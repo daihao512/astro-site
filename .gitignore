@@ -1,0 +1,19 @@
+# build output
+dist/
+# dependencies
+node_modules/
+# astro generated types/cache
+.astro/
+# logs
+*.log
+# editor / os
+.vscode/
+.DS_Store
+
+# environment / secrets (never commit real keys)
+.env
+.env.*
+!.env.example
+
+# local agent / project tooling data (not part of the site)
+.workbuddy/
