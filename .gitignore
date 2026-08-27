@@ -17,3 +17,8 @@ node_modules/
 
 # local agent / project tooling data (not part of the site)
 .workbuddy/
+
+# 业务素材（本地保留，不推送到公开仓库）
+2020年产品画册LOGO/
+Broadya catalog2026.pdf
+胶带样品库/
