@@ -14,7 +14,7 @@ import Layout from '../layouts/Layout.astro';
         </p>
         <div class="hero-cta">
           <a class="btn" href="#products">查看产品</a>
-          <a class="btn btn-ghost" href="#contact">联系我们</a>
+          <a class="btn btn-ghost" href="#quote">获取报价</a>
         </div>
       </div>
       <div class="hero-visual">
@@ -39,35 +39,47 @@ import Layout from '../layouts/Layout.astro';
         <p>覆盖多场景的胶粘产品矩阵，支持按规格、基材与用途定制。</p>
       </div>
       <div class="grid">
-        <div class="card">
-          <div class="ico">🔁</div>
-          <h3>双面胶带</h3>
-          <p>高初粘、易模切，适用于手机、屏贴、铭牌固定与精密组装。</p>
+        <div class="card product-card">
+          <img src="/products/acrylic.jpg" alt="Double Sided Acrylic Tape" class="product-img" loading="lazy" />
+          <h3>双面亚克力胶</h3>
+          <p class="en">Double Sided Acrylic Tape</p>
+          <p>高初粘、耐候抗老化，适用于汽车外饰、铭牌固定与精密结构粘接。</p>
         </div>
-        <div class="card">
-          <div class="ico">🧽</div>
-          <h3>泡棉胶带</h3>
-          <p>PE/EVA 泡棉基材，缓冲密封、填缝减震，汽车与建筑密封首选。</p>
+        <div class="card product-card">
+          <img src="/products/eva.jpg" alt="Double Sided EVA Tape" class="product-img" loading="lazy" />
+          <h3>EVA 双面胶</h3>
+          <p class="en">Double Sided EVA Tape</p>
+          <p>缓冲密封、填缝减震，泡棉基材柔韧服帖，包装与工业组装常用。</p>
         </div>
-        <div class="card">
-          <div class="ico">🏭</div>
-          <h3>工业胶带</h3>
-          <p>布基、PET、无纺布等多基材，强力捆绑、线束固定、表面保护。</p>
+        <div class="card product-card">
+          <img src="/products/opp.jpg" alt="Double Sided OPP Tape" class="product-img" loading="lazy" />
+          <h3>OPP 双面胶</h3>
+          <p class="en">Double Sided OPP Tape</p>
+          <p>高强度捆绑、线束固定与封缄，性价比之选，通用粘接可靠。</p>
         </div>
-        <div class="card">
-          <div class="ico">🔥</div>
-          <h3>高温胶带</h3>
-          <p>聚酰亚胺 / 玻璃布基材，耐焊、耐烤、耐化学，适用于喷涂与回流焊。</p>
+        <div class="card product-card">
+          <img src="/products/pe-foam.jpg" alt="Double Sided PE Foam Tape" class="product-img" loading="lazy" />
+          <h3>PE 泡棉双面胶</h3>
+          <p class="en">Double Sided PE Foam Tape</p>
+          <p>缓冲密封、填缝减震，汽车与建筑密封、镜面安装首选。</p>
         </div>
-        <div class="card">
-          <div class="ico">🛡️</div>
-          <h3>防伪胶带</h3>
-          <p>揭显、VOID 防伪技术，保障物流与品牌安全，防拆防篡改。</p>
+        <div class="card product-card">
+          <img src="/products/pet.jpg" alt="Double Sided PET Tape" class="product-img" loading="lazy" />
+          <h3>PET 双面胶</h3>
+          <p class="en">Double Sided PET Tape</p>
+          <p>超薄、尺寸稳定，电子屏贴、铭牌与塑料件精密固定。</p>
         </div>
-        <div class="card">
-          <div class="ico">📦</div>
-          <h3>包装胶带</h3>
-          <p>高强封箱、可印刷定制，电商与物流场景稳定之选。</p>
+        <div class="card product-card">
+          <img src="/products/pvc.jpg" alt="Double Sided PVC Tape" class="product-img" loading="lazy" />
+          <h3>PVC 双面胶</h3>
+          <p class="en">Double Sided PVC Tape</p>
+          <p>贴合绝缘、轻量固定，适用于线材、标牌与表面保护。</p>
+        </div>
+        <div class="card product-card">
+          <img src="/products/tissue.jpg" alt="Double Sided Tissue Tape" class="product-img" loading="lazy" />
+          <h3>棉纸双面胶</h3>
+          <p class="en">Double Sided Tissue Tape</p>
+          <p>易模切、服帖性好，laminating 与通用轻粘接场景。</p>
         </div>
       </div>
     </div>
@@ -130,8 +142,140 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
+  <!-- Industries -->
+  <section id="industries" style="background:var(--bg-soft)">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Industries</div>
+        <h2>行业解决方案</h2>
+        <p>从汽车到电子，为各行业提供定制化的粘接、密封与缓冲方案。</p>
+      </div>
+      <div class="grid">
+        <div class="card industry-card">
+          <div class="ico">🚗</div>
+          <h3>汽车</h3>
+          <p>外饰件、徽标、内饰结构粘接，耐候抗老化，适应严苛车规环境。</p>
+        </div>
+        <div class="card industry-card">
+          <div class="ico">🏢</div>
+          <h3>建筑</h3>
+          <p>中空玻璃、幕墙填缝与结构粘接，长期稳定，安装更高效。</p>
+        </div>
+        <div class="card industry-card">
+          <div class="ico">🔌</div>
+          <h3>家电</h3>
+          <p>面板固定、减震与热管理，提升装配效率与产品可靠性。</p>
+        </div>
+        <div class="card industry-card">
+          <div class="ico">⚙️</div>
+          <h3>机械工业</h3>
+          <p>设备组装、密封与长期户外防护，承载工业级应用需求。</p>
+        </div>
+        <div class="card industry-card">
+          <div class="ico">🪧</div>
+          <h3>标识</h3>
+          <p>室内外招牌安装，隐形固定、强持粘，呈现更整洁的视觉效果。</p>
+        </div>
+        <div class="card industry-card">
+          <div class="ico">📱</div>
+          <h3>电子</h3>
+          <p>超薄双面胶与导热粘接，服务智能设备与显示屏精密组装。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Certifications & Reports -->
+  <section id="certifications">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Quality</div>
+        <h2>资质认证与检测报告</h2>
+        <p>完善的质量体系与第三方检测报告，为长期稳定供货提供保障。</p>
+      </div>
+      <div class="grid">
+        <div class="card cert-card">
+          <div class="ico">📜</div>
+          <h3>ISO 9001:2015</h3>
+          <p>质量管理体系认证，<a href="/certs/iso-9001.pdf" target="_blank" rel="noopener">下载证书 ↗</a></p>
+        </div>
+        <div class="card cert-card">
+          <div class="ico">♻️</div>
+          <h3>RoHS 合规</h3>
+          <p>材料符合RoHS有害物质限制指令，可下载检测报告。</p>
+        </div>
+        <div class="card cert-card">
+          <div class="ico">🌿</div>
+          <h3>REACH 合规</h3>
+          <p>符合REACH化学品注册、评估与授权要求。</p>
+        </div>
+        <div class="card cert-card">
+          <div class="ico">🔍</div>
+          <h3>SGS 审核</h3>
+          <p>第三方审核供应商，生产体系可验证。</p>
+        </div>
+        <div class="card cert-card">
+          <div class="ico">🧪</div>
+          <h3>自建实验室</h3>
+          <p>初粘、持粘、剥离、老化等关键指标可检测。</p>
+        </div>
+      </div>
+
+      <h3 style="margin:2.5rem 0 1rem">检测报告下载</h3>
+      <ul class="report-list">
+        <li><a href="/reports/pe-foam-rohs.pdf" target="_blank" rel="noopener"><span class="pdf-ico">PDF</span> PE Foam Tape — RoHS Report</a></li>
+        <li><a href="/reports/pet-rohs.pdf" target="_blank" rel="noopener"><span class="pdf-ico">PDF</span> PET Tape — RoHS Report</a></li>
+        <li><a href="/reports/pe-foam-uv-aging.pdf" target="_blank" rel="noopener"><span class="pdf-ico">PDF</span> PE Foam Tape — UV Aging Test</a></li>
+        <li><a href="/reports/pet-tape-rohs.pdf" target="_blank" rel="noopener"><span class="pdf-ico">PDF</span> 双面 PET 胶带 — RoHS 报告</a></li>
+        <li><a href="/reports/pe-foam-tape-rohs.pdf" target="_blank" rel="noopener"><span class="pdf-ico">PDF</span> 双面 PE 泡棉胶带 — RoHS 报告</a></li>
+        <li><a href="/reports/flame-retardant-tissue-rohs.pdf" target="_blank" rel="noopener"><span class="pdf-ico">PDF</span> 阻燃棉纸胶带 — RoHS 报告</a></li>
+        <li><a href="/reports/low-odor-tissue-odor.pdf" target="_blank" rel="noopener"><span class="pdf-ico">PDF</span> 低气味棉纸胶带 — 气味检测报告</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Quote -->
+  <section id="quote" class="contact">
+    <div class="container contact-grid">
+      <div>
+        <div class="section-head" style="text-align:left; margin:0 0 1.5rem">
+          <div class="eyebrow">Quote</div>
+          <h2>获取报价</h2>
+          <p>告诉我们您的应用场景与规格，我们将尽快提供选型建议与报价。</p>
+        </div>
+        <ul class="contact-info">
+          <li><strong>邮箱：</strong> sales@lubandart-tape.com</li>
+          <li><strong>电话：</strong> +86 400-000-0000</li>
+          <li><strong>地址：</strong> 中国 · 胶粘产业园 A 区</li>
+          <li><strong>工作时间：</strong> 周一至周五 9:00–18:00</li>
+        </ul>
+        <p style="margin-top:1.5rem; color:var(--fg-soft)">也可以直接点击右下角 <strong>AI 客服</strong>，实时咨询产品信息。</p>
+      </div>
+      <form class="quote-form" onsubmit="return false">
+        <input type="text" placeholder="您的称呼" />
+        <input type="text" placeholder="公司名称" />
+        <input type="email" placeholder="邮箱 / 电话" class="full" />
+        <select class="full">
+          <option value="">请选择产品类型</option>
+          <option>双面亚克力胶</option>
+          <option>PE 泡棉双面胶</option>
+          <option>PET 双面胶</option>
+          <option>棉纸双面胶</option>
+          <option>EVA 双面胶</option>
+          <option>OPP 双面胶</option>
+          <option>PVC 双面胶</option>
+          <option>其他 / 定制</option>
+        </select>
+        <input type="text" placeholder="规格尺寸（如 宽10mm 厚0.1mm）" />
+        <input type="text" placeholder="预计用量" />
+        <textarea placeholder="请描述您的需求，例如：需要 0.1mm 双面胶，宽 10mm，用量 5000 卷" class="full"></textarea>
+        <button class="btn full" type="submit">获取报价</button>
+      </form>
+    </div>
+  </section>
+
   <!-- Contact -->
-  <section id="contact" class="contact">
+  <section id="contact">
     <div class="container contact-grid">
       <div>
         <div class="section-head" style="text-align:left; margin:0 0 1.5rem">
@@ -145,7 +289,6 @@ import Layout from '../layouts/Layout.astro';
           <li><strong>地址：</strong> 中国 · 胶粘产业园 A 区</li>
           <li><strong>工作时间：</strong> 周一至周五 9:00–18:00</li>
         </ul>
-        <p style="margin-top:1.5rem; color:var(--fg-soft)">也可以直接点击右下角 <strong>AI 客服</strong>，实时咨询产品信息。</p>
       </div>
       <form class="contact-form" onsubmit="return false">
         <input type="text" placeholder="您的称呼" />
@@ -156,3 +299,84 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 </Layout>
+
+<style>
+  .product-img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    background: var(--bg-soft);
+  }
+  .product-card .en {
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin: -0.3rem 0 0.6rem;
+  }
+  .industry-card .ico,
+  .cert-card .ico {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(246, 130, 31, 0.12);
+    color: var(--accent);
+    display: grid;
+    place-items: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .cert-card a { color: var(--accent); font-weight: 600; }
+  .report-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .report-list li a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--fg);
+    font-size: 0.92rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .report-list li a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .report-list .pdf-ico {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.78rem;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 1px 6px;
+  }
+  .quote-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+  }
+  .quote-form .full { grid-column: 1 / -1; }
+  .quote-form input,
+  .quote-form select,
+  .quote-form textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font: inherit;
+    background: #fff;
+  }
+  .quote-form textarea { min-height: 110px; resize: vertical; }
+  @media (max-width: 680px) {
+    .quote-form { grid-template-columns: 1fr; }
+  }
+</style>
