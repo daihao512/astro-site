@@ -1,0 +1,133 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { products, getProduct } from '../../data/products';
+
+export function getStaticPaths() {
+  return products.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const product = getProduct(slug!);
+if (!product) return Astro.redirect("/products");
+
+const related = products.filter((p) => p.slug !== product.slug).slice(0, 4);
+---
+
+<Layout title={`${product.name} — LubandArt Tape`} description={product.intro.slice(0, 120)}>
+  <!-- 面包屑 -->
+  <div class="container" style="padding-top:1.5rem">
+    <nav class="crumbs"><a href="/">首页</a> / <a href="/products">产品中心</a> / <span>{product.name}</span></nav>
+  </div>
+
+  <!-- 头部 -->
+  <section style="background:var(--bg-soft); padding:2rem 0">
+    <div class="container prod-head">
+      <img src={product.img} alt={product.en} class="prod-img" />
+      <div>
+        <div class="eyebrow">{product.en}</div>
+        <h1 class="prod-title">{product.name}</h1>
+        <p class="prod-tagline">{product.tagline}</p>
+        <p class="prod-intro">{product.intro}</p>
+        <div class="prod-cta">
+          <a class="btn" href="/contact">获取报价</a>
+          <a class="btn btn-ghost" href="/contact">技术咨询</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 特性 -->
+  <section style="padding:4rem 0">
+    <div class="container">
+      <div class="section-head" style="text-align:left; margin:0 0 2rem">
+        <div class="eyebrow">Features</div>
+        <h2>产品特性</h2>
+      </div>
+      <div class="grid feats">
+        {product.features.map((f, i) => (
+          <div class="card feature"><div class="dot">{i + 1}</div><div><p>{f}</p></div></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 规格参数 -->
+  <section style="background:var(--bg-soft); padding:4rem 0">
+    <div class="container">
+      <div class="section-head" style="text-align:left; margin:0 0 2rem">
+        <div class="eyebrow">Specifications</div>
+        <h2>技术规格</h2>
+        <p>以下为常规范围，具体以选型确认书 / 检测报告为准，支持非标定制。</p>
+      </div>
+      <div class="spec-table">
+        {product.specs.map((s) => (
+          <div class="spec-row"><span class="spec-label">{s.label}</span><span class="spec-value">{s.value}</span></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 应用场景 -->
+  <section style="padding:4rem 0">
+    <div class="container">
+      <div class="section-head" style="text-align:left; margin:0 0 2rem">
+        <div class="eyebrow">Applications</div>
+        <h2>典型应用</h2>
+      </div>
+      <div class="grid apps">
+        {product.applications.map((a) => (
+          <div class="card app-card"><span class="app-ico">✓</span><p>{a}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 相关产品 -->
+  <section style="background:var(--bg-soft); padding:4rem 0">
+    <div class="container">
+      <div class="section-head" style="text-align:left; margin:0 0 2rem">
+        <div class="eyebrow">Related</div>
+        <h2>相关产品</h2>
+      </div>
+      <div class="grid">
+        {related.map((r) => (
+          <a class="card rel-card" href={`/products/${r.slug}`}>
+            <img src={r.img} alt={r.en} class="rel-img" loading="lazy" />
+            <h3>{r.name}</h3>
+            <p class="en">{r.en}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .crumbs { font-size: .85rem; color: var(--fg-soft); }
+  .crumbs a { color: var(--fg-soft); }
+  .crumbs a:hover { color: var(--accent); }
+  .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; }
+  .prod-head { display: grid; grid-template-columns: .8fr 1.2fr; gap: 2.5rem; align-items: center; }
+  .prod-img { width: 100%; height: 280px; object-fit: cover; border-radius: 16px; background: #fff; }
+  .prod-title { font-size: clamp(1.8rem, 3.5vw, 2.6rem); margin: .4rem 0 .3rem; }
+  .prod-tagline { color: var(--accent); font-weight: 600; margin: 0 0 1rem; }
+  .prod-intro { color: var(--fg-soft); line-height: 1.7; }
+  .prod-cta { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 1.5rem; }
+  .feats { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .feats .feature { display: flex; gap: 1rem; align-items: flex-start; }
+  .feature .dot { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 9px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; }
+  .spec-table { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fff; }
+  .spec-row { display: flex; padding: .9rem 1.2rem; border-bottom: 1px solid var(--line); }
+  .spec-row:last-child { border-bottom: 0; }
+  .spec-label { width: 160px; flex: 0 0 auto; color: var(--fg-soft); font-weight: 600; }
+  .spec-value { color: var(--fg); }
+  .apps { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .app-card { display: flex; align-items: center; gap: .8rem; }
+  .app-ico { color: #fff; background: var(--accent); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; flex: 0 0 auto; }
+  .app-card p { margin: 0; }
+  .rel-card { color: inherit; }
+  .rel-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent); }
+  .rel-img { width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: .8rem; }
+  .rel-card .en { color: var(--accent); font-size: .78rem; font-weight: 600; margin: -.2rem 0 0; }
+  @media (max-width: 760px) { .prod-head { grid-template-columns: 1fr; } .spec-label { width: 120px; } }
+</style>

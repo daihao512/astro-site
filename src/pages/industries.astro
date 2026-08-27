@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { industries } from '../data/industries';
+---
+
+<Layout title="行业解决方案 — LubandArt Tape" description="为汽车、建筑、家电、机械工业、标识、电子提供定制化的粘接、密封与缓冲方案。">
+  <section style="background:var(--bg-soft); padding:4rem 0 2.5rem">
+    <div class="container">
+      <div class="eyebrow">Industries</div>
+      <h1 class="page-title">行业解决方案</h1>
+      <p class="page-sub">从汽车到电子，为各行业提供定制化的粘接、密封与缓冲方案。点击行业查看完整方案与推荐产品。</p>
+    </div>
+  </section>
+
+  <section style="padding:2.5rem 0 5rem">
+    <div class="container">
+      <div class="grid">
+        {industries.map((it) => (
+          <a class="card ind-card" href={`/industries/${it.slug}`}>
+            <div class="ico">{it.icon}</div>
+            <h3>{it.name} <span class="en">/ {it.en}</span></h3>
+            <p>{it.desc}</p>
+            <span class="more">查看方案 →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-title { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: .5rem 0 .6rem; }
+  .page-sub { color: var(--fg-soft); max-width: 640px; }
+  .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; }
+  .ind-card { display: block; color: inherit; }
+  .ind-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent); }
+  .ind-card .ico { width: 48px; height: 48px; border-radius: 12px; background: rgba(246,130,31,.12); color: var(--accent); display: grid; place-items: center; font-size: 1.5rem; margin-bottom: 1rem; }
+  .ind-card h3 { margin: .2rem 0 .5rem; }
+  .ind-card h3 .en { color: var(--fg-soft); font-weight: 500; font-size: .8rem; }
+  .ind-card .more { display: inline-block; margin-top: .8rem; color: var(--accent); font-weight: 600; font-size: .9rem; }
+</style>

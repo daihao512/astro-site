@@ -1,0 +1,72 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="联系与报价 — LubandArt Tape" description="告诉我们您的应用场景与规格，LubandArt Tape 将尽快提供选型建议与报价。">
+  <section style="background:var(--bg-soft); padding:4rem 0 2.5rem">
+    <div class="container">
+      <div class="eyebrow">Contact</div>
+      <h1 class="page-title">联系与报价</h1>
+      <p class="page-sub">告诉我们您的应用场景与规格，我们将尽快提供选型建议与报价。也可直接点击右下角 AI 客服实时咨询。</p>
+    </div>
+  </section>
+
+  <section class="contact" style="padding:3rem 0">
+    <div class="container contact-grid">
+      <div>
+        <ul class="contact-info">
+          <li><strong>邮箱：</strong> sales@lubandart-tape.com</li>
+          <li><strong>电话：</strong> +86 400-000-0000</li>
+          <li><strong>地址：</strong> 中国 · 胶粘产业园 A 区</li>
+          <li><strong>工作时间：</strong> 周一至周五 9:00–18:00</li>
+        </ul>
+        <div class="footer-social" style="margin-top:1.5rem">
+          <a href="mailto:sales@lubandart-tape.com">Email</a>
+          <a href="#" rel="noopener">WhatsApp</a>
+          <a href="#" rel="noopener">微信</a>
+        </div>
+      </div>
+
+      <form class="quote-form" onsubmit="return false">
+        <input type="text" placeholder="您的称呼" />
+        <input type="text" placeholder="公司名称" />
+        <input type="email" placeholder="邮箱 / 电话" class="full" />
+        <select class="full">
+          <option value="">请选择产品类型</option>
+          <option>双面亚克力胶</option>
+          <option>PE 泡棉双面胶</option>
+          <option>PET 双面胶</option>
+          <option>棉纸双面胶</option>
+          <option>EVA 双面胶</option>
+          <option>OPP 双面胶</option>
+          <option>PVC 双面胶</option>
+          <option>其他 / 定制</option>
+        </select>
+        <input type="text" placeholder="规格尺寸（如 宽10mm 厚0.1mm）" />
+        <input type="text" placeholder="预计用量" />
+        <textarea placeholder="请描述您的需求，例如：需要 0.1mm 双面胶，宽 10mm，用量 5000 卷" class="full"></textarea>
+        <button class="btn full" type="submit">获取报价</button>
+      </form>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-title { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: .5rem 0 .6rem; }
+  .page-sub { color: var(--fg-soft); max-width: 640px; }
+  .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; }
+  .contact { background: var(--bg-soft); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2.5rem; align-items: start; }
+  .contact-info li { list-style: none; padding: .5rem 0; color: var(--fg-soft); }
+  .contact-info strong { color: var(--fg); }
+  .footer-social { display: flex; flex-wrap: wrap; gap: .6rem; }
+  .footer-social a { border: 1px solid rgba(0,0,0,.14); padding: .4rem .85rem; border-radius: 999px; font-size: .82rem; color: var(--fg-soft); }
+  .footer-social a:hover { border-color: var(--accent); color: var(--accent); }
+  .quote-form { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+  .quote-form .full { grid-column: 1 / -1; }
+  .quote-form input, .quote-form select, .quote-form textarea {
+    width: 100%; padding: .8rem 1rem; border: 1px solid var(--line); border-radius: 10px; font: inherit; background: #fff;
+  }
+  .quote-form textarea { min-height: 110px; resize: vertical; }
+  @media (max-width: 680px) { .quote-form, .contact-grid { grid-template-columns: 1fr; } }
+</style>

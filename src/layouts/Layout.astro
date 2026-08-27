@@ -192,7 +192,17 @@ const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带�
 
       @media (max-width: 860px) {
         .hero-inner, .contact-grid { grid-template-columns: 1fr; }
-        .nav-links { display: none; }
+        .nav-toggle { display: flex; }
+        .nav-links {
+          position: absolute; top: 64px; left: 0; right: 0;
+          flex-direction: column; align-items: stretch; gap: 0;
+          background: #fff; border-bottom: 1px solid var(--line);
+          padding: .5rem 1.25rem 1rem; box-shadow: var(--shadow);
+          display: none;
+        }
+        .nav-links.open { display: flex; }
+        .nav-links a { padding: .7rem .2rem; border-bottom: 1px solid var(--line); }
+        .nav-links a:last-of-type { border-bottom: 0; }
       }
       @media (max-width: 760px) {
         .footer-grid { grid-template-columns: 1fr 1fr; }
@@ -213,15 +223,16 @@ const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带�
           <span class="logo">L</span>
           <span>Luband<span class="sub">Art</span> Tape</span>
         </a>
-        <nav class="nav-links">
-          <a href="/#products">产品中心</a>
-          <a href="/#industries">行业方案</a>
-          <a href="/#certifications">资质报告</a>
-          <a href="/#about">关于我们</a>
-          <a href="/#advantages">核心优势</a>
-          <a href="/#quote">获取报价</a>
-          <a href="/#contact">联系方式</a>
+        <nav class="nav-links" id="nav-menu">
+          <a href="/products">产品中心</a>
+          <a href="/industries">行业方案</a>
+          <a href="/certifications">资质报告</a>
+          <a href="/about">关于我们</a>
+          <a href="/contact">联系报价</a>
         </nav>
+        <button class="nav-toggle" id="nav-toggle" aria-label="菜单">
+          <span></span><span></span><span></span>
+        </button>
         <button class="btn" id="nav-chat">AI 客服</button>
       </div>
     </header>
@@ -243,24 +254,24 @@ const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带�
         <div class="footer-col">
           <h4>产品</h4>
           <ul>
-            <li><a href="/#products">双面亚克力胶</a></li>
-            <li><a href="/#products">EVA 双面胶</a></li>
-            <li><a href="/#products">OPP 双面胶</a></li>
-            <li><a href="/#products">PE 泡棉双面胶</a></li>
-            <li><a href="/#products">PET 双面胶</a></li>
-            <li><a href="/#products">PVC 双面胶</a></li>
-            <li><a href="/#products">棉纸双面胶</a></li>
+            <li><a href="/products/acrylic">双面亚克力胶</a></li>
+            <li><a href="/products/eva">EVA 双面胶</a></li>
+            <li><a href="/products/opp">OPP 双面胶</a></li>
+            <li><a href="/products/pe-foam">PE 泡棉双面胶</a></li>
+            <li><a href="/products/pet">PET 双面胶</a></li>
+            <li><a href="/products/pvc">PVC 双面胶</a></li>
+            <li><a href="/products/tissue">棉纸双面胶</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h4>行业方案</h4>
           <ul>
-            <li><a href="/#industries">汽车</a></li>
-            <li><a href="/#industries">建筑</a></li>
-            <li><a href="/#industries">家电</a></li>
-            <li><a href="/#industries">机械工业</a></li>
-            <li><a href="/#industries">标识</a></li>
-            <li><a href="/#industries">电子</a></li>
+            <li><a href="/industries/automotive">汽车</a></li>
+            <li><a href="/industries/construction">建筑</a></li>
+            <li><a href="/industries/appliance">家电</a></li>
+            <li><a href="/industries/machinery">机械工业</a></li>
+            <li><a href="/industries/signage">标识</a></li>
+            <li><a href="/industries/electronics">电子</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -309,6 +320,29 @@ const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带�
       const form = document.getElementById('chat-form');
       const input = document.getElementById('chat-input');
       const msgs = document.getElementById('chat-msgs');
+
+      /* 移动端菜单 */
+      const navToggle = document.getElementById('nav-toggle');
+      const navMenu = document.getElementById('nav-menu');
+      if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+          navMenu.classList.toggle('open');
+          navToggle.classList.toggle('open');
+        });
+        navMenu.querySelectorAll('a').forEach((a) =>
+          a.addEventListener('click', () => {
+            navMenu.classList.remove('open');
+            navToggle.classList.remove('open');
+          })
+        );
+      }
+
+      /* 当前页高亮 */
+      const path = location.pathname;
+      document.querySelectorAll('#nav-menu a').forEach((a) => {
+        const href = a.getAttribute('href');
+        if (href === path || (href !== '/' && path.startsWith(href))) a.classList.add('active');
+      });
 
       const SYSTEM = {
         role: 'system',

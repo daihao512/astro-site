@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const stats = [
+  { num: "10+", lbl: "年行业经验" },
+  { num: "500+", lbl: "合作客户" },
+  { num: "2000+", lbl: "产品规格" },
+  { num: "30+", lbl: "出口国家" },
+];
+
+const caps = [
+  { icon: "🏭", t: "自主研发生产", d: "从基材选型、涂布工艺到分切包装全流程自主管控，品质稳定可控。" },
+  { icon: "🧪", t: "实验室检测", d: "初粘、持粘、剥离、老化等关键指标在厂内实验室可检测、可复现。" },
+  { icon: "✂️", t: "柔性加工", d: "支持精密模切、分条、复卷与异形加工，满足非标定制需求。" },
+  { icon: "🌐", t: "全球供货", d: "成熟出口体系，服务 30+ 国家客户，OEM / ODM 私标支持。" },
+];
+---
+
+<Layout title="关于我们 — LubandArt Tape" description="十余年胶粘行业深耕，集研发、生产、分切、品控于一体，服务全球客户的胶带与胶粘解决方案制造商。">
+  <section style="background:var(--bg-soft); padding:4rem 0 2.5rem">
+    <div class="container">
+      <div class="eyebrow">About</div>
+      <h1 class="page-title">关于我们</h1>
+      <p class="page-sub">十余年胶粘行业深耕，集研发、生产、分切、品控于一体，为全球客户提供稳定可靠的粘接方案。</p>
+    </div>
+  </section>
+
+  <section style="padding:3rem 0">
+    <div class="container about-grid">
+      <div>
+        <h2 class="about-h">公司简介</h2>
+        <p class="about-p">LubandArt Tape 拥有完善的生产线与实验室检测能力，从基材选型、涂布工艺到分切包装全流程管控。我们坚持稳定的品质与快速的交付，帮助客户降低综合成本、提升产品可靠性。</p>
+        <p class="about-p">无论是标准规格还是非标定制，我们都可提供样品打样、技术选型与批量供货的一体化服务，覆盖电子、汽车、包装、建筑等多个行业。</p>
+      </div>
+      <div class="stats-wrap">
+        {stats.map((s) => (
+          <div class="card stat-card"><div class="num">{s.num}</div><div class="lbl">{s.lbl}</div></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--bg-soft); padding:4rem 0">
+    <div class="container">
+      <div class="section-head" style="text-align:left; margin:0 0 2rem">
+        <div class="eyebrow">Capabilities</div>
+        <h2>核心能力</h2>
+      </div>
+      <div class="grid">
+        {caps.map((c) => (
+          <div class="card cap-card"><div class="ico">{c.icon}</div><h3>{c.t}</h3><p>{c.d}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:4rem 0">
+    <div class="container" style="text-align:center">
+      <h2 class="about-h">与 LubandArt 合作</h2>
+      <p class="page-sub" style="margin:0 auto 1.8rem">提供选型建议、打样试产与批量供货的一站式服务。</p>
+      <a class="btn" href="/contact">联系我们 →</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-title { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: .5rem 0 .6rem; }
+  .page-sub { color: var(--fg-soft); max-width: 640px; }
+  .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; }
+  .about-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3rem; align-items: center; }
+  .about-h { font-size: 1.6rem; margin: 0 0 1rem; }
+  .about-p { color: var(--fg-soft); line-height: 1.8; margin: 0 0 1rem; }
+  .stats-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .stat-card { text-align: center; }
+  .stat-card .num { font-size: 2rem; font-weight: 800; color: var(--accent); }
+  .stat-card .lbl { color: var(--fg-soft); font-size: .85rem; }
+  .cap-card .ico { width: 48px; height: 48px; border-radius: 12px; background: rgba(246,130,31,.12); color: var(--accent); display: grid; place-items: center; font-size: 1.5rem; margin-bottom: 1rem; }
+  @media (max-width: 760px) { .about-grid { grid-template-columns: 1fr; } }
+</style>

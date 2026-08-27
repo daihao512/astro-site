@@ -1,0 +1,73 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const certs = [
+  { icon: "📜", name: "ISO 9001:2015", desc: "质量管理体系认证，规范研发、生产、品控全流程。", file: "/certs/iso-9001.pdf" },
+  { icon: "♻️", name: "RoHS 合规", desc: "材料符合 RoHS 有害物质限制指令，可下载检测报告。" },
+  { icon: "🌿", name: "REACH 合规", desc: "符合 REACH 化学品注册、评估与授权要求。" },
+  { icon: "🔍", name: "SGS 审核", desc: "第三方审核供应商，生产体系可验证。" },
+  { icon: "🧪", name: "自建实验室", desc: "初粘、持粘、剥离、老化等关键指标可检测。" },
+];
+
+const reports = [
+  { name: "PE Foam Tape — RoHS Report", file: "/reports/pe-foam-rohs.pdf" },
+  { name: "PET Tape — RoHS Report", file: "/reports/pet-rohs.pdf" },
+  { name: "PE Foam Tape — UV Aging Test", file: "/reports/pe-foam-uv-aging.pdf" },
+  { name: "双面 PET 胶带 — RoHS 报告", file: "/reports/pet-tape-rohs.pdf" },
+  { name: "双面 PE 泡棉胶带 — RoHS 报告", file: "/reports/pe-foam-tape-rohs.pdf" },
+  { name: "阻燃棉纸胶带 — RoHS 报告", file: "/reports/flame-retardant-tissue-rohs.pdf" },
+  { name: "低气味棉纸胶带 — 气味检测报告", file: "/reports/low-odor-tissue-odor.pdf" },
+];
+---
+
+<Layout title="资质认证与检测报告 — LubandArt Tape" description="ISO 9001、RoHS、REACH、SGS 审核与第三方检测报告下载。">
+  <section style="background:var(--bg-soft); padding:4rem 0 2.5rem">
+    <div class="container">
+      <div class="eyebrow">Quality</div>
+      <h1 class="page-title">资质认证与检测报告</h1>
+      <p class="page-sub">完善的质量体系与第三方检测报告，为长期稳定供货提供保障。下列资料可直接下载查阅。</p>
+    </div>
+  </section>
+
+  <section style="padding:2.5rem 0">
+    <div class="container">
+      <div class="grid">
+        {certs.map((c) => (
+          <div class="card cert-card">
+            <div class="ico">{c.icon}</div>
+            <h3>{c.name}</h3>
+            <p>{c.desc}</p>
+            {c.file && <a class="cert-link" href={c.file} target="_blank" rel="noopener">下载证书 ↗</a>}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:1.5rem 0 5rem">
+    <div class="container">
+      <h2 class="rep-h">检测报告下载</h2>
+      <ul class="report-list">
+        {reports.map((r) => (
+          <li><a href={r.file} target="_blank" rel="noopener"><span class="pdf-ico">PDF</span> {r.name}</a></li>
+        ))}
+      </ul>
+      <p class="rep-note">需要特定产品的完整 TDS / SDS，或更多第三方报告？请 <a href="/contact">联系我们</a> 获取。</p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-title { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: .5rem 0 .6rem; }
+  .page-sub { color: var(--fg-soft); max-width: 640px; }
+  .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; }
+  .cert-card .ico { width: 48px; height: 48px; border-radius: 12px; background: rgba(246,130,31,.12); color: var(--accent); display: grid; place-items: center; font-size: 1.5rem; margin-bottom: 1rem; }
+  .cert-link { color: var(--accent); font-weight: 600; }
+  .rep-h { font-size: 1.4rem; margin: 2.5rem 0 1rem; }
+  .report-list { list-style: none; padding: 0; margin: 0; display: grid; gap: .6rem; }
+  .report-list li a { display: flex; align-items: center; gap: .6rem; padding: .75rem 1rem; border: 1px solid var(--line); border-radius: 10px; color: var(--fg); font-size: .92rem; transition: border-color .2s, color .2s; }
+  .report-list li a:hover { border-color: var(--accent); color: var(--accent); }
+  .report-list .pdf-ico { color: var(--accent); font-weight: 700; font-size: .78rem; border: 1px solid var(--accent); border-radius: 6px; padding: 1px 6px; }
+  .rep-note { margin-top: 1.5rem; color: var(--fg-soft); }
+  .rep-note a { color: var(--accent); font-weight: 600; }
+</style>
