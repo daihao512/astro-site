@@ -2,11 +2,157 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="我的 Astro 站点">
-  <h1>🚀 你好，Cloudflare Pages！</h1>
-  <p>
-    这个站点在 WorkBuddy 工作区（F:\free site）用 Astro 编写，
-    推送到 GitHub 后，由 Cloudflare Pages 通过 Git 集成自动拉取、构建并部署到全球网络。
-  </p>
-  <p>每次向 <code>main</code> 分支推送，都会触发一次自动重新部署。</p>
+<Layout title="LubandArt Tape — 专业胶带与胶粘解决方案制造商">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div>
+        <h1>专业<span class="hl">胶粘解决方案</span><br />让每一次粘接都更可靠</h1>
+        <p>
+          LubandArt Tape 专注于双面胶、泡棉胶带、工业胶带与高温胶带的研发与制造，
+          为电子、汽车、包装、建筑等行业提供稳定可靠的粘接方案。
+        </p>
+        <div class="hero-cta">
+          <a class="btn" href="#products">查看产品</a>
+          <a class="btn btn-ghost" href="#contact">联系我们</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <span class="tag">核心能力</span>
+        <ul>
+          <li><span>厚度公差控制</span><span>±0.01mm</span></li>
+          <li><span>耐温范围</span><span>-40~260℃</span></li>
+          <li><span>初粘 / 持粘</span><span>行业领先</span></li>
+          <li><span>定制分切</span><span>支持</span></li>
+          <li><span>环保认证</span><span>RoHS</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <section id="products">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Products</div>
+        <h2>产品中心</h2>
+        <p>覆盖多场景的胶粘产品矩阵，支持按规格、基材与用途定制。</p>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="ico">🔁</div>
+          <h3>双面胶带</h3>
+          <p>高初粘、易模切，适用于手机、屏贴、铭牌固定与精密组装。</p>
+        </div>
+        <div class="card">
+          <div class="ico">🧽</div>
+          <h3>泡棉胶带</h3>
+          <p>PE/EVA 泡棉基材，缓冲密封、填缝减震，汽车与建筑密封首选。</p>
+        </div>
+        <div class="card">
+          <div class="ico">🏭</div>
+          <h3>工业胶带</h3>
+          <p>布基、PET、无纺布等多基材，强力捆绑、线束固定、表面保护。</p>
+        </div>
+        <div class="card">
+          <div class="ico">🔥</div>
+          <h3>高温胶带</h3>
+          <p>聚酰亚胺 / 玻璃布基材，耐焊、耐烤、耐化学，适用于喷涂与回流焊。</p>
+        </div>
+        <div class="card">
+          <div class="ico">🛡️</div>
+          <h3>防伪胶带</h3>
+          <p>揭显、VOID 防伪技术，保障物流与品牌安全，防拆防篡改。</p>
+        </div>
+        <div class="card">
+          <div class="ico">📦</div>
+          <h3>包装胶带</h3>
+          <p>高强封箱、可印刷定制，电商与物流场景稳定之选。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About + Stats -->
+  <section id="about" style="background:var(--bg-soft)">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">About</div>
+        <h2>关于我们</h2>
+        <p>十余年胶粘行业深耕，集研发、生产、分切、品控于一体，服务全球客户。</p>
+      </div>
+      <div class="grid" style="grid-template-columns:1.2fr 1fr; align-items:center; gap:3rem">
+        <div>
+          <p style="color:var(--fg-soft)">
+            LubandArt Tape 拥有完善的生产线与实验室检测能力，从基材选型、涂布工艺到分切包装全流程管控。
+            我们坚持稳定的品质与快速的交付，帮助客户降低综合成本、提升产品可靠性。
+          </p>
+          <p style="color:var(--fg-soft)">
+            无论是标准规格还是非标定制，我们都可提供样品打样、技术选型与批量供货的一体化服务。
+          </p>
+        </div>
+        <div class="grid" style="grid-template-columns:repeat(2,1fr); gap:1.2rem">
+          <div class="card"><div class="stat"><div class="num">10+</div><div class="lbl">年行业经验</div></div></div>
+          <div class="card"><div class="stat"><div class="num">500+</div><div class="lbl">合作客户</div></div></div>
+          <div class="card"><div class="stat"><div class="num">2000+</div><div class="lbl">产品规格</div></div></div>
+          <div class="card"><div class="stat"><div class="num">30+</div><div class="lbl">出口国家</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Advantages -->
+  <section id="advantages">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Why Us</div>
+        <h2>核心优势</h2>
+        <p>从品质到服务，构建可持续的供应链合作。</p>
+      </div>
+      <div class="grid">
+        <div class="card feature">
+          <div class="dot">1</div>
+          <div><h3>品质稳定</h3><p>全流程品控与批次追溯，关键指标可检测、可复现。</p></div>
+        </div>
+        <div class="card feature">
+          <div class="dot">2</div>
+          <div><h3>快速打样</h3><p>技术团队响应迅速，支持非标定制与小批量试产。</p></div>
+        </div>
+        <div class="card feature">
+          <div class="dot">3</div>
+          <div><h3>柔性供应</h3><p>多基地协同，交期可控，支持长期框架合作。</p></div>
+        </div>
+        <div class="card feature">
+          <div class="dot">4</div>
+          <div><h3>技术支持</h3><p>提供选型建议、应用测试与售后跟踪服务。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="contact">
+    <div class="container contact-grid">
+      <div>
+        <div class="section-head" style="text-align:left; margin:0 0 1.5rem">
+          <div class="eyebrow">Contact</div>
+          <h2>联系方式</h2>
+          <p>欢迎来电、邮件或通过下方表单咨询，我们将尽快回复。</p>
+        </div>
+        <ul class="contact-info">
+          <li><strong>邮箱：</strong> sales@lubandart-tape.com</li>
+          <li><strong>电话：</strong> +86 400-000-0000</li>
+          <li><strong>地址：</strong> 中国 · 胶粘产业园 A 区</li>
+          <li><strong>工作时间：</strong> 周一至周五 9:00–18:00</li>
+        </ul>
+        <p style="margin-top:1.5rem; color:var(--fg-soft)">也可以直接点击右下角 <strong>AI 客服</strong>，实时咨询产品信息。</p>
+      </div>
+      <form class="contact-form" onsubmit="return false">
+        <input type="text" placeholder="您的称呼" />
+        <input type="email" placeholder="邮箱 / 电话" />
+        <textarea placeholder="请描述您的需求，例如：需要 0.1mm 双面胶，宽 10mm，用量 5000 卷"></textarea>
+        <button class="btn" type="submit">提交咨询</button>
+      </form>
+    </div>
+  </section>
 </Layout>
