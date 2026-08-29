@@ -1,38 +1,150 @@
 ---
+import { SITE, absUrl } from '../config/site';
+import { industries } from '../data/industries';
+
 interface Props {
   title: string;
   description?: string;
+  /** Override the canonical URL (defaults to the current path under SITE.url) */
+  canonical?: string;
+  /** Social share image — absolute URL or site-relative path */
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  /** Extra JSON-LD block(s) injected into the page head */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  publishedDate?: string;
+  modifiedDate?: string;
+  noindex?: boolean;
+  /** Breadcrumb trail — rendered as BreadcrumbList JSON-LD and (on sub-pages) a visible nav */
+  breadcrumbs?: { name: string; href: string }[];
 }
-const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带、工业胶带与高温胶带制造商" } = Astro.props;
+
+const {
+  title,
+  description = SITE.description,
+  canonical,
+  ogImage = SITE.ogImage,
+  ogType = 'website',
+  jsonLd,
+  publishedDate,
+  modifiedDate,
+  noindex = false,
+  breadcrumbs,
+} = Astro.props;
+
+const path = Astro.url.pathname;
+const canonicalURL = canonical ? absUrl(canonical) : absUrl(path);
+const ogImageURL = ogImage.startsWith('http') ? ogImage : absUrl(ogImage);
+
+/* Organization entity — reused on every page so the brand resolves consistently */
+const organizationLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': absUrl('/#organization'),
+  name: SITE.name,
+  legalName: SITE.legalName,
+  url: SITE.url,
+  logo: absUrl(SITE.logo),
+  description: SITE.description,
+  foundingDate: SITE.foundingDate,
+  email: SITE.email,
+  ...(SITE.telephone ? { telephone: SITE.telephone } : {}),
+  address: { '@type': 'PostalAddress', ...SITE.address },
+  ...(SITE.sameAs.length ? { sameAs: SITE.sameAs } : {}),
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'sales',
+    email: SITE.email,
+    availableLanguage: ['en'],
+  },
+};
+
+/* BreadcrumbList — emitted whenever a page supplies a trail (all inner pages do) */
+const breadcrumbLd = breadcrumbs && breadcrumbs.length > 0
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbs.map((c, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: c.name,
+        item: absUrl(c.href),
+      })),
+    }
+  : null;
+
+const ldBlocks = [
+  organizationLd,
+  ...(breadcrumbLd ? [breadcrumbLd] : []),
+  ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []),
+];
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="description" content={description} />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    {publishedDate && <meta property="article:published_time" content={publishedDate} />}
+    {modifiedDate && <meta property="article:modified_time" content={modifiedDate} />}
+
+    <!-- Structured data -->
+    {ldBlocks.map((ld) => (
+      <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    ))}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style is:global>
       :root {
-        --bg: #ffffff;
-        --bg-soft: #f6f7f9;
-        --bg-dark: #0f172a;
-        --fg: #1f2937;
-        --fg-soft: #5b6776;
-        --accent: #f6821f;
-        --accent-dark: #d96a08;
-        --line: #e5e8ee;
-        --radius: 14px;
-        --maxw: 1140px;
-        --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        --bg: #FAFAF7;
+        --bg-1: #FFFFFF;
+        --bg-2: #F1F1ED;
+        --bg-3: #1A1A1A;
+        --bg-card: #FFFFFF;
+        --fg: #1A1A1A;
+        --fg-soft: #555555;
+        --fg-mute: #8A8A85;
+        --line: #E2E2DC;
+        --line-dark: #2A2A2A;
+        --accent: #C8542B;
+        --accent-2: #B8432A;
+        --accent-3: #8B6A3F;
+        --radius: 4px;
+        --radius-lg: 6px;
+        --maxw: 1240px;
+        --shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.15);
+        --font-head: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Microsoft YaHei', sans-serif;
+        --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Microsoft YaHei', sans-serif;
       }
       * { box-sizing: border-box; }
       html { scroll-behavior: smooth; }
       body {
         margin: 0;
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+        font-family: var(--font-body);
         color: var(--fg);
         background: var(--bg);
         line-height: 1.6;
@@ -40,210 +152,508 @@ const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带�
       }
       a { color: inherit; text-decoration: none; }
       img { max-width: 100%; display: block; }
+      h1, h2, h3, h4 { font-family: var(--font-head); color: var(--fg); }
 
-      .container { max-width: var(--maxw); margin: 0 auto; padding: 0 1.25rem; }
+      .container { max-width: var(--maxw); margin: 0 auto; padding: 0 1.5rem; }
 
-      /* Top announcement bar */
-      .topbar {
-        background: var(--bg-dark); color: #cbd5e1; font-size: .8rem;
-        text-align: center; padding: .45rem 1rem; letter-spacing: .3px;
+      /* Module containers — alternating light / gray / dark */
+      .mod { padding: 5.5rem 0; position: relative; }
+      .mod-light { background: var(--bg-1); color: var(--fg); }
+      .mod-gray { background: var(--bg-2); color: var(--fg); }
+      .mod-dark { background: var(--bg-3); color: #fff; }
+      .mod-dark h1, .mod-dark h2, .mod-dark h3, .mod-dark h4 { color: #fff; }
+      .mod-dark p { color: #b8b8b8; }
+
+      /* Section head — eyebrow + title + lead */
+      .section-head { text-align: center; max-width: 760px; margin: 0 auto 3.2rem; }
+      .section-head .eyebrow {
+        display: inline-block;
+        color: var(--accent);
+        font-family: var(--font-head);
+        font-weight: 600;
+        letter-spacing: 3px;
+        font-size: .82rem;
+        text-transform: uppercase;
+        padding-bottom: .4rem;
+        border-bottom: 2px solid var(--accent);
+        margin-bottom: 1rem;
       }
-      .topbar strong { color: var(--accent); font-weight: 700; }
+      .section-head h2 {
+        font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+        margin: 0 0 .7rem;
+        line-height: 1.1;
+        font-weight: 700;
+      }
+      .section-head h2 .accent { color: var(--accent); }
+      .section-head h2 .accent2 { color: var(--accent-2); }
+      .section-head p { color: var(--fg-soft); font-size: 1.02rem; max-width: 620px; margin: 0 auto; }
+      .mod-dark .section-head p { color: #b8b8b8; }
 
       /* Nav */
       .nav {
         position: sticky; top: 0; z-index: 50;
-        background: rgba(255, 255, 255, 0.86);
-        backdrop-filter: saturate(180%) blur(12px);
+        background: rgba(20, 20, 20, 0.92);
+        backdrop-filter: saturate(160%) blur(10px);
         border-bottom: 1px solid var(--line);
       }
-      .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-      .brand { display: flex; align-items: center; gap: .6rem; font-weight: 800; font-size: 1.1rem; letter-spacing: .3px; }
+      .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 70px; gap: 1rem; }
+      .brand { display: flex; align-items: center; gap: .6rem; font-family: var(--font-head); font-weight: 700; font-size: 1.25rem; letter-spacing: 1.5px; text-transform: uppercase; color: #fff; }
       .brand .logo {
-        width: 34px; height: 34px; border-radius: 9px;
-        background: var(--accent); color: #fff;
-        display: grid; place-items: center; font-weight: 800; font-size: 1rem;
+        width: 36px; height: 36px; display: grid; place-items: center;
+        background: var(--accent); color: #fff; font-weight: 700; font-size: 1.1rem;
+        clip-path: polygon(0 0, 100% 0, 100% 78%, 78% 100%, 0 100%);
       }
-      .brand .sub { color: var(--accent); font-weight: 700; }
-      .nav-links { display: flex; gap: 1.6rem; align-items: center; }
-      .nav-links a { color: var(--fg-soft); font-weight: 500; font-size: .95rem; transition: color .2s; }
-      .nav-links a:hover { color: var(--accent); }
+      .brand .sub { color: var(--accent); }
+
+      .nav-links { display: flex; gap: 1.8rem; align-items: center; }
+      .nav-links > a, .nav-item > a {
+        color: #d6d6d6; font-weight: 600; font-size: .92rem; letter-spacing: .5px;
+        text-transform: uppercase; transition: color .2s; padding: .4rem 0; display: inline-block;
+      }
+      .nav-links > a:hover, .nav-item > a:hover, .nav-links a.active { color: var(--accent); }
+      .nav-item { position: relative; }
+      .nav-item .caret { font-size: .6rem; margin-left: .3rem; opacity: .7; }
+
+      .dropdown {
+        position: absolute; top: 100%; left: 0; min-width: 220px;
+        background: #161616; border: 1px solid var(--line); border-top: 2px solid var(--accent);
+        display: none; flex-direction: column; padding: .5rem 0; box-shadow: var(--shadow);
+      }
+      .dropdown a {
+        color: #cfcfcf; padding: .6rem 1.2rem; font-size: .86rem; letter-spacing: .5px;
+        text-transform: uppercase; transition: background .15s, color .15s; white-space: nowrap;
+      }
+      .dropdown a:hover { background: #242424; color: var(--accent); }
+      .nav-item.has-dropdown:hover .dropdown { display: block; }
+
+      /* Applications dropdown — 2-column grid of all industries */
+      .dropdown.apps {
+        min-width: 340px;
+        display: none;
+        grid-template-columns: 1fr 1fr;
+        gap: .25rem;
+        padding: .8rem .7rem;
+      }
+      .nav-item.has-dropdown:hover .dropdown.apps { display: grid; }
+      .dropdown.apps a {
+        white-space: normal;
+        padding: .7rem .95rem;
+        border-radius: var(--radius);
+        font-size: .84rem;
+        display: flex; align-items: center; gap: .5rem;
+        transition: background .15s, color .15s;
+      }
+      .dropdown.apps a .dot {
+        width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: 0 0 auto;
+      }
+      .dropdown.apps a:hover { background: #242424; color: var(--accent); }
+      .dropdown.apps .apps-foot {
+        grid-column: 1 / -1;
+        border-top: 1px solid var(--line);
+        margin-top: .35rem; padding-top: .5rem;
+        text-align: center;
+      }
+      .dropdown.apps .apps-foot a {
+        display: inline-block; font-family: var(--font-head);
+        letter-spacing: 1px; text-transform: uppercase; font-size: .76rem; color: var(--accent);
+      }
+
+  /* Mega menu (Products dropdown — 3 categories + CTA) */
+  .dropdown.mega {
+    min-width: 980px;
+    display: none;
+    grid-template-columns: 1.05fr 1fr 1.05fr 1fr;
+    gap: 1.4rem;
+    padding: 1.6rem 1.8rem;
+  }
+  .nav-item.has-dropdown:hover .dropdown.mega { display: grid; }
+  .mega-col { display: flex; flex-direction: column; }
+  .mega-img { display: block; aspect-ratio: 4 / 3; overflow: hidden; margin-bottom: .9rem; background: #0f0f0f; }
+  .mega-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; display: block; }
+  .mega-col:hover .mega-img img { transform: scale(1.06); }
+  .mega-title { font-size: .95rem; margin: 0 0 .8rem; padding: 0 0 .4rem; border-bottom: 1px solid var(--line); color: #fff; }
+  .mega-title a { color: #fff; }
+  .mega-title a:hover { color: var(--accent); }
+  .mega-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .35rem; }
+  .mega-list a {
+    color: #cfcfcf; font-size: .85rem; letter-spacing: .2px;
+    text-transform: none; padding: .25rem 0; transition: color .15s;
+  }
+  .mega-list a:hover { color: var(--accent); }
+  .mega-cta {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 1.2rem; background: #1d1d1d;
+    border-left: 2px solid var(--accent);
+  }
+  .mega-cta h4 { color: #fff; font-size: 1.1rem; margin: 0 0 .6rem; }
+  .mega-cta p { color: #aaa; font-size: .85rem; line-height: 1.55; margin: 0 0 1.1rem; }
+
+  /* Mega menu (Products dropdown — 3 categories + CTA) */
+  .dropdown.mega {
+    min-width: 980px;
+    display: none;
+    grid-template-columns: 1.05fr 1fr 1.05fr 1fr;
+    gap: 1.4rem;
+    padding: 1.6rem 1.8rem;
+  }
+  .nav-item.has-dropdown:hover .dropdown.mega { display: grid; }
+  .mega-col { display: flex; flex-direction: column; }
+  .mega-img { display: block; aspect-ratio: 4 / 3; overflow: hidden; margin-bottom: .9rem; background: #0f0f0f; }
+  .mega-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; display: block; }
+  .mega-col:hover .mega-img img { transform: scale(1.06); }
+  .mega-title { font-size: .95rem; margin: 0 0 .8rem; padding: 0 0 .4rem; border-bottom: 1px solid var(--line); color: #fff; }
+  .mega-title a { color: #fff; }
+  .mega-title a:hover { color: var(--accent); }
+  .mega-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .35rem; }
+  .mega-list a {
+    color: #cfcfcf; font-size: .85rem; letter-spacing: .2px;
+    text-transform: none; padding: .25rem 0; transition: color .15s;
+  }
+  .mega-list a:hover { color: var(--accent); }
+  .mega-cta {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 1.2rem; background: #1d1d1d;
+    border-left: 2px solid var(--accent);
+  }
+  .mega-cta h4 { color: #fff; font-size: 1.1rem; margin: 0 0 .6rem; }
+  .mega-cta p { color: #aaa; font-size: .85rem; line-height: 1.55; margin: 0 0 1.1rem; }
+
       .btn {
-        display: inline-flex; align-items: center; gap: .4rem;
-        background: var(--accent); color: #fff; font-weight: 600;
-        padding: .6rem 1.1rem; border-radius: 999px; border: 0; cursor: pointer;
-        font-size: .95rem; transition: background .2s, transform .1s;
+        display: inline-flex; align-items: center; gap: .4rem; cursor: pointer; border: 0;
+        background: var(--accent); color: #fff; font-family: var(--font-head); font-weight: 600;
+        text-transform: uppercase; letter-spacing: .6px; font-size: .9rem;
+        padding: .6rem 1.25rem; border-radius: var(--radius); transition: background .2s, transform .1s;
       }
-      .btn:hover { background: var(--accent-dark); }
+      .btn:hover { background: var(--accent-2); }
       .btn:active { transform: translateY(1px); }
-      .btn-ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
-      .btn-ghost:hover { background: rgba(246,130,31,.1); }
+      .btn-ghost { background: transparent; color: var(--fg); border: 2px solid var(--fg); }
+      .btn-ghost:hover { background: var(--fg); color: var(--bg); }
+      .btn-quote { background: var(--accent); }
 
-      /* Sections */
-      section { padding: 5rem 0; }
-      .section-head { text-align: center; max-width: 640px; margin: 0 auto 3rem; }
-      .section-head .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; }
-      .section-head h2 { font-size: clamp(1.6rem, 3vw, 2.3rem); margin: .6rem 0 .5rem; }
-      .section-head p { color: var(--fg-soft); }
-
-      /* Hero */
-      .hero { background: radial-gradient(1000px 500px at 80% -10%, rgba(246,130,31,.14), transparent 60%), var(--bg-soft); }
-      .hero-inner { display: grid; grid-template-columns: 1.1fr .9fr; gap: 3rem; align-items: center; }
-      .hero h1 { font-size: clamp(2rem, 4.5vw, 3.2rem); line-height: 1.15; margin: 0 0 1.2rem; }
-      .hero h1 .hl { color: var(--accent); }
-      .hero p { font-size: 1.1rem; color: var(--fg-soft); margin: 0 0 2rem; }
-      .hero-cta { display: flex; gap: .8rem; flex-wrap: wrap; }
-      .hero-visual {
-        background: linear-gradient(135deg, #0f172a, #1e293b);
-        border-radius: 20px; padding: 2rem; color: #fff; box-shadow: var(--shadow);
+      /* Sub-page hero — consistent dark theme that matches the homepage hero */
+      .subhero {
+        position: relative; overflow: hidden;
+        background:
+          radial-gradient(900px 480px at 82% -8%, rgba(200,84,43,.26), transparent 60%),
+          radial-gradient(680px 420px at 8% 110%, rgba(200,84,43,.10), transparent 60%),
+          linear-gradient(135deg, #141316 0%, #1b1816 55%, #0e0e10 100%);
+        color: #fff;
+        padding: 5rem 0 3.4rem;
+        border-bottom: 1px solid rgba(255,255,255,.08);
       }
-      .hero-visual .tag { display: inline-block; background: rgba(246,130,31,.2); color: var(--accent); padding: .25rem .7rem; border-radius: 999px; font-size: .8rem; margin-bottom: 1rem; }
+      .subhero-inner {
+        position: relative; z-index: 1;
+        display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center;
+      }
+      .subhero-with-media .subhero-inner { grid-template-columns: 1.05fr .95fr; }
+      .subhero-text { max-width: 760px; }
+      .subhero-eyebrow { display: inline-block; }
+      .subhero-title { font-size: clamp(2.4rem, 5.2vw, 4rem); line-height: 1.05; margin: 0 0 1rem; color: #fff; font-weight: 700; }
+      .subhero-sub { font-size: 1.08rem; color: #cfcfcf; max-width: 56ch; margin: 0 0 1.8rem; line-height: 1.7; }
+      .subhero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+      .subhero .btn-ghost { background: transparent; color: #fff; border: 2px solid #fff; }
+      .subhero .btn-ghost:hover { background: #fff; color: var(--bg-3); }
+      .subhero-media {
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 16px; overflow: hidden;
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.10);
+        box-shadow: 0 24px 70px rgba(0,0,0,.35);
+        aspect-ratio: 4 / 3;
+      }
+      .subhero-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      @media (max-width: 900px) {
+        .subhero-with-media .subhero-inner { grid-template-columns: 1fr; }
+        .subhero-media { aspect-ratio: 16 / 9; max-width: 600px; }
+      }
+
+      /* Base eyebrow utility (standalone + section heads) */
+      .eyebrow {
+        display: inline-block; color: var(--accent); font-family: var(--font-head);
+        font-weight: 600; letter-spacing: 3px; font-size: .8rem; text-transform: uppercase;
+        padding-bottom: .4rem; border-bottom: 2px solid var(--accent); margin-bottom: 1rem;
+      }
+
+      .nav-toggle {
+        display: none; flex-direction: column; gap: 5px; width: 42px; height: 42px;
+        border: 1px solid rgba(255,255,255,.25); background: #1f1f1f; cursor: pointer;
+        align-items: center; justify-content: center; border-radius: var(--radius);
+      }
+      .nav-toggle span { width: 20px; height: 2px; background: #fff; transition: .2s; }
+      .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      .nav-toggle.open span:nth-child(2) { opacity: 0; }
+      .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+      /* generic hero (non-full) - kept for sub-page hero usage */
+      .hero { background: linear-gradient(135deg, #161616, #262626); color: #fff; }
+      .hero-inner { display: grid; grid-template-columns: 1.1fr .9fr; gap: 3rem; align-items: center; }
+      .hero h1 { font-size: clamp(2rem, 4.5vw, 3.2rem); line-height: 1.12; margin: 0 0 1.2rem; color: #fff; }
+      .hero h1 .hl { color: var(--accent); }
+      .hero p { font-size: 1.05rem; color: #cfcfcf; margin: 0 0 2rem; }
+      .hero-cta { display: flex; gap: .9rem; flex-wrap: wrap; }
+      .hero-visual {
+        background: linear-gradient(135deg, #0f0f0f, #1d1d1d);
+        border: 1px solid var(--line); padding: 2rem; color: #fff;
+      }
+      .hero-visual .tag { display: inline-block; background: rgba(200,84,43,.18); color: var(--accent); padding: .25rem .7rem; font-family: var(--font-head); letter-spacing: 1px; text-transform: uppercase; font-size: .75rem; margin-bottom: 1rem; }
       .hero-visual ul { list-style: none; padding: 0; margin: 0; }
-      .hero-visual li { padding: .55rem 0; border-bottom: 1px solid rgba(255,255,255,.08); display: flex; justify-content: space-between; }
+      .hero-visual li { padding: .6rem 0; border-bottom: 1px solid rgba(255,255,255,.08); display: flex; justify-content: space-between; }
       .hero-visual li span:last-child { color: var(--accent); font-weight: 700; }
 
-      /* Product grid */
-      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.4rem; }
+      /* grid + card (legacy utility - now mostly used in dark sections) */
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
       .card {
-        background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
-        padding: 1.6rem; transition: transform .2s, box-shadow .2s, border-color .2s;
+        background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius);
+        padding: 1.8rem; transition: transform .2s, border-color .2s, box-shadow .2s;
       }
-      .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent); }
-      .card .ico { width: 48px; height: 48px; border-radius: 12px; background: rgba(246,130,31,.12); color: var(--accent); display: grid; place-items: center; font-size: 1.5rem; margin-bottom: 1rem; }
-      .card h3 { margin: .2rem 0 .5rem; font-size: 1.15rem; }
-      .card p { color: var(--fg-soft); font-size: .95rem; margin: 0; }
+      .mod-dark .card { background: #1d1d1d; border-color: var(--line-dark); color: #d8d8d8; }
+      .card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: var(--shadow); }
+      .card .ico {
+        width: 52px; height: 52px; display: grid; place-items: center;
+        background: rgba(200,84,43,.14); color: var(--accent); font-size: 1.6rem; margin-bottom: 1.1rem;
+        border: 1px solid rgba(200,84,43,.3);
+      }
+      .card h3 { margin: .2rem 0 .6rem; font-size: 1.2rem; }
+      .mod-dark .card h3 { color: #fff; }
+      .card p { color: var(--fg-soft); font-size: .94rem; margin: 0; }
+      .card .more { display: inline-block; margin-top: .9rem; color: var(--accent); font-family: var(--font-head); font-weight: 600; letter-spacing: .5px; text-transform: uppercase; font-size: .85rem; }
 
-      /* Stats */
-      .stats { background: var(--bg-dark); color: #fff; }
+      /* stats */
+      .stats { background: #141414; color: #fff; }
       .stats .grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
-      .stat { text-align: center; }
-      .stat .num { font-size: 2.4rem; font-weight: 800; color: var(--accent); }
-      .stat .lbl { color: #cbd5e1; font-size: .9rem; }
+      .stat { text-align: center; border-left: 1px solid var(--line); padding: 1rem; }
+      .stat:first-child { border-left: 0; }
+      .stat .num { font-family: var(--font-head); font-size: 2.6rem; font-weight: 700; color: var(--accent); }
+      .stat .lbl { color: #b8b8b8; font-size: .85rem; letter-spacing: .5px; text-transform: uppercase; }
 
-      /* Features */
+      /* features */
       .feature { display: flex; gap: 1rem; align-items: flex-start; }
-      .feature .dot { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 10px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; }
+      .feature .dot { flex: 0 0 auto; width: 40px; height: 40px; background: var(--accent); color: #fff; display: grid; place-items: center; font-family: var(--font-head); font-weight: 700; }
 
-      /* Contact */
-      .contact { background: var(--bg-soft); }
-      .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
-      .contact-info li { list-style: none; padding: .5rem 0; color: var(--fg-soft); }
-      .contact-info strong { color: var(--fg); }
-      .contact-form { display: grid; gap: .9rem; }
-      .contact-form input, .contact-form textarea {
-        width: 100%; padding: .8rem 1rem; border: 1px solid var(--line); border-radius: 10px; font: inherit; background: #fff;
+      /* contact (light theme) */
+      .contact-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; }
+      .contact-info { list-style: none; padding: 0; margin: 0; display: grid; gap: .9rem; }
+      .contact-form, .quote-form { display: grid; gap: 1rem; }
+      .contact-form input, .contact-form textarea,
+      .quote-form input, .quote-form select, .quote-form textarea {
+        width: 100%; padding: .95rem 1rem; border: 1px solid var(--line); border-radius: var(--radius);
+        font: inherit; background: #fff; color: var(--fg);
+        transition: border-color .2s, background .2s;
       }
-      .contact-form textarea { min-height: 110px; resize: vertical; }
+      .contact-form input:focus, .contact-form textarea:focus,
+      .quote-form input:focus, .quote-form select:focus, .quote-form textarea:focus {
+        outline: none; border-color: var(--accent); background: #fff;
+      }
+      .contact-form textarea, .quote-form textarea { min-height: 120px; resize: vertical; }
 
-      /* Footer */
-      footer { background: var(--bg-dark); color: #cbd5e1; font-size: .9rem; padding: 3.2rem 0 0; }
-      footer a { color: #cbd5e1; transition: color .2s; }
+      /* footer */
+      footer { background: #141414; color: #b8b8b8; font-size: .9rem; padding: 3.5rem 0 0; border-top: 3px solid var(--accent); }
+      footer a { color: #b8b8b8; transition: color .2s; }
       footer a:hover { color: var(--accent); }
-      .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.3fr; gap: 2.2rem; }
-      .footer-col h4 { color: #fff; font-size: .98rem; margin: 0 0 1rem; letter-spacing: .3px; }
-      .footer-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .55rem; }
-      .footer-brand .brand { color: #fff; font-size: 1.15rem; }
-      .footer-brand p { color: #94a3b8; margin: .9rem 0 1.1rem; line-height: 1.6; max-width: 30ch; }
+      .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1.2fr 1fr; gap: 2.4rem; }
+      .footer-col h4 { color: #fff; font-size: 1rem; margin: 0 0 1.1rem; letter-spacing: 1px; }
+      .footer-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .6rem; }
+      .footer-brand .brand { color: #fff; font-size: 1.2rem; }
+      .footer-brand p { color: #8f8f8f; margin: .9rem 0 1.2rem; line-height: 1.7; max-width: 34ch; }
       .footer-badges { display: flex; flex-wrap: wrap; gap: .5rem; }
       .footer-badges span {
-        font-size: .72rem; border: 1px solid rgba(246,130,31,.45); color: var(--accent);
-        padding: .28rem .65rem; border-radius: 999px; letter-spacing: .3px;
+        font-family: var(--font-head); font-size: .72rem; letter-spacing: .5px; text-transform: uppercase;
+        border: 1px solid rgba(200,84,43,.5); color: var(--accent); padding: .3rem .65rem;
       }
-      .footer-contact li { color: #cbd5e1; }
-      .footer-social { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.1rem; }
-      .footer-social a {
-        border: 1px solid rgba(255,255,255,.16); padding: .4rem .85rem; border-radius: 999px; font-size: .82rem;
-      }
+      .footer-contact li { color: #b8b8b8; }
+      .footer-social { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.2rem; }
+      .footer-social a { border: 1px solid var(--line); padding: .4rem .85rem; font-family: var(--font-head); letter-spacing: .5px; text-transform: uppercase; font-size: .78rem; }
       .footer-social a:hover { border-color: var(--accent); }
-      .footer-bottom {
-        border-top: 1px solid rgba(255,255,255,.08); margin-top: 2.6rem; padding: 1.3rem 0;
-        color: #94a3b8; font-size: .82rem;
-      }
+      .footer-bottom { border-top: 1px solid var(--line); margin-top: 2.8rem; padding: 1.4rem 0; color: #7a7a7a; font-size: .8rem; }
 
-      /* Chat widget */
+      /* chat widget — red tape roll */
       .chat-fab {
-        position: fixed; right: 24px; bottom: 24px; z-index: 100;
-        width: 60px; height: 60px; border-radius: 50%; border: 0; cursor: pointer;
-        background: var(--accent); color: #fff; font-size: 1.5rem; box-shadow: 0 8px 24px rgba(246,130,31,.45);
+        position: fixed; right: 22px; bottom: 22px; z-index: 100;
+        width: 64px; height: 64px; border: 0; cursor: pointer; border-radius: 50%;
+        background:
+          radial-gradient(circle at 30% 30%, rgba(255,255,255,.38) 0%, transparent 26%),
+          radial-gradient(circle at 50% 50%, #3e2723 15%, #5d4037 19%, transparent 22%),
+          radial-gradient(circle at 50% 50%, var(--accent) 23%, var(--accent-2) 56%, #7c2a15 100%);
+        box-shadow:
+          inset -5px -5px 12px rgba(0,0,0,.28),
+          inset 5px 5px 12px rgba(255,255,255,.14),
+          0 10px 28px rgba(200,84,43,.55);
         display: grid; place-items: center; transition: transform .15s;
       }
-      .chat-fab:hover { transform: scale(1.06); }
+      .chat-fab::before {
+        content: ""; position: absolute; inset: 0; border-radius: 50%;
+        background: conic-gradient(from 30deg, transparent 0deg, rgba(255,255,255,.10) 70deg, transparent 140deg);
+        pointer-events: none;
+      }
+      .chat-fab:hover { transform: scale(1.07); }
+      .chat-fab svg { position: relative; z-index: 2; width: 26px; height: 26px; filter: drop-shadow(0 1px 2px rgba(0,0,0,.45)); }
       .chat-panel {
-        position: fixed; right: 24px; bottom: 96px; z-index: 100;
+        position: fixed; right: 22px; bottom: 92px; z-index: 100;
         width: 360px; max-width: calc(100vw - 32px); height: 520px; max-height: calc(100vh - 120px);
-        background: #fff; border-radius: 18px; box-shadow: 0 20px 60px rgba(15,23,42,.25);
+        background: #1c1c1c; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.5);
         display: flex; flex-direction: column; overflow: hidden;
         transform: translateY(16px) scale(.98); opacity: 0; pointer-events: none; transition: .2s;
       }
       .chat-panel.open { transform: none; opacity: 1; pointer-events: auto; }
-      .chat-head { background: var(--bg-dark); color: #fff; padding: .9rem 1.1rem; display: flex; align-items: center; justify-content: space-between; }
-      .chat-head .ttl { font-weight: 700; font-size: .98rem; }
-      .chat-head .st { font-size: .72rem; color: #94a3b8; }
+      .chat-head { background: #0f0f0f; color: #fff; padding: .9rem 1.1rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+      .chat-head .ttl { font-family: var(--font-head); font-weight: 600; letter-spacing: .5px; text-transform: uppercase; font-size: .95rem; }
+      .chat-head .st { font-size: .72rem; color: #8f8f8f; }
       .chat-close { background: transparent; border: 0; color: #fff; font-size: 1.3rem; cursor: pointer; line-height: 1; }
-      .chat-msgs { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .7rem; background: var(--bg-soft); }
-      .msg { max-width: 82%; padding: .6rem .85rem; border-radius: 14px; font-size: .92rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+      .chat-msgs { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .7rem; background: #161616; }
+      .msg { max-width: 82%; padding: .6rem .85rem; border-radius: 12px; font-size: .9rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
       .msg.user { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
-      .msg.bot { align-self: flex-start; background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+      .msg.bot { align-self: flex-start; background: #2a2a2a; color: var(--fg); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
       .msg.typing .msg-text::after { content: "▋"; animation: blink 1s steps(2) infinite; color: var(--accent); }
       @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-      .chat-input { display: flex; gap: .5rem; padding: .7rem; border-top: 1px solid var(--line); background: #fff; }
-      .chat-input input { flex: 1; border: 1px solid var(--line); border-radius: 999px; padding: .6rem 1rem; font: inherit; }
+      .chat-input { display: flex; gap: .5rem; padding: .7rem; border-top: 1px solid var(--line); background: #1c1c1c; }
+      .chat-input input { flex: 1; border: 1px solid var(--line); border-radius: 999px; padding: .6rem 1rem; font: inherit; background: #0f0f0f; color: var(--fg); }
       .chat-input button { flex: 0 0 auto; }
 
-      @media (max-width: 860px) {
+      @media (max-width: 920px) {
         .hero-inner, .contact-grid { grid-template-columns: 1fr; }
         .nav-toggle { display: flex; }
         .nav-links {
-          position: absolute; top: 64px; left: 0; right: 0;
+          position: absolute; top: 70px; left: 0; right: 0;
           flex-direction: column; align-items: stretch; gap: 0;
-          background: #fff; border-bottom: 1px solid var(--line);
-          padding: .5rem 1.25rem 1rem; box-shadow: var(--shadow);
-          display: none;
+          background: #161616; border-bottom: 1px solid var(--line);
+          padding: .5rem 1.5rem 1.2rem; display: none; box-shadow: var(--shadow);
         }
         .nav-links.open { display: flex; }
-        .nav-links a { padding: .7rem .2rem; border-bottom: 1px solid var(--line); }
-        .nav-links a:last-of-type { border-bottom: 0; }
+        .nav-links > a, .nav-item > a { padding: .8rem 0; border-bottom: 1px solid var(--line); }
+        .nav-item { width: 100%; }
+        .nav-item.has-dropdown:hover .dropdown { display: none; }
+        .nav-links.open .dropdown { display: flex; position: static; border: 0; box-shadow: none; background: transparent; padding: .2rem 0 .6rem 1rem; }
+        .dropdown a { border-bottom: 1px solid var(--line); }
+
+        /* Mobile mega menu: product images become icon-sized thumbnails */
+        .dropdown.mega {
+          display: flex; flex-direction: column; gap: 1rem;
+          padding: .2rem 0 .6rem 1rem;
+        }
+        .mega-col {
+          display: grid;
+          grid-template-columns: 56px 1fr;
+          grid-template-rows: auto 1fr;
+          gap: .35rem .85rem;
+          align-items: start;
+        }
+        .mega-img {
+          grid-column: 1; grid-row: 1 / 3;
+          width: 56px; height: 56px;
+          aspect-ratio: 1 / 1;
+          margin: 0;
+          border-radius: var(--radius);
+          overflow: hidden;
+        }
+        .mega-img img { border-radius: var(--radius); }
+        .mega-title {
+          grid-column: 2; grid-row: 1;
+          margin: 0; padding: 0;
+          border-bottom: 0;
+          font-size: .9rem;
+        }
+        .mega-list {
+          grid-column: 2; grid-row: 2;
+          display: flex; flex-wrap: wrap; gap: .35rem .8rem;
+          flex-direction: row;
+        }
+        .mega-list li { display: inline; }
+        .mega-list a {
+          display: inline;
+          padding: 0;
+          border-bottom: 0;
+          font-size: .82rem;
+          color: #aaa;
+        }
+        .mega-list a:hover { color: var(--accent); }
+        .mega-cta {
+          margin-top: .5rem;
+          border-left: 0;
+          border-top: 2px solid var(--accent);
+          padding: 1rem;
+          background: #1d1d1d;
+        }
       }
-      @media (max-width: 760px) {
-        .footer-grid { grid-template-columns: 1fr 1fr; }
-      }
-      @media (max-width: 460px) {
-        .footer-grid { grid-template-columns: 1fr; }
-      }
+      @media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+      @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
     </style>
   </head>
   <body>
-    <div class="topbar">
-      🏆 <strong>ISO 9001:2015</strong> 认证制造商 · 支持全球 <strong>OEM / ODM</strong> 定制 · <strong>30+</strong> 国家出口
-    </div>
-
     <header class="nav">
       <div class="container nav-inner">
         <a class="brand" href="/">
           <span class="logo">L</span>
-          <span>Luband<span class="sub">Art</span> Tape</span>
+          <span>LUBAND<span class="sub">ART</span> TAPE</span>
         </a>
         <nav class="nav-links" id="nav-menu">
-          <a href="/products">产品中心</a>
-          <a href="/industries">行业方案</a>
-          <a href="/certifications">资质报告</a>
-          <a href="/about">关于我们</a>
-          <a href="/contact">联系报价</a>
+          <a href="/" class={path === "/" ? "active" : ""}>Home</a>
+          <div class="nav-item has-dropdown">
+            <a href="/products">Products <span class="caret">▾</span></a>
+            <div class="dropdown mega">
+              <div class="mega-col">
+                <a class="mega-img" href="/products/double-sided"><img src="/products/opp.jpg" alt="Double Sided Tape" loading="lazy" /></a>
+                <h3 class="mega-title"><a href="/products/double-sided">Double Sided Tape</a></h3>
+                <ul class="mega-list">
+                  <li><a href="/products/opp">Double Sided OPP Tape</a></li>
+                  <li><a href="/products/pet">Double Sided PET Tape</a></li>
+                  <li><a href="/products/pvc">Double Sided PVC Tape</a></li>
+                  <li><a href="/products/tissue">Double Sided Tissue Tape</a></li>
+                </ul>
+              </div>
+              <div class="mega-col">
+                <a class="mega-img" href="/products/foam"><img src="/products/pe-foam.jpg" alt="Foam Tape" loading="lazy" /></a>
+                <h3 class="mega-title"><a href="/products/foam">Foam Tape</a></h3>
+                <ul class="mega-list">
+                  <li><a href="/products/pe-foam">PE Foam Tape</a></li>
+                  <li><a href="/products/eva">EVA Foam Tape</a></li>
+                </ul>
+              </div>
+              <div class="mega-col">
+                <a class="mega-img" href="/products/specialty"><img src="/products/acrylic.jpg" alt="Specialty Tape" loading="lazy" /></a>
+                <h3 class="mega-title"><a href="/products/specialty">Specialty Tape</a></h3>
+                <ul class="mega-list">
+                  <li><a href="/products/acrylic">Acrylic Tape</a></li>
+                  <li><a href="/products/low-odor">Low-Odor Tape</a></li>
+                  <li><a href="/products/flame-retardant">Flame Retardant Tape</a></li>
+                  <li><a href="/products/substrate-free">Substrate-Free Tape</a></li>
+                </ul>
+              </div>
+              <div class="mega-cta">
+                <h4>Custom Specs?</h4>
+                <p>We engineer specific adhesive formulations for heavy-duty industrial requirements.</p>
+                <a class="btn btn-quote" href="/contact">Consult an Expert</a>
+              </div>
+            </div>
+          </div>
+          <div class="nav-item has-dropdown">
+            <a href="/industries">Applications <span class="caret">▾</span></a>
+            <div class="dropdown apps">
+              {industries.map((it) => (
+                <a href={`/industries/${it.slug}`}><span class="dot"></span>{it.icon} {it.en}</a>
+              ))}
+              <div class="apps-foot"><a href="/industries">View All Applications →</a></div>
+            </div>
+          </div>
+          <a href="/about">About Us</a>
+          <a href="/blogs">Blogs</a>
+          <a href="/contact">Contact</a>
         </nav>
-        <button class="nav-toggle" id="nav-toggle" aria-label="菜单">
-          <span></span><span></span><span></span>
-        </button>
-        <button class="btn" id="nav-chat">AI 客服</button>
+        <div style="display:flex; gap:.6rem; align-items:center">
+          <a class="btn btn-quote" href="/contact">Get a Quote</a>
+          <button class="nav-toggle" id="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+        </div>
       </div>
     </header>
 
-    <slot />
+    <main id="main">
+      <slot />
+    </main>
 
     <footer>
       <div class="container footer-grid">
         <div class="footer-col footer-brand">
-          <div class="brand"><span class="logo">L</span> LubandArt Tape</div>
-          <p>专业双面胶、泡棉胶带、工业胶带与高温胶带制造商，集研发、分切、品控于一体，提供 OEM / ODM 定制与全球供货。</p>
+          <div class="brand"><span class="logo">L</span> LUBANDART TAPE</div>
+          <p>Industrial adhesive tape manufacturer supplying double sided tape, foam tape and specialty tape for converters, distributors and OEMs worldwide.</p>
           <div class="footer-badges">
             <span>ISO 9001</span>
             <span>RoHS</span>
@@ -252,63 +662,61 @@ const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带�
           </div>
         </div>
         <div class="footer-col">
-          <h4>产品</h4>
+          <h4>Quick Links</h4>
           <ul>
-            <li><a href="/products/acrylic">双面亚克力胶</a></li>
-            <li><a href="/products/eva">EVA 双面胶</a></li>
-            <li><a href="/products/opp">OPP 双面胶</a></li>
-            <li><a href="/products/pe-foam">PE 泡棉双面胶</a></li>
-            <li><a href="/products/pet">PET 双面胶</a></li>
-            <li><a href="/products/pvc">PVC 双面胶</a></li>
-            <li><a href="/products/tissue">棉纸双面胶</a></li>
+            <li><a href="/products">Products</a></li>
+            <li><a href="/industries">Applications</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/blogs">Blogs</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>行业方案</h4>
-          <ul>
-            <li><a href="/industries/automotive">汽车</a></li>
-            <li><a href="/industries/construction">建筑</a></li>
-            <li><a href="/industries/appliance">家电</a></li>
-            <li><a href="/industries/machinery">机械工业</a></li>
-            <li><a href="/industries/signage">标识</a></li>
-            <li><a href="/industries/electronics">电子</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>联系我们</h4>
+          <h4>Contact</h4>
           <ul class="footer-contact">
-            <li>邮箱：sales@lubandart-tape.com</li>
-            <li>电话：+86 400-000-0000</li>
-            <li>地址：中国 · 胶粘产业园 A 区</li>
+            <li>Email: info@lubandart.com</li>
+            <li>Phone: +86 400-000-0000</li>
+            <li>WhatsApp: +86 138-0000-0000</li>
           </ul>
           <div class="footer-social">
-            <a href="mailto:sales@lubandart-tape.com">Email</a>
+            <a href="mailto:info@lubandart.com">Email</a>
             <a href="#" rel="noopener">WhatsApp</a>
-            <a href="#" rel="noopener">微信</a>
+            <a href="#" rel="noopener">WeChat</a>
           </div>
+        </div>
+        <div class="footer-col">
+          <h4>Certifications</h4>
+          <ul>
+            <li><a href="/certifications">ISO 9001:2015</a></li>
+            <li><a href="/certifications">RoHS / REACH</a></li>
+            <li><a href="/certifications">SGS Verified</a></li>
+            <li><a href="/certifications">Test Reports</a></li>
+          </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        <div class="container">© {new Date().getFullYear()} LubandArt Tape. 保留所有权利.</div>
+        <div class="container">© {new Date().getFullYear()} LubandArt Tape. All Rights Reserved. · Industrial Adhesive Solutions</div>
       </div>
     </footer>
 
-    <!-- AI 客服浮窗 -->
-    <button class="chat-fab" id="chat-fab" aria-label="打开 AI 客服">💬</button>
+    <!-- AI Assistant -->
+    <button class="chat-fab" id="chat-fab" aria-label="Open AI Assistant">
+      <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    </button>
     <div class="chat-panel" id="chat-panel">
       <div class="chat-head">
         <div>
-          <div class="ttl">LubandArt AI 客服</div>
-          <div class="st">由 DeepSeek 驱动 · 在线</div>
+          <div class="ttl">LubandArt AI Assistant</div>
+          <div class="st">Powered by DeepSeek · Online</div>
         </div>
-        <button class="chat-close" id="chat-close" aria-label="关闭">×</button>
+        <button class="chat-close" id="chat-close" aria-label="Close">×</button>
       </div>
       <div class="chat-msgs" id="chat-msgs">
-        <div class="msg bot">您好！我是 LubandArt 的 AI 客服助手，可以帮您了解双面胶、泡棉胶带、工业胶带、高温胶带等产品。请问有什么可以帮您？</div>
+        <div class="msg bot">Hello! I'm the LubandArt AI assistant. I can help you with double sided tape, foam tape, specialty tape, applications and sourcing. How can I help?</div>
       </div>
       <form class="chat-input" id="chat-form">
-        <input id="chat-input" type="text" placeholder="输入您的问题…" autocomplete="off" />
-        <button class="btn" type="submit">发送</button>
+        <input id="chat-input" type="text" placeholder="Ask a question..." autocomplete="off" />
+        <button class="btn" type="submit">Send</button>
       </form>
     </div>
 
@@ -316,12 +724,11 @@ const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带�
       const fab = document.getElementById('chat-fab');
       const panel = document.getElementById('chat-panel');
       const closeBtn = document.getElementById('chat-close');
-      const navChat = document.getElementById('nav-chat');
       const form = document.getElementById('chat-form');
       const input = document.getElementById('chat-input');
       const msgs = document.getElementById('chat-msgs');
 
-      /* 移动端菜单 */
+      /* mobile menu */
       const navToggle = document.getElementById('nav-toggle');
       const navMenu = document.getElementById('nav-menu');
       if (navToggle && navMenu) {
@@ -337,7 +744,7 @@ const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带�
         );
       }
 
-      /* 当前页高亮 */
+      /* active link */
       const path = location.pathname;
       document.querySelectorAll('#nav-menu a').forEach((a) => {
         const href = a.getAttribute('href');
@@ -346,7 +753,7 @@ const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带�
 
       const SYSTEM = {
         role: 'system',
-        content: '你是 LubandArt Tape 的专业胶粘产品客服助手。请用简洁、专业、友好的中文回答客户关于双面胶、泡棉胶带、工业胶带、高温胶带、防伪胶带等产品的问题，适当介绍产品特性、应用场景，并在合适时引导客户留下联系方式或前往「联系方式」版块。不要编造具体规格数字，如不确定可说明以官方资料为准。'
+        content: 'You are the professional adhesive tape specialist for LubandArt Tape. Answer customer questions concisely, professionally and friendly in English about double sided tape, foam tape, specialty tape, applications (automotive, construction, electronics, home appliance, packaging), converting capabilities and OEM/ODM sourcing. Introduce product features and use cases, and guide customers to leave contact info or visit the Contact section when appropriate. Do not fabricate specific spec numbers; if unsure, say official data applies.'
       };
       let history = [SYSTEM];
 
@@ -354,7 +761,6 @@ const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带�
       function closeChat() { panel.classList.remove('open'); }
 
       fab.addEventListener('click', () => panel.classList.toggle('open') && input.focus());
-      navChat.addEventListener('click', openChat);
       closeBtn.addEventListener('click', closeChat);
 
       function addMsg(role, text, typing = false) {
@@ -376,7 +782,7 @@ const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带�
         input.value = '';
         addMsg('user', text);
         history.push({ role: 'user', content: text });
-        const typingEl = addMsg('bot', '正在输入', true);
+        const typingEl = addMsg('bot', 'Typing', true);
 
         try {
           const res = await fetch('/api/chat', {
@@ -385,18 +791,18 @@ const { title, description = "LubandArt Tape — 专业双面胶、泡棉胶带�
             body: JSON.stringify({ messages: history })
           });
           const data = await res.json();
-          let reply = '抱歉，我暂时无法回答，请稍后再试。';
+          let reply = 'Sorry, I cannot answer right now. Please try again later.';
           if (data?.choices?.[0]?.message?.content) {
             reply = data.choices[0].message.content;
           } else if (data?.error) {
-            reply = '接口返回错误：' + (typeof data.error === 'string' ? data.error : JSON.stringify(data.error));
+            reply = 'API error: ' + (typeof data.error === 'string' ? data.error : JSON.stringify(data.error));
           }
           history.push({ role: 'assistant', content: reply });
           typingEl.classList.remove('typing');
           typingEl.querySelector('.msg-text').textContent = reply;
         } catch (err) {
           typingEl.classList.remove('typing');
-          typingEl.querySelector('.msg-text').textContent = '网络错误：' + err.message;
+          typingEl.querySelector('.msg-text').textContent = 'Network error: ' + err.message;
         }
         msgs.scrollTop = msgs.scrollHeight;
       });

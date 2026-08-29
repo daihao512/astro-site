@@ -1,0 +1,50 @@
+---
+interface Crumb {
+  name: string;
+  href: string;
+}
+interface Cta {
+  label: string;
+  href: string;
+  variant?: 'solid' | 'ghost';
+}
+interface Props {
+  /** Small uppercase label above the title */
+  eyebrow?: string;
+  /** Hero heading */
+  title: string;
+  /** Supporting paragraph */
+  sub?: string;
+  /** Optional background photo (site-relative path). A light veil keeps text readable. */
+  image?: string;
+  imageAlt?: string;
+  /** Breadcrumb trail — last item is treated as the current page */
+  breadcrumbs?: Crumb[];
+  /** Optional call-to-action buttons */
+  ctas?: Cta[];
+}
+
+const { eyebrow, title, sub, image, imageAlt, breadcrumbs, ctas } = Astro.props;
+---
+
+<section class:list={['subhero', image && 'subhero-with-media']}>
+  <div class="container subhero-inner">
+    <div class="subhero-text">
+      {eyebrow && <span class="eyebrow subhero-eyebrow">{eyebrow}</span>}
+      <h1 class="subhero-title">{title}</h1>
+      {sub && <p class="subhero-sub">{sub}</p>}
+      {ctas && ctas.length > 0 && (
+        <div class="subhero-cta">
+          {ctas.map((c) => (
+            <a class:list={['btn', c.variant === 'ghost' && 'btn-ghost']} href={c.href}>{c.label}</a>
+          ))}
+        </div>
+      )}
+    </div>
+    {image && (
+      <div class="subhero-media" aria-hidden="true">
+        <img src={image} alt={imageAlt ?? ''} />
+      </div>
+    )}
+  </div>
+</section>

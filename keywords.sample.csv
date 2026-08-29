@@ -1,0 +1,18 @@
+﻿# LubandArt 选题输入样本
+# ⚠️ 本文件数字为「示意占位」，不是真实调研！请用 Ahrefs / SEMrush / Google Keyword Planner / Search Console 导出真实数据替换后再跑 topic_score.py。
+# 列说明: keyword(必填) volume(月搜索量) cpc(美元竞价) kd(0-100难度) intent(BOFU/MOFU/TOFU/INFO/TRAN) growth(同比增速%,可选) cluster(分组,可选)
+keyword,volume,cpc,kd,intent,growth,cluster
+double sided pe foam tape,1000,3.2,35,MOFU,,foam
+pe foam tape for automotive,350,4.5,28,BOFU,,automotive
+low odor tape automotive interior,90,5.1,22,BOFU,,low-odor
+pe foam tape uv resistance,120,3.8,30,MOFU,,foam
+double sided acrylic tape,800,3.0,40,MOFU,,acrylic
+eva foam tape,400,2.5,25,MOFU,,eva
+foam tape for glazing,80,4.0,18,BOFU,,construction
+what is adhesive tape,5000,0.8,60,TOFU,,pillar
+how to choose double sided tape,300,1.5,30,TOFU,,pillar
+flame retardant tape,150,4.2,26,BOFU,,flame
+tissue tape hand tearable,200,2.2,24,MOFU,,tissue
+pet double sided tape,450,2.8,33,MOFU,,pet
+automotive interior trim tape,140,4.6,20,BOFU,,automotive
+battery pack adhesive tape,70,6.0,18,BOFU,,flame

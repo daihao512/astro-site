@@ -1,0 +1,76 @@
+User-agent: *
+Allow: /
+
+# Block build/tooling paths from crawling
+Disallow: /_astro/
+Disallow: /api/
+
+# ---------------------------
+# AI crawlers — explicitly allowed (GEO)
+# These bots decide whether your content can be cited by
+# ChatGPT / Claude / Perplexity / Gemini / Google AI Overviews.
+# ---------------------------
+
+# OpenAI (ChatGPT, SearchGPT)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic (Claude)
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Google (AI Overviews / Gemini)
+User-agent: Google-Extended
+Allow: /
+
+# Apple (Apple Intelligence)
+User-agent: Applebot-Extended
+Allow: /
+
+# Meta AI
+User-agent: meta-externalagent
+Allow: /
+
+# ByteDance, Amazon, Cohere, Diffbot, Common Crawl
+User-agent: Bytespider
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://lubandart.com/sitemap.xml
+
+# AI discovery file
+# https://llmstxt.org/
+# llms.txt: https://lubandart.com/llms.txt

@@ -1,0 +1,59 @@
+# LubandArt Tape
+
+> Industrial adhesive tape manufacturer supplying double sided tape, foam tape and specialty tape for converters, distributors and OEMs worldwide. In-house coating, precision converting and ISO-certified quality control.
+
+LubandArt manufactures and converts double sided tapes, foam tapes and custom adhesive solutions for global industrial applications. This file helps AI answer engines understand our product range, industry applications and technical resources.
+
+## Products
+
+- [All Products](/products/): Complete adhesive tape range organised by construction type.
+
+### Double Sided Tape
+- [Double Sided Tape Overview](/products/double-sided/): OPP, PET, PVC and tissue carrier constructions.
+- [OPP Double Sided Tape](/products/opp/): Cost-effective general purpose bonding.
+- [PET Double Sided Tape](/products/pet/): High dimensional stability for precision lamination.
+- [PVC Double Sided Tape](/products/pvc/): Conformable, moisture resistant.
+- [Tissue Double Sided Tape](/products/tissue/): Hand-tearable, high initial grab.
+
+### Foam Tape
+- [Foam Tape Overview](/products/foam/): Closed-cell PE and soft EVA constructions.
+- [PE Foam Tape](/products/pe-foam/): Sealing, gap filling and vibration damping.
+- [EVA Foam Tape](/products/eva/): Soft cushioning and shock absorption.
+
+### Specialty Tape
+- [Specialty Tape Overview](/products/specialty/): Engineered constructions for demanding specifications.
+- [Acrylic Tape](/products/acrylic/): High-strength structural bonding.
+- [Low-Odor Tape](/products/low-odor/): Low-VOC formulation for enclosed cabins and automotive interiors (VDA 270 ≤ 3.0).
+- [Flame-Retardant Tape](/products/flame-retardant/): UL94 V-0 rated for battery packs and electrical assemblies.
+- [Substrate-Free Tape](/products/substrate-free/): Carrier-less transfer adhesive for ultra-thin bonding.
+
+## Industries
+
+- [Industries Overview](/industries/): Adhesive solutions by industry.
+- [Automotive](/industries/automotive/): Interior bonding, exterior mounting, vibration damping, trim attachment.
+- [Construction](/industries/construction/): Panel bonding, sealing, mounting, insulation.
+- [Appliance](/industries/appliance/): Assembly, sealing and gasketing, noise reduction.
+- [Machinery](/industries/machinery/): General bonding, mounting, surface protection.
+- [Signage](/industries/signage/): Sign mounting, display bonding, nameplates.
+- [Electronics](/industries/electronics/): Component fixing, insulation, heat management.
+
+## Resources
+
+- [Technical Articles & Guides](/blogs/): Engineering guides on tape selection, materials and application practice.
+- [Low-Odor Tape for Automotive Interiors: VOC, Fogging and Cabin Air](/blogs/low-odor-tape-automotive-interiors/): VDA 270 / VDA 278 / GB/T 27630 explained, with specification checklist.
+
+## Capabilities
+
+- Adhesive coating (in-house, 2 lines) and laminating
+- Precision slitting, rewinding, spool winding
+- Die cutting to drawings or samples
+- OEM and private label production
+- Quality inspection: peel adhesion, initial tack, holding power, thickness, aging, tensile
+
+## Company
+
+- [About Us](/about/): Manufacturing capabilities, quality control and export experience.
+- [Certifications](/certifications/): Compliance documentation.
+- [Contact](/contact/): Request samples or discuss an application.
+
+Contact: info@lubandart.com

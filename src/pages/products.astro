@@ -1,72 +1,500 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SubHero from '../components/SubHero.astro';
 import { products } from '../data/products';
 
-const cats = [
-  { name: "泡棉基材", note: "缓冲 · 密封 · 减震", items: ["pe-foam", "eva"] },
-  { name: "薄膜基材", note: "薄型 · 精密 · 稳定", items: ["pet", "pvc", "opp"] },
-  { name: "高性能胶系", note: "强粘 · 耐候 · 复合", items: ["acrylic", "tissue"] },
+import { categories } from '../data/categories';
+import CategorySection from '../components/CategorySection.astro';
+
+// Second navigation axis — by bonding requirement (cross-cuts the categories above).
+// Each need carries an Unsplash scene photo of the application in use.
+const needs = [
+  {
+    name: 'Heavy Duty Double Sided Tape',
+    desc: 'High-strength bonding for demanding mounting, assembly and load-bearing applications.',
+    rec: ['acrylic', 'pe-foam'],
+    scene: '',
+    alt: 'Industrial robotic assembly line for heavy duty mounting',
+  },
+  {
+    name: 'Double Sided Mounting Tape',
+    desc: 'Mount panels, signs, nameplates and trims without bulky mechanical fasteners.',
+    rec: ['acrylic', 'pe-foam', 'pet'],
+    scene: '',
+    alt: 'Construction worker mounting panels on site',
+  },
+  {
+    name: 'Thin Double Sided Tape',
+    desc: 'Low-profile solutions for lamination, labels, electronics and graphics where minimum thickness matters.',
+    rec: ['pet', 'tissue', 'opp'],
+    scene: '',
+    alt: 'Electronics and circuit board close-up for thin lamination tape',
+  },
+  {
+    name: 'Outdoor Double Sided Tape',
+    desc: 'Selected for outdoor exposure, moisture and aging under changing environmental conditions.',
+    rec: ['acrylic', 'pe-foam'],
+    scene: '',
+    alt: 'Modern glass building exterior for facade and weatherstrip tape',
+  },
+  {
+    name: 'Removable Double Sided Tape',
+    desc: 'Repositionable constructions for controlled removal and reduced adhesive residue.',
+    rec: ['eva', 'pvc'],
+    scene: '',
+    alt: 'Interior wall decoration being mounted with repositionable tape',
+  },
+  {
+    name: 'Heat Resistant Double Sided Tape',
+    desc: 'Tape solutions selected for elevated operating or processing temperatures.',
+    rec: ['pet', 'acrylic', 'opp'],
+    scene: '',
+    alt: 'Industrial welding sparks and heat for high temperature tape',
+  },
 ];
+
+// NOTE: stats are placeholders — replace with real Broadya figures before launch.
+const stats = [
+  { n: '10+', l: 'Years of adhesive R&D' },
+  { n: '2', l: 'In-house coating lines' },
+  { n: '5,000㎡', l: 'Dust-free workshop area' },
+  { n: '30+', l: 'Countries served' },
+];
+
+const capabilities = [
+  {
+    n: '01', t: 'Adhesive Coating',
+    d: 'Solvent-based and hot-melt coating for different tape constructions and adhesive systems.',
+    scene: '',
+    alt: 'Industrial adhesive coating line applying adhesive to film',
+  },
+  {
+    n: '02', t: 'Rewinding',
+    d: 'Controlled rewinding for jumbo rolls and finished tape formats to tight tolerance.',
+    scene: '',
+    alt: 'Tape rewinding production line in factory',
+  },
+  {
+    n: '03', t: 'Slitting & Converting',
+    d: 'Custom widths, roll lengths and die-cut parts produced to your project specification.',
+    scene: '',
+    alt: 'Industrial slitting and converting machine cutting tape',
+  },
+  {
+    n: '04', t: 'Testing & Packaging',
+    d: 'Inspection against confirmed specs and export-grade packaging before shipment.',
+    scene: '',
+    alt: 'Quality testing and export packaging of finished tape',
+  },
+];
+
+const guarantees = [
+  { t: 'Consistent Specifications', d: 'Production and inspection follow the confirmed product specification and quality requirements.' },
+  { t: 'Flexible Customization', d: 'Adhesive, thickness, width, liner, roll format and converting options can all be customized.' },
+  { t: 'Clear Production Planning', d: 'Sampling and production schedules are confirmed against order requirements and material availability.' },
+];
+
+const supportSteps = [
+  // Reserved for future expansion — the 4 manufacturing capabilities above already cover
+  // the in-house + custom-converting story; an earlier "How We Support" 3-step block was
+  // removed because it duplicated the capability section.
+];
+
+const industries = [
+  { t: 'Home Appliance Assembly', d: 'Improves sealing, noise reduction and panel bonding performance while raising durability and line efficiency.', slug: 'appliance', img: '', alt: 'Home appliance panel assembly line' },
+  { t: 'Automotive Assembly', d: 'Trim attachment, emblem bonding, sealing and vibration damping — selected by substrate and service environment.', slug: 'automotive', img: '', alt: 'Robotic automotive assembly line' },
+  { t: 'Signage & Display', d: 'Clean, invisible bonding for indoor and outdoor signage with strong adhesion and a neat appearance.', slug: 'signage', img: '', alt: 'Outdoor signage installation' },
+  { t: 'Mechanical & Industrial', d: 'Mounting, sealing, cushioning and vibration control for equipment and fabricated components.', slug: 'machinery', img: '', alt: 'Industrial machinery and fabricated components' },
+  { t: 'Construction & Facade', d: 'Panel bonding, sealing, cushioning and gap compensation for windows, doors and façades.', slug: 'construction', img: '', alt: 'Glass curtain wall for construction sealing' },
+  { t: 'Electronics', d: 'Component mounting, cushioning, insulation and vibration control inside electronic assemblies.', slug: 'electronics', img: '', alt: 'Electronics and circuit board close-up' },
+];
+
 const bySlug = Object.fromEntries(products.map((p) => [p.slug, p]));
+const sellingPoints = [
+  { t: 'Direct Factory Pricing', d: 'Manufactured in-house — no middle layer between you and the tape.' },
+  { t: 'Custom Slitting & Rewinding', d: 'Widths, lengths and die-cut parts built to your specification.' },
+  { t: 'Free Product Samples', d: 'Evaluate the right construction before you commit to volume.' },
+  { t: 'Response Within 24 Hours', d: 'Our team replies to quotes and application questions fast.' },
+];
 ---
 
-<Layout title="产品中心 — LubandArt Tape" description="双面亚克力胶、EVA、OPP、PE 泡棉、PET、PVC、棉纸双面胶 7 大系列，覆盖多场景粘接需求。">
-  <!-- 页头 -->
-  <section style="background:var(--bg-soft); padding:4rem 0 2.5rem">
-    <div class="container">
-      <div class="eyebrow">Products</div>
-      <h1 class="page-title">产品中心</h1>
-      <p class="page-sub">覆盖多场景的胶粘产品矩阵，支持按规格、基材与用途定制。点击任意产品查看完整规格与应用。</p>
-    </div>
-  </section>
+<Layout
+  title="Products — LubandArt Tape | Double Sided, Foam & Specialty Tape"
+  description="Explore LubandArt double sided tape, foam tape and specialty tape ranges for industrial bonding, mounting, sealing and converting."
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Products', href: '/products' }]}
+>
+  <!-- Hero -->
+  <SubHero
+    eyebrow="Industrial Adhesive Tape Manufacturer"
+    title="Double Sided, Foam & Specialty Tape"
+    sub="LubandArt manufactures double sided adhesive tape, foam tape and specialty industrial tapes with custom adhesive coating, slitting, rewinding and converting support."
+    breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Products', href: '/products' }]}
+    ctas={[{ label: 'Get a Quote', href: '/contact' }, { label: 'Request Samples', href: '/contact', variant: 'ghost' }]}
+    image="/products/acrylic.jpg"
+    imageAlt="Double sided acrylic foam tape rolls"
+  />
 
-  <!-- 分类导览 -->
-  <section style="padding:2.5rem 0">
+  <!-- Selling points -->
+  <section class="mod mod-gray">
     <div class="container">
-      <div class="cat-nav">
-        {cats.map((c) => (
-          <div class="cat-pill">
-            <strong>{c.name}</strong>
-            <span>{c.note}</span>
+      <div class="selling-grid">
+        {sellingPoints.map((s) => (
+          <div class="selling">
+            <div class="selling-t">{s.t}</div>
+            <div class="selling-d">{s.d}</div>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- 产品列表 -->
-  <section style="padding:1.5rem 0 5rem">
+  <!-- Page header -->
+  <section class="mod mod-light page-head">
     <div class="container">
-      <div class="grid">
-        {products.map((p) => (
-          <a class="card product-card" href={`/products/${p.slug}`}>
-            <img src={p.img} alt={p.en} class="product-img" loading="lazy" />
-            <h3>{p.name}</h3>
-            <p class="en">{p.en}</p>
-            <p class="tagline">{p.tagline}</p>
-            <p class="desc">{p.intro.slice(0, 46)}…</p>
-            <span class="more">查看详情 →</span>
+      <div class="section-head">
+        <div class="eyebrow">Products</div>
+        <h2>Explore Our <span class="accent">Tape</span> Products</h2>
+        <p>
+          Industrial double sided tape, foam tape and specialty tape solutions for bonding, mounting,
+          sealing, lamination and converting — all manufactured in-house with custom slitting and
+          die-cutting support.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category quick nav -->
+  <div class="cat-strip">
+    <div class="container cat-strip-inner">
+      {categories.map((c) => (
+        <a class="cat-link" href={`/products/${c.id}`}>{c.name}</a>
+      ))}
+      <a class="cat-link" href="#by-need">By Bonding Need</a>
+      <a class="cat-link cat-cta" href="/contact">Get a Quote</a>
+    </div>
+  </div>
+
+  <!-- Category sections -->
+  {categories.map((cat, i) => (
+    <CategorySection category={cat} sectionIndex={i} />
+  ))}
+
+  <!-- Second axis: by bonding requirement -->
+  <section id="by-need" class="mod mod-light">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Selection Guide</div>
+        <h2>Choose Tape by <span class="accent">Bonding</span> Requirement</h2>
+        <p>
+          Not sure which construction to choose? Start from your bonding, mounting or environmental
+          requirement and explore a suitable tape solution.
+        </p>
+      </div>
+
+      <div class="need-grid">
+        {needs.map((need) => (
+          <div class="need-card">
+            <div class="need-scene">
+              <img src={bySlug[need.rec[0]].img} alt={need.name} loading="lazy" />
+              <div class="need-scene-overlay"></div>
+            </div>
+            <div class="need-body">
+              <h3>{need.name}</h3>
+              <p>{need.desc}</p>
+              <div class="need-rec">
+                <span class="need-rec-label">Recommended:</span>
+                {need.rec.map((slug) => (
+                  <a class="rec-chip" href={`/products/${slug}`}>{bySlug[slug].en}</a>
+                ))}
+              </div>
+              <a class="btn btn-ghost btn-sm" href="/contact">Get Tape Recommendation →</a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats band -->
+  <section class="mod mod-gray">
+    <div class="container">
+      <div class="stats-grid">
+        {stats.map((s) => (
+          <div class="stat">
+            <div class="stat-n">{s.n}</div>
+            <div class="stat-l">{s.l}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Manufacturing capabilities -->
+  <section class="mod mod-light">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Why LubandArt</div>
+        <h2>In-House Tape Manufacturing &amp; <span class="accent">Converting</span></h2>
+        <p>
+          We combine adhesive coating, rewinding, slitting and converting to support custom double
+          sided, foam and industrial adhesive tape production.
+        </p>
+      </div>
+
+      <div class="cap-grid">
+        {capabilities.map((cap) => (
+          <div class="cap">
+            <div class="cap-scene">
+              <div class="cap-scene-overlay"></div>
+              <span class="cap-n">{cap.n}</span>
+            </div>
+            <div class="cap-body">
+              <h3>{cap.t}</h3>
+              <p>{cap.d}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="guarantee-grid">
+        {guarantees.map((g) => (
+          <div class="guarantee">
+            <h4>{g.t}</h4>
+            <p>{g.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Industry solutions -->
+  <section class="mod mod-gray">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Applications</div>
+        <h2>Tape Solutions by <span class="accent">Industry</span></h2>
+        <p>
+          Adhesive tape solutions for bonding, mounting, sealing and cushioning across industrial
+          applications.
+        </p>
+      </div>
+
+      <div class="ind-grid">
+        {industries.map((ind) => (
+          <a class="ind-card" href={`/industries/${ind.slug}`}>
+            <div class="ind-img"></div>
+            <div class="ind-body">
+              <h3>{ind.t}</h3>
+              <p>{ind.d}</p>
+              <span class="ind-more">Explore solutions →</span>
+            </div>
           </a>
         ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Not sure which tape CTA -->
+  <section class="mod mod-light">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="eyebrow">Need Help Choosing?</div>
+        <h2>Not Sure Which <span class="accent">Tape</span> You Need?</h2>
+        <p>
+          Tell us your substrate, application, required thickness and temperature range. Our team will
+          recommend a suitable tape construction and can supply free samples.
+        </p>
+        <a class="btn" href="/contact">Discuss Your Application</a>
       </div>
     </div>
   </section>
 </Layout>
 
 <style>
-  .page-title { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: .5rem 0 .6rem; }
-  .page-sub { color: var(--fg-soft); max-width: 640px; }
-  .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; }
-  .cat-nav { display: flex; flex-wrap: wrap; gap: .8rem; }
-  .cat-pill { border: 1px solid var(--line); border-radius: 999px; padding: .5rem 1rem; display: flex; flex-direction: column; line-height: 1.3; }
-  .cat-pill strong { font-size: .95rem; }
-  .cat-pill span { font-size: .78rem; color: var(--fg-soft); }
+  /* Selling points band */
+  .selling-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; max-width: 980px; }
+  .selling { border-left: 2px solid var(--accent); padding-left: 1rem; }
+  .selling-t { font-family: var(--font-head); font-weight: 700; color: var(--fg); letter-spacing: .4px; margin-bottom: .3rem; font-size: .98rem; }
+  .selling-d { color: var(--fg-soft); font-size: .88rem; line-height: 1.55; }
 
-  .product-card { display: block; color: inherit; }
-  .product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent); }
-  .product-img { width: 100%; height: 170px; object-fit: cover; border-radius: 12px; margin-bottom: 1rem; background: var(--bg-soft); }
-  .product-card .en { color: var(--accent); font-size: .8rem; font-weight: 600; letter-spacing: .3px; margin: -.3rem 0 .4rem; }
-  .product-card .tagline { color: var(--fg); font-weight: 600; font-size: .9rem; margin: 0 0 .4rem; }
-  .product-card .desc { color: var(--fg-soft); font-size: .9rem; margin: 0 0 .8rem; }
-  .product-card .more { color: var(--accent); font-weight: 600; font-size: .88rem; }
+  .page-head { padding: 4.5rem 0 3rem; }
+  .page-head .section-head { margin-bottom: 0; }
+
+  /* Sticky category strip */
+  .cat-strip {
+    position: sticky;
+    top: 64px;
+    z-index: 40;
+    background: rgba(250, 250, 247, 0.9);
+    backdrop-filter: saturate(180%) blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .cat-strip-inner { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; padding: .8rem 1.5rem; }
+  .cat-link {
+    font-family: var(--font-head);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-weight: 600;
+    font-size: .82rem;
+    color: var(--fg-soft);
+    padding: .45rem .9rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    transition: .18s;
+  }
+  .cat-link:hover { color: var(--accent); border-color: var(--accent); }
+  .cat-cta { background: var(--accent); color: #fff; border-color: var(--accent); margin-left: auto; }
+  .cat-cta:hover { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+
+  /* Bonding-need grid */
+  .need-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.4rem; }
+  .need-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .need-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .need-scene {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  }
+  .need-scene img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s;
+    display: block;
+  }
+  .need-card:hover .need-scene img { transform: scale(1.05); }
+  .need-scene-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,.35) 100%);
+    pointer-events: none;
+  }
+  .need-body { padding: 1.5rem 1.7rem 1.8rem; display: flex; flex-direction: column; flex: 1; }
+  .need-body h3 { font-size: 1.12rem; margin: 0 0 .6rem; color: var(--fg); }
+  .need-body > p { color: var(--fg-soft); font-size: .92rem; line-height: 1.6; margin: 0 0 1.1rem; flex: 1; }
+  .need-rec { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; margin-bottom: 1.2rem; }
+  .need-rec-label { font-size: .8rem; color: var(--fg-soft); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+  .rec-chip {
+    font-size: .8rem;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    padding: .28rem .7rem;
+    transition: .18s;
+  }
+  .rec-chip:hover { background: var(--accent); color: #fff; }
+
+  /* Stats band */
+  .stats-band { padding: 3.6rem 0; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem; text-align: center; }
+  .stat-n { font-family: var(--font-head); font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 800; color: var(--accent); line-height: 1; }
+  .stat-l { color: var(--fg-soft); margin-top: .6rem; font-size: .9rem; letter-spacing: .3px; }
+
+  /* Capabilities */
+  .cap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.4rem; margin-bottom: 2.8rem; }
+  .cap {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .cap:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .cap-scene {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    background-image: radial-gradient(circle at 30% 22%, rgba(200,84,43,.30), transparent 60%);
+  }
+  .cap-scene img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s;
+    display: block;
+  }
+  .cap:hover .cap-scene img { transform: scale(1.05); }
+  .cap-scene-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,.15) 0%, rgba(0,0,0,.45) 100%);
+    pointer-events: none;
+  }
+  .cap-n {
+    position: absolute;
+    top: .8rem;
+    left: .9rem;
+    font-family: var(--font-head);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #fff;
+    background: rgba(200,84,43,.9);
+    padding: .2rem .55rem;
+    border-radius: 2px;
+    line-height: 1;
+    z-index: 1;
+  }
+  .cap-body { padding: 1.3rem 1.4rem 1.5rem; }
+  .cap-body h3 { font-size: 1.1rem; margin: 0 0 .5rem; color: var(--fg); }
+  .cap-body p { color: var(--fg-soft); font-size: .9rem; line-height: 1.6; margin: 0; }
+
+  .guarantee-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; padding: 2.2rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .guarantee h4 { font-size: 1rem; margin: 0 0 .4rem; color: var(--fg); }
+  .guarantee p { color: var(--fg-soft); font-size: .88rem; line-height: 1.6; margin: 0; }
+
+  /* Industry grid — 2 columns with alternating left/right image (mirrors Category 03 alt layout) */
+  .ind-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+  .ind-card {
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    color: inherit;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .ind-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .ind-img { order: 1; aspect-ratio: 1 / 1; max-height: 320px; overflow: hidden; background: linear-gradient(135deg, #1e1c1a 0%, #2e2a26 100%); background-image: radial-gradient(circle at 28% 22%, rgba(200,84,43,.32), transparent 58%); }
+  .ind-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; display: block; }
+  .ind-card:hover .ind-img img { transform: scale(1.06); }
+  .ind-body { order: 2; padding: 1.7rem 1.8rem; display: flex; flex-direction: column; justify-content: center; }
+  .ind-body h3 { font-size: 1.12rem; margin: 0 0 .6rem; color: var(--fg); }
+  .ind-body p { color: var(--fg-soft); font-size: .9rem; line-height: 1.6; margin: 0 0 1rem; flex: 1; }
+  .ind-more { color: var(--accent); font-family: var(--font-head); font-weight: 600; font-size: .85rem; letter-spacing: .4px; }
+  /* Even cards: flip to right-image-left-text */
+  .ind-card:nth-child(even) .ind-img { order: 2; }
+  .ind-card:nth-child(even) .ind-body { order: 1; }
+  @media (max-width: 860px) {
+    .ind-grid { grid-template-columns: 1fr; }
+    .ind-card, .ind-card:nth-child(even) { grid-template-columns: 1fr; }
+    .ind-card .ind-img, .ind-card:nth-child(even) .ind-img { order: 1; aspect-ratio: 4 / 3; max-height: 280px; }
+    .ind-card .ind-body, .ind-card:nth-child(even) .ind-body { order: 2; padding: 1.4rem 1.6rem; }
+  }
+
+  /* CTA */
+  .tapecta { padding: 5rem 0; }
+  .cta-inner { text-align: center; max-width: 680px; margin: 0 auto; }
+  .cta-inner .eyebrow { display: inline-block; color: var(--accent); font-family: var(--font-head); font-weight: 600; letter-spacing: 3px; font-size: .8rem; text-transform: uppercase; }
+  .cta-inner h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); margin: .6rem 0 .8rem; }
+  .cta-inner p { color: var(--fg-soft); margin: 0 auto 1.8rem; max-width: 560px; }
+
+  @media (max-width: 600px) {
+    .cat-strip { top: 60px; }
+    .cat-link { font-size: .76rem; padding: .4rem .75rem; }
+    .prod-hero { padding: 3.5rem 0 2.5rem; }
+    .pbody h3, .need-card h3, .ind-card h3 { font-size: 1.05rem; }
+  }
 </style>

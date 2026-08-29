@@ -1,0 +1,91 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SubHero from '../../components/SubHero.astro';
+import { categories } from '../../data/categories';
+import CategorySection from '../../components/CategorySection.astro';
+
+const cat = categories.find((c) => c.id === 'foam')!;
+---
+
+<Layout
+  title={`${cat.name} — LubandArt | PE & EVA Foam Tape Manufacturer`}
+  description={`${cat.name}: ${cat.intro} Closed-cell PE and soft EVA foam tapes for cushioning, sealing, gap filling and vibration control.`}
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Products', href: '/products' },
+    { name: cat.name, href: `/products/${cat.id}` }
+  ]}
+>
+  <SubHero
+    eyebrow={cat.index}
+    title={`${cat.name} Solutions`}
+    sub={cat.intro}
+    breadcrumbs={[
+      { name: 'Home', href: '/' },
+      { name: 'Products', href: '/products' },
+      { name: cat.name, href: `/products/${cat.id}` }
+    ]}
+    ctas={[{ label: 'Discuss Your Application', href: '/contact' }]}
+  />
+
+  <CategorySection category={cat} sectionIndex={0} />
+
+  <section class="mod mod-light tapecta">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="eyebrow">Need Help Choosing?</div>
+        <h2>Not Sure Which <span class="accent">{cat.name}</span> You Need?</h2>
+        <p>
+          Tell us your substrate, application, required thickness and compression profile. Our team
+          will recommend a suitable foam tape construction and can supply free samples.
+        </p>
+        <a class="btn" href="/contact">Discuss Your Application</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="mod mod-light other-cats">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Other Categories</div>
+        <h2>Explore More <span class="accent">Tape</span> Solutions</h2>
+      </div>
+      <div class="other-grid">
+        {categories.filter((c) => c.id !== cat.id).map((c) => (
+          <a class="other-card" href={`/products/${c.id}`}>
+            <div class="other-index">{c.index}</div>
+            <h3>{c.name}</h3>
+            <p>{c.intro}</p>
+            <span class="other-more">Explore {c.name} →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .tapecta { padding: 5rem 0; }
+  .cta-inner { text-align: center; max-width: 680px; margin: 0 auto; }
+  .cta-inner .eyebrow { display: inline-block; color: var(--accent); font-family: var(--font-head); font-weight: 600; letter-spacing: 3px; font-size: .8rem; text-transform: uppercase; }
+  .cta-inner h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); margin: .6rem 0 .8rem; }
+  .cta-inner p { color: var(--fg-soft); margin: 0 auto 1.8rem; max-width: 560px; }
+
+  .other-cats { padding: 4.5rem 0; }
+  .other-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; max-width: 1000px; margin: 0 auto; }
+  .other-card {
+    display: flex; flex-direction: column;
+    background: #fff; border: 1px solid var(--line); border-radius: 4px;
+    padding: 1.8rem 2rem; color: inherit;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .other-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .other-index { font-size: .76rem; color: var(--accent); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: .6rem; }
+  .other-card h3 { font-size: 1.15rem; margin: 0 0 .6rem; color: var(--fg); }
+  .other-card p { color: var(--fg-soft); font-size: .9rem; line-height: 1.6; margin: 0 0 1.2rem; flex: 1; }
+  .other-more { color: var(--accent); font-family: var(--font-head); font-weight: 600; font-size: .85rem; letter-spacing: .4px; }
+
+  @media (max-width: 760px) {
+    .other-grid { grid-template-columns: 1fr; }
+  }
+</style>

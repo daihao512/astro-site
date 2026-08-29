@@ -1,0 +1,306 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { posts } from '../../data/posts';
+import { products } from '../../data/products';
+import { industries } from '../../data/industries';
+import { SITE, absUrl } from '../../config/site';
+
+export function getStaticPaths() {
+  return posts.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = posts.find((p) => p.slug === slug)!;
+
+/* ---- Internal linking: post -> products / industries / other posts ---- */
+const relatedProducts = (post.relatedProducts ?? [])
+  .map((s) => products.find((p) => p.slug === s))
+  .filter(Boolean) as typeof products;
+const relatedIndustries = (post.relatedIndustries ?? [])
+  .map((s) => industries.find((i) => i.slug === s))
+  .filter(Boolean) as typeof industries;
+
+const relatedPosts = posts.filter((p) => p.slug !== post.slug && p.category === post.category);
+const more = (relatedPosts.length
+  ? relatedPosts
+  : posts.filter((p) => p.slug !== post.slug)
+).slice(0, 3);
+
+const fmtDate = (d: string) =>
+  new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+const pageUrl = absUrl(`/blogs/${post.slug}/`);
+const coverUrl = post.img ? (post.img.startsWith('http') ? post.img : absUrl(post.img)) : undefined;
+
+/* ---- Structured data: Article + Breadcrumb + FAQPage ---- */
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.title,
+  description: post.excerpt,
+  image: coverUrl,
+  datePublished: post.date,
+  dateModified: post.date,
+  author: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+  publisher: { '@id': absUrl('/#organization') },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
+  articleSection: post.category,
+  timeRequired: `PT${post.readMin}M`,
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: absUrl('/') },
+    { '@type': 'ListItem', position: 2, name: 'Resources', item: absUrl('/blogs/') },
+    { '@type': 'ListItem', position: 3, name: post.title, item: pageUrl },
+  ],
+};
+
+const faqLd = post.faq?.length
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: post.faq.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    }
+  : null;
+---
+
+<Layout
+  title={`${post.title} — LubandArt Tape`}
+  description={post.excerpt}
+  ogType="article"
+  ogImage={post.img || undefined}
+  publishedDate={post.date}
+  modifiedDate={post.date}
+  jsonLd={[articleLd, breadcrumbLd, ...(faqLd ? [faqLd] : [])]}
+>
+  <section class="post-hero">
+    <div class="container">
+      <div class="post-head">
+        <div class="post-meta-lg">
+          <span class="post-cat">{post.category}</span>
+          <span>{fmtDate(post.date)}</span>
+          <span>{post.readMin} min read</span>
+        </div>
+        <h1>{post.title}</h1>
+        <p class="post-lead">{post.excerpt}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mod mod-light post-content">
+    <div class="container">
+      <div class="post-cover"></div>
+
+      {post.body ? (
+        <div class="post-body-html" set:html={post.body} />
+      ) : (
+        <div class="post-note">
+          <strong>Note:</strong> the full article text is being prepared. This page carries the
+          summary and technical framing — request the complete guide, or discuss your application
+          directly with our engineering team.
+        </div>
+      )}
+
+      {/* ---- Internal links: related products ---- */}
+      {relatedProducts.length > 0 && (
+        <div class="ilinks">
+          <h2 class="ilinks-h">Related <span class="accent">Products</span></h2>
+          <div class="ilink-grid">
+            {relatedProducts.map((p) => (
+              <a class="ilink-card" href={`/products/${p.slug}`}>
+                <div class="ilink-img"><img src={p.img} alt={p.en} loading="lazy" /></div>
+                <div class="ilink-body">
+                  <h3>{p.en}</h3>
+                  <span class="ilink-more">View product →</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ---- Internal links: related industries ---- */}
+      {relatedIndustries.length > 0 && (
+        <div class="ilinks">
+          <h2 class="ilinks-h">Applications in <span class="accent">Focus</span></h2>
+          <div class="ilink-chips">
+            {relatedIndustries.map((i) => (
+              <a class="ilink-chip" href={`/industries/${i.slug}`}>{i.en} solutions →</a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ---- FAQ (rendered on page + as FAQPage JSON-LD) ---- */}
+      {post.faq && post.faq.length > 0 && (
+        <div class="faq">
+          <h2 class="ilinks-h">Frequently Asked <span class="accent">Questions</span></h2>
+          {post.faq.map((f) => (
+            <details class="faq-item">
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      )}
+
+      <div class="post-cta-row">
+        <a class="btn" href="/contact">Request the Full Guide</a>
+        <a class="btn btn-ghost" href="/blogs">← Back to Resources</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="mod mod-gray">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Keep Reading</div>
+        <h2>Related <span class="accent">Articles</span></h2>
+      </div>
+      <div class="rel-grid">
+        {more.map((p) => (
+          <a class="rel-card" href={`/blogs/${p.slug}`}>
+            <div class="rel-img"><img src={p.img} alt={p.imgAlt} loading="lazy" /></div>
+            <div class="rel-body">
+              <span class="rel-cat">{p.category}</span>
+              <h3>{p.title}</h3>
+              <span class="rel-more">Read →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .post-hero {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(900px 480px at 82% -8%, rgba(200,84,43,.26), transparent 60%),
+      radial-gradient(680px 420px at 8% 110%, rgba(200,84,43,.10), transparent 60%),
+      linear-gradient(135deg, #141316 0%, #1b1816 55%, #0e0e10 100%);
+    color: #fff; padding: 5rem 0 3.4rem;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .post-head { padding-top: 1.2rem; }
+  .post-meta-lg { display: flex; flex-wrap: wrap; align-items: center; gap: .9rem; margin-bottom: .9rem; }
+  .post-meta-lg > span:not(.post-cat) { color: #b8b8b8; font-size: .82rem; letter-spacing: .2px; }
+  .post-cat {
+    font-family: var(--font-head); font-size: .72rem; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--accent);
+    border-radius: 999px; padding: .18rem .6rem;
+  }
+  .post-head h1 { font-size: clamp(2.4rem, 5.2vw, 4rem); line-height: 1.05; margin: 0 0 1rem; color: #fff; font-weight: 700; }
+  .post-lead { color: #cfcfcf; font-size: 1.02rem; line-height: 1.8; margin: 0; }
+
+  .post-content { padding: 3.5rem 0 4rem; }
+
+  .post-cover {
+    width: 100%; aspect-ratio: 21 / 9; min-height: 200px;
+    border-radius: 4px; border: 1px solid var(--line); margin: 2.2rem 0 1.8rem;
+    background: radial-gradient(120% 140% at 25% 15%, rgba(200,84,43,.24), transparent 55%), linear-gradient(135deg,#221d19,#33291f 55%,#433423);
+  }
+
+  /* Long-form article typography */
+  .post-body-html { max-width: 780px; }
+  .post-body-html h2 { font-size: 1.32rem; line-height: 1.3; margin: 2.3rem 0 .8rem; color: var(--fg); }
+  .post-body-html h3 { font-size: 1.06rem; margin: 1.6rem 0 .5rem; color: var(--fg); }
+  .post-body-html p { color: var(--fg-soft); font-size: .97rem; line-height: 1.85; margin: 0 0 1.1rem; }
+  .post-body-html ul, .post-body-html ol {
+    color: var(--fg-soft); font-size: .95rem; line-height: 1.8;
+    margin: 0 0 1.3rem; padding-left: 1.35rem;
+  }
+  .post-body-html li { margin-bottom: .55rem; }
+  .post-body-html strong { color: var(--fg); }
+  .post-body-html table {
+    width: 100%; border-collapse: collapse; margin: 1.2rem 0 1.6rem;
+    font-size: .88rem; background: #fff; border: 1px solid var(--line);
+  }
+  .post-body-html th {
+    text-align: left; background: var(--bg-2); color: var(--fg);
+    font-family: var(--font-head); letter-spacing: .3px;
+    padding: .7rem .9rem; border-bottom: 1px solid var(--line);
+  }
+  .post-body-html td { padding: .7rem .9rem; border-bottom: 1px solid var(--line); color: var(--fg-soft); }
+  .post-body-html tr:last-child td { border-bottom: 0; }
+
+  .post-note {
+    background: #fff; border-left: 3px solid var(--accent);
+    padding: 1rem 1.2rem; max-width: 780px;
+    color: var(--fg-soft); font-size: .88rem; line-height: 1.7;
+  }
+  .post-note strong { color: var(--fg); }
+
+  /* Internal link blocks */
+  .ilinks { max-width: 780px; margin-top: 2.6rem; }
+  .ilinks-h { font-size: 1.25rem; margin: 0 0 1rem; color: var(--fg); }
+  .ilinks-h .accent { color: var(--accent); }
+  .ilink-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .ilink-card {
+    display: flex; flex-direction: column; color: inherit;
+    background: #fff; border: 1px solid var(--line); border-radius: 4px; overflow: hidden;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .ilink-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .ilink-img { aspect-ratio: 4 / 3; overflow: hidden; background: #e6e6e0; }
+  .ilink-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s; }
+  .ilink-card:hover .ilink-img img { transform: scale(1.06); }
+  .ilink-body { padding: .9rem 1rem 1.05rem; display: flex; flex-direction: column; flex: 1; }
+  .ilink-body h3 { font-size: .92rem; line-height: 1.35; margin: 0 0 .6rem; color: var(--fg); flex: 1; }
+  .ilink-more { color: var(--accent); font-family: var(--font-head); font-weight: 600; font-size: .78rem; letter-spacing: .4px; }
+  .ilink-chips { display: flex; flex-wrap: wrap; gap: .6rem; }
+  .ilink-chip {
+    font-size: .85rem; color: var(--accent); border: 1px solid var(--accent);
+    border-radius: 999px; padding: .4rem .9rem; transition: .18s;
+  }
+  .ilink-chip:hover { background: var(--accent); color: #fff; }
+
+  /* FAQ */
+  .faq { max-width: 780px; margin-top: 2.6rem; }
+  .faq-item {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: 4px; margin-bottom: .6rem; overflow: hidden;
+  }
+  .faq-item summary {
+    cursor: pointer; padding: 1rem 1.2rem;
+    font-family: var(--font-head); font-weight: 600; font-size: .98rem;
+    color: var(--fg); letter-spacing: .3px; list-style: none;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after { content: '+'; float: right; color: var(--accent); font-size: 1.2rem; line-height: 1; }
+  .faq-item[open] summary::after { content: '−'; }
+  .faq-item p {
+    margin: 0; padding: 0 1.2rem 1.1rem;
+    color: var(--fg-soft); font-size: .9rem; line-height: 1.75;
+  }
+
+  .post-cta-row { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 2.4rem; }
+
+  .rel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+  .rel-card {
+    display: flex; flex-direction: column; color: inherit;
+    background: #fff; border: 1px solid var(--line); border-radius: 4px; overflow: hidden;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .rel-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .rel-img { aspect-ratio: 16 / 10; overflow: hidden; background: radial-gradient(120% 120% at 25% 15%, rgba(200,84,43,.22), transparent 55%), linear-gradient(135deg,#241f1a,#33291f 55%,#433423); }
+  .rel-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .45s; }
+  .rel-card:hover .rel-img img { transform: scale(1.06); }
+  .rel-body { padding: 1.2rem 1.35rem 1.4rem; display: flex; flex-direction: column; flex: 1; }
+  .rel-cat { font-size: .72rem; color: var(--accent); font-family: var(--font-head); font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: .5rem; }
+  .rel-body h3 { font-size: 1rem; line-height: 1.4; margin: 0 0 .9rem; color: var(--fg); flex: 1; }
+  .rel-more { color: var(--accent); font-family: var(--font-head); font-weight: 600; font-size: .82rem; letter-spacing: .4px; }
+
+  @media (max-width: 900px) {
+    .rel-grid, .ilink-grid { grid-template-columns: 1fr; }
+  }
+</style>

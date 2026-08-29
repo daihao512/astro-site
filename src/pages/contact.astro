@@ -1,51 +1,64 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SubHero from '../components/SubHero.astro';
 ---
 
-<Layout title="联系与报价 — LubandArt Tape" description="告诉我们您的应用场景与规格，LubandArt Tape 将尽快提供选型建议与报价。">
-  <section style="background:var(--bg-soft); padding:4rem 0 2.5rem">
-    <div class="container">
-      <div class="eyebrow">Contact</div>
-      <h1 class="page-title">联系与报价</h1>
-      <p class="page-sub">告诉我们您的应用场景与规格，我们将尽快提供选型建议与报价。也可直接点击右下角 AI 客服实时咨询。</p>
-    </div>
-  </section>
+<Layout title="Contact & Quote — LubandArt Tape" description="Tell us about your application and specifications, and LubandArt Tape will get back to you with product recommendations and a quote shortly."
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Contact', href: '/contact' }]}
+>
+  <SubHero
+    eyebrow="Contact"
+    title="Contact & Quote"
+    sub="LubandArt Tape is an industrial adhesive tape manufacturer supplying double sided tape, foam tape, and specialty tape for converters, distributors and OEMs worldwide. Tell us about your application and specifications, and we'll get back with product recommendations and a quote — we respond to all inquiries within 24 hours."
+    breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Contact', href: '/contact' }]}
+  />
 
   <section class="contact" style="padding:3rem 0">
+    <div class="container">
+      <div class="badges">
+        <span><b>✓</b> ISO 9001:2015</span>
+        <span><b>✓</b> REACH Compliant</span>
+        <span><b>✓</b> RoHS Compliant</span>
+        <span><b>✓</b> 10+ Years in Business</span>
+        <span><b>✓</b> Factory Direct</span>
+      </div>
+    </div>
     <div class="container contact-grid">
       <div>
         <ul class="contact-info">
-          <li><strong>邮箱：</strong> sales@lubandart-tape.com</li>
-          <li><strong>电话：</strong> +86 400-000-0000</li>
-          <li><strong>地址：</strong> 中国 · 胶粘产业园 A 区</li>
-          <li><strong>工作时间：</strong> 周一至周五 9:00–18:00</li>
+          <li><strong>Email:</strong> info@lubandart.com</li>
+          <li><strong>Phone:</strong> +86 400-000-0000</li>
+          <li><strong>Address:</strong> Adhesive Tape Industrial Park, Zone A, China</li>
+          <li><strong>Working Hours:</strong> Monday – Sunday · 24/7 Service</li>
         </ul>
         <div class="footer-social" style="margin-top:1.5rem">
-          <a href="mailto:sales@lubandart-tape.com">Email</a>
+          <a href="mailto:info@lubandart.com">Email</a>
           <a href="#" rel="noopener">WhatsApp</a>
-          <a href="#" rel="noopener">微信</a>
+          <a href="#" rel="noopener">WeChat</a>
         </div>
       </div>
 
-      <form class="quote-form" onsubmit="return false">
-        <input type="text" placeholder="您的称呼" />
-        <input type="text" placeholder="公司名称" />
-        <input type="email" placeholder="邮箱 / 电话" class="full" />
-        <select class="full">
-          <option value="">请选择产品类型</option>
-          <option>双面亚克力胶</option>
-          <option>PE 泡棉双面胶</option>
-          <option>PET 双面胶</option>
-          <option>棉纸双面胶</option>
-          <option>EVA 双面胶</option>
-          <option>OPP 双面胶</option>
-          <option>PVC 双面胶</option>
-          <option>其他 / 定制</option>
+      <form id="quoteForm" class="quote-form" novalidate>
+        <input type="text" name="name" placeholder="Your name *" required />
+        <input type="text" name="company" placeholder="Company name *" required />
+        <input type="email" name="email" placeholder="Email *" required />
+        <input type="text" name="whatsapp" placeholder="WhatsApp number *" required />
+        <select name="product" class="full" required>
+          <option value="" disabled selected>Select product type *</option>
+          <option>Double Sided Acrylic Tape</option>
+          <option>Double Sided PE Foam Tape</option>
+          <option>Double Sided PET Tape</option>
+          <option>Double Sided Tissue Tape</option>
+          <option>Double Sided EVA Tape</option>
+          <option>Double Sided OPP Tape</option>
+          <option>Double Sided PVC Tape</option>
+          <option>Other / Custom</option>
         </select>
-        <input type="text" placeholder="规格尺寸（如 宽10mm 厚0.1mm）" />
-        <input type="text" placeholder="预计用量" />
-        <textarea placeholder="请描述您的需求，例如：需要 0.1mm 双面胶，宽 10mm，用量 5000 卷" class="full"></textarea>
-        <button class="btn full" type="submit">获取报价</button>
+        <input type="text" name="spec" placeholder="Specs & dimensions (e.g. width 10mm, thickness 0.1mm)" />
+        <input type="text" name="qty" placeholder="Estimated quantity" />
+        <textarea name="message" placeholder="Describe your needs, e.g. need 0.1mm double sided tape, 10mm wide, 5,000 rolls" class="full"></textarea>
+        <button class="btn full" type="submit" id="submitBtn">Get a Quote</button>
+        <p id="formStatus" class="form-status full" role="status" aria-live="polite"></p>
       </form>
     </div>
   </section>
@@ -55,7 +68,15 @@ import Layout from '../layouts/Layout.astro';
   .page-title { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: .5rem 0 .6rem; }
   .page-sub { color: var(--fg-soft); max-width: 640px; }
   .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; }
-  .contact { background: var(--bg-soft); }
+  .badges { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1.6rem; }
+  .badges span {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-size: .82rem; font-weight: 600; color: var(--fg-soft);
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: .38rem .85rem; background: #fff;
+  }
+  .badges span b { color: var(--accent); font-weight: 700; }
+  .contact { background: var(--bg-2); }
   .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2.5rem; align-items: start; }
   .contact-info li { list-style: none; padding: .5rem 0; color: var(--fg-soft); }
   .contact-info strong { color: var(--fg); }
@@ -68,5 +89,76 @@ import Layout from '../layouts/Layout.astro';
     width: 100%; padding: .8rem 1rem; border: 1px solid var(--line); border-radius: 10px; font: inherit; background: #fff;
   }
   .quote-form textarea { min-height: 110px; resize: vertical; }
+  .quote-form .btn { padding: .85rem 1rem; }
+  .quote-form .btn:disabled { opacity: .6; cursor: not-allowed; }
+  .form-status { margin: 0; font-size: .9rem; min-height: 1.2em; }
+  .form-status.ok { color: #137333; }
+  .form-status.err { color: #c5221f; }
   @media (max-width: 680px) { .quote-form, .contact-grid { grid-template-columns: 1fr; } }
 </style>
+
+<script>
+  const form = document.getElementById('quoteForm') as HTMLFormElement;
+  const btn = document.getElementById('submitBtn') as HTMLButtonElement;
+  const status = document.getElementById('formStatus') as HTMLParagraphElement;
+
+  const required = [
+    { name: 'name', label: 'Name' },
+    { name: 'company', label: 'Company name' },
+    { name: 'email', label: 'Email' },
+    { name: 'whatsapp', label: 'WhatsApp number' },
+    { name: 'product', label: 'Tape type' },
+  ];
+
+  function validate() {
+    for (const f of required) {
+      const el = form.elements[f.name] as HTMLInputElement;
+      const val = (el.value || '').trim();
+      if (!val) return { ok: false, el, msg: `${f.label} is required.` };
+      if (f.name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        return { ok: false, el, msg: 'Please enter a valid email address.' };
+      }
+    }
+    return { ok: true };
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    status.className = 'form-status full';
+    status.textContent = '';
+    const v = validate();
+    if (!v.ok) {
+      status.className = 'form-status full err';
+      status.textContent = '✗ ' + v.msg;
+      v.el.focus();
+      return;
+    }
+    const data = Object.fromEntries(new FormData(form).entries());
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (res.ok && out.ok) {
+        status.className = 'form-status full ok';
+        status.textContent = out.degraded
+          ? '✓ We received your inquiry (demo mode: CRM not configured). We will contact you shortly.'
+          : '✓ We received your inquiry and will contact you soon!';
+        form.reset();
+      } else {
+        status.className = 'form-status full err';
+        status.textContent = '✗ ' + (out.error || 'Submission failed. Please try again later or email us directly.');
+      }
+    } catch (err) {
+      status.className = 'form-status full err';
+      status.textContent = '✗ Network error: ' + (err as Error).message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Get a Quote';
+    }
+  });
+</script>

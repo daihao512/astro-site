@@ -1,79 +1,340 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SubHero from '../components/SubHero.astro';
 
+const U = (_id: string, _w = 900) => '';
+
+/* NOTE: placeholder figures — replace with real Broadya data before launch. */
 const stats = [
-  { num: "10+", lbl: "年行业经验" },
-  { num: "500+", lbl: "合作客户" },
-  { num: "2000+", lbl: "产品规格" },
-  { num: "30+", lbl: "出口国家" },
+  { n: '10+', l: 'Years of adhesive R&D' },
+  { n: '2', l: 'In-house coating lines' },
+  { n: '5,000㎡', l: 'Dust-free workshop area' },
+  { n: '30+', l: 'Countries served' },
 ];
 
-const caps = [
-  { icon: "🏭", t: "自主研发生产", d: "从基材选型、涂布工艺到分切包装全流程自主管控，品质稳定可控。" },
-  { icon: "🧪", t: "实验室检测", d: "初粘、持粘、剥离、老化等关键指标在厂内实验室可检测、可复现。" },
-  { icon: "✂️", t: "柔性加工", d: "支持精密模切、分条、复卷与异形加工，满足非标定制需求。" },
-  { icon: "🌐", t: "全球供货", d: "成熟出口体系，服务 30+ 国家客户，OEM / ODM 私标支持。" },
+/* 1 — Hero (copy left, photo right) */
+const hero = {
+  img: U('1565793298595-6a879b1d9492', 1000),
+  alt: 'Automated industrial tape production line',
+};
+
+/* 3 — Who We Are (photo left, copy right) */
+const whoWeAre = {
+  img: U('1581092335397-9583eb92d232', 1000),
+  alt: 'Industrial adhesive coating and laminating line',
+  p1: "LubandArt supplies high-performance double sided and foam tapes — engineered for strength, cut to spec, and ready to run. We don't just manufacture materials; we solve your most complex assembly challenges.",
+  p2: 'Global OEMs and industrial partners count on our coating and precision die-cutting for unmatched consistency, from automotive to electronics.',
+  achievements: [
+    '10+ Years of Engineering Expertise',
+    'ISO 9001 Certified Quality Management',
+    'Serving 30+ Export Markets',
+  ],
+};
+
+/* 4 — Capabilities: production flow + converting merged into one 6-card grid
+   (the old page had these as two separate 6-item sections saying the same thing) */
+const capabilities = [
+  { t: 'Material Selection', d: 'Select foam, film, tissue, adhesive and release liner materials according to the required construction.', img: U('1581092335397-9583eb92d232', 700), alt: 'Adhesive coating and material selection' },
+  { t: 'Adhesive Laminating', d: 'Combine materials into single sided, double sided or multilayer adhesive constructions.', img: U('1565043666747-69f6646db940', 700), alt: 'Industrial laminating process' },
+  { t: 'Precision Slitting', d: 'Convert jumbo and log rolls into controlled widths from 5 mm up to 1040 mm.', img: U('1530124566582-a618bc2615dc', 700), alt: 'Converted tape rolls after slitting' },
+  { t: 'Rewinding & Spooling', d: 'Finished rolls, long-length rolls and spool-wound formats for automated application.', img: U('1565793298595-6a879b1d9492', 700), alt: 'Automated rewinding line' },
+  { t: 'Precision Die Cutting', d: 'Gaskets, pads, rings, strips and custom shapes produced from drawings or samples.', img: U('1567789884554-0b844b597180', 700), alt: 'Precision die-cut adhesive components' },
+  { t: 'OEM & Private Label', d: 'Custom cores, labels, cartons and packaging for distributors and industrial brands.', img: U('1504917595217-d4dc5ebe6122', 700), alt: 'Branded private-label packaging' },
 ];
+
+/* 5 — Quality Control (copy left, photo right) */
+const qc = {
+  img: U('1567789884554-0b844b597180', 1000),
+  alt: 'Quality control inspection of adhesive tape performance',
+  items: [
+    { t: 'Peel Adhesion', d: 'Bonding force between the tape and a selected substrate.' },
+    { t: 'Initial Tack', d: 'Initial contact and quick-stick performance.' },
+    { t: 'Holding Power', d: 'Resistance to static shear load over time.' },
+    { t: 'Thickness & Dimensions', d: 'Thickness, width, length and converted part dimensions.' },
+    { t: 'Aging Evaluation', d: 'Performance under project-specific temperature or aging.' },
+    { t: 'Tensile & Material', d: 'Foam, film or reinforced material characteristics.' },
+  ],
+};
+
+/* 6 — Who We Serve */
+const customers = [
+  { t: 'Distributors', d: 'Product ranges, private-label packaging and repeat supply.', img: U('1504917595217-d4dc5ebe6122', 700), alt: 'Branded product ranges for distribution' },
+  { t: 'OEM Manufacturers', d: 'Custom constructions and converted parts for assembly lines.', img: U('1565793298595-6a879b1d9492', 700), alt: 'OEM production assembly line' },
+  { t: 'Tape Converters', d: 'Jumbo rolls, log rolls and semi-finished material.', img: U('1581092335397-9583eb92d232', 700), alt: 'Jumbo roll converting line' },
+  { t: 'Project Buyers', d: 'Sample development and spec-based production.', img: U('1505691938895-1758d7feb511', 700), alt: 'Application-specific sample development' },
+];
+
+/* 7 — Why LubandArt: merged from the old "Why Partner With Us" + "Why Work With Us" (they said the same thing).
+   Deliberately a plain list — no cards, so the page closes light. */
+const whyUs = [
+  { t: 'Direct Factory Supply', d: 'No middlemen — full cost efficiency and quality oversight from raw material to finished roll.' },
+  { t: 'Stable Quality Control', d: 'ISO-certified testing for consistent adhesion and performance in every batch.' },
+  { t: 'Custom Adhesive Solutions', d: 'Formulations and dimensions developed for your exact application.' },
+  { t: 'Fast Lead Times', d: 'High-capacity lines and an optimized supply chain keep projects on schedule.' },
+  { t: 'Global Export Experience', d: '10+ years of international logistics and compliance support.' },
+  { t: 'Engineering Support', d: 'Our technical team partners with you on your most complex bonding challenges.' },
+];
+
+const statsBg = U('1565043666747-69f6646db940', 1600);
 ---
 
-<Layout title="关于我们 — LubandArt Tape" description="十余年胶粘行业深耕，集研发、生产、分切、品控于一体，服务全球客户的胶带与胶粘解决方案制造商。">
-  <section style="background:var(--bg-soft); padding:4rem 0 2.5rem">
-    <div class="container">
-      <div class="eyebrow">About</div>
-      <h1 class="page-title">关于我们</h1>
-      <p class="page-sub">十余年胶粘行业深耕，集研发、生产、分切、品控于一体，为全球客户提供稳定可靠的粘接方案。</p>
-    </div>
-  </section>
+<Layout
+  title="About Us — LubandArt Tape | Adhesive Tape Manufacturer"
+  description="LubandArt manufactures and converts double sided tape, foam tape and custom adhesive solutions — in-house coating, precision converting and ISO-certified quality control for global industrial customers."
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'About Us', href: '/about' }]}
+>
+  <!-- ===== 1. HERO ===== -->
+  <SubHero
+    eyebrow="About Us"
+    title="About LubandArt"
+    sub="LubandArt manufactures and converts double sided tapes, foam tapes and custom adhesive solutions for global industrial applications."
+    breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'About Us', href: '/about' }]}
+    ctas={[{ label: 'Our Products', href: '/products' }, { label: 'Request Samples', href: '/contact', variant: 'ghost' }]}
+  />
 
-  <section style="padding:3rem 0">
-    <div class="container about-grid">
-      <div>
-        <h2 class="about-h">公司简介</h2>
-        <p class="about-p">LubandArt Tape 拥有完善的生产线与实验室检测能力，从基材选型、涂布工艺到分切包装全流程管控。我们坚持稳定的品质与快速的交付，帮助客户降低综合成本、提升产品可靠性。</p>
-        <p class="about-p">无论是标准规格还是非标定制，我们都可提供样品打样、技术选型与批量供货的一体化服务，覆盖电子、汽车、包装、建筑等多个行业。</p>
-      </div>
-      <div class="stats-wrap">
+  <!-- ===== 2. STATS BAND ===== -->
+  <section class="mod mod-light">
+    <div class="container">
+      <div class="stats-grid">
         {stats.map((s) => (
-          <div class="card stat-card"><div class="num">{s.num}</div><div class="lbl">{s.lbl}</div></div>
+          <div class="stat">
+            <div class="stat-n">{s.n}</div>
+            <div class="stat-l">{s.l}</div>
+          </div>
         ))}
       </div>
     </div>
   </section>
 
-  <section style="background:var(--bg-soft); padding:4rem 0">
+  <!-- ===== 3. WHO WE ARE — photo left, copy right (no centered section-head) ===== -->
+  <section class="mod mod-gray">
+    <div class="container split">
+      <div class="split-img"></div>
+      <div class="split-body">
+        <div class="eyebrow">Who We Are</div>
+        <h2 class="split-h">Who We Are</h2>
+        <p class="split-p">{whoWeAre.p1}</p>
+        <p class="split-p">{whoWeAre.p2}</p>
+        <ul class="tick-list">
+          {whoWeAre.achievements.map((a) => <li><span class="tick">✓</span>{a}</li>)}
+        </ul>
+        <div class="split-cta">
+          <a class="btn" href="/products">Our Products</a>
+          <a class="btn btn-ghost" href="/contact">About Our Factory</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. CAPABILITIES — one grid, production + converting merged ===== -->
+  <section class="mod mod-light">
     <div class="container">
-      <div class="section-head" style="text-align:left; margin:0 0 2rem">
-        <div class="eyebrow">Capabilities</div>
-        <h2>核心能力</h2>
+      <div class="section-head">
+        <div class="eyebrow">What We Do</div>
+        <h2>Manufacturing &amp; <span class="accent">Converting</span></h2>
+        <p>
+          From material selection to finished, inspection-cleared parts — one integrated line.
+        </p>
       </div>
-      <div class="grid">
-        {caps.map((c) => (
-          <div class="card cap-card"><div class="ico">{c.icon}</div><h3>{c.t}</h3><p>{c.d}</p></div>
+      <div class="img-card-grid three">
+        {capabilities.map((c) => (
+          <div class="img-card">
+            <div class="img-card-img"></div>
+            <div class="img-card-body">
+              <h3>{c.t}</h3>
+              <p>{c.d}</p>
+            </div>
+          </div>
         ))}
       </div>
     </div>
   </section>
 
-  <section style="padding:4rem 0">
-    <div class="container" style="text-align:center">
-      <h2 class="about-h">与 LubandArt 合作</h2>
-      <p class="page-sub" style="margin:0 auto 1.8rem">提供选型建议、打样试产与批量供货的一站式服务。</p>
-      <a class="btn" href="/contact">联系我们 →</a>
+  <!-- ===== 5. QUALITY CONTROL — copy left, photo right ===== -->
+  <section class="mod mod-gray">
+    <div class="container split alt">
+      <div class="split-body">
+        <div class="eyebrow">Quality Control</div>
+        <h2 class="split-h">Consistency You Can <span class="accent">Verify</span></h2>
+        <p class="split-p">
+          Every batch is inspected against the tape construction and your project requirements.
+        </p>
+        <div class="qc-grid">
+          {qc.items.map((q) => (
+            <div class="qc-item">
+              <h3>{q.t}</h3>
+              <p>{q.d}</p>
+            </div>
+          ))}
+        </div>
+        <p class="qc-note">
+          <strong>Note:</strong> Methods and available reports depend on the product construction and
+          project. Supporting documents may include TDS, SDS, REACH or SGS / third-party test reports
+          where available.
+        </p>
+      </div>
+      <div class="split-img"></div>
+    </div>
+  </section>
+
+  <!-- ===== 6. WHO WE SERVE ===== -->
+  <section class="mod mod-light">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Who We Serve</div>
+        <h2>Supporting Industrial Customers <span class="accent">Worldwide</span></h2>
+        <p>
+          Supplied to customers in more than 30 countries — with samples, customized specifications,
+          repeat production and export packaging.
+        </p>
+      </div>
+      <div class="img-card-grid four">
+        {customers.map((c) => (
+          <div class="img-card">
+            <div class="img-card-img"></div>
+            <div class="img-card-body">
+              <h3>{c.t}</h3>
+              <p>{c.d}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 7. WHY US + CTA — plain list, closes light ===== -->
+  <section class="mod mod-gray why-sec">
+    <div class="container">
+      <div class="why-head">
+        <div class="eyebrow">Why LubandArt</div>
+        <h2 class="why-h">Why Work With <span class="accent">LubandArt</span></h2>
+      </div>
+      <div class="why-grid">
+        {whyUs.map((w, i) => (
+          <div class="why-item">
+            <div class="why-n">{String(i + 1).padStart(2, '0')}</div>
+            <div class="why-txt">
+              <h3>{w.t}</h3>
+              <p>{w.d}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="mod mod-light">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="eyebrow">Start a Project</div>
+        <h2>Let's Engineer Your <span class="accent">Bonding</span> Solution</h2>
+        <p>
+          Tell us your substrate, application and production requirements. We will recommend a
+          construction and supply samples for validation.
+        </p>
+        <a class="btn" href="/contact">Discuss Your Application</a>
+      </div>
     </div>
   </section>
 </Layout>
 
 <style>
-  .page-title { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: .5rem 0 .6rem; }
-  .page-sub { color: var(--fg-soft); max-width: 640px; }
-  .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; }
-  .about-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3rem; align-items: center; }
-  .about-h { font-size: 1.6rem; margin: 0 0 1rem; }
-  .about-p { color: var(--fg-soft); line-height: 1.8; margin: 0 0 1rem; }
-  .stats-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .stat-card { text-align: center; }
-  .stat-card .num { font-size: 2rem; font-weight: 800; color: var(--accent); }
-  .stat-card .lbl { color: var(--fg-soft); font-size: .85rem; }
-  .cap-card .ico { width: 48px; height: 48px; border-radius: 12px; background: rgba(246,130,31,.12); color: var(--accent); display: grid; place-items: center; font-size: 1.5rem; margin-bottom: 1rem; }
-  @media (max-width: 760px) { .about-grid { grid-template-columns: 1fr; } }
+  /* ---- 1. Hero ---- */
+  .about-hero { padding: 4.5rem 0 3.5rem; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 3rem; align-items: center; }
+  .eyebrow { color: var(--accent); font-family: var(--font-head); font-weight: 600; letter-spacing: 3px; font-size: .82rem; text-transform: uppercase; margin-bottom: .8rem; }
+
+  /* ---- Image cards ---- */
+  .img-card-grid { display: grid; gap: 1.5rem; }
+  .img-card-grid.three { grid-template-columns: repeat(3, 1fr); }
+  .img-card-grid.four { grid-template-columns: repeat(4, 1fr); }
+  .img-card {
+    display: flex; flex-direction: column; color: inherit;
+    background: #fff; border: 1px solid var(--line); border-radius: 4px; overflow: hidden;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .img-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .img-card-img { aspect-ratio: 16 / 10; overflow: hidden; background: radial-gradient(120% 120% at 25% 15%, rgba(200,84,43,.22), transparent 55%), linear-gradient(135deg,#241f1a,#33291f 55%,#433423); }
+  .img-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .45s; }
+  .img-card:hover .img-card-img img { transform: scale(1.07); }
+  .img-card-body { padding: 1.25rem 1.35rem 1.45rem; display: flex; flex-direction: column; flex: 1; }
+  .img-card-body h3 { font-size: 1.02rem; margin: 0 0 .5rem; color: var(--fg); }
+  .img-card-body p { color: var(--fg-soft); font-size: .87rem; line-height: 1.6; margin: 0; }
+
+  /* ---- Split blocks (alternating direction) ---- */
+  .split { display: grid; grid-template-columns: 1fr 1.05fr; gap: 3.2rem; align-items: center; }
+  .split.alt { grid-template-columns: 1.05fr 1fr; }
+  .split-img { border-radius: 4px; overflow: hidden; border: 1px solid var(--line); aspect-ratio: 4 / 3; background: radial-gradient(120% 120% at 25% 15%, rgba(200,84,43,.26), transparent 55%), linear-gradient(135deg,#221d19,#33291f 55%,#433423); }
+  .split-img img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; transition: transform .5s; }
+  .split-img:hover img { transform: scale(1.04); }
+  .split.alt .split-img { order: 2; }
+  .split.alt .split-body { order: 1; }
+  .split-h { font-size: clamp(1.5rem, 3vw, 2.2rem); margin: 0 0 .9rem; line-height: 1.2; }
+  .split-p { color: var(--fg-soft); font-size: .97rem; line-height: 1.8; margin: 0 0 1.3rem; }
+  .split-cta { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 1.5rem; }
+
+  .tick-list { list-style: none; padding: 0; margin: 0; display: grid; gap: .55rem; }
+  .tick-list li { color: var(--fg); font-size: .92rem; display: flex; align-items: center; gap: .6rem; }
+  .tick { color: var(--accent); font-weight: 700; }
+
+  /* ---- Quality control ---- */
+  .qc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.4rem; }
+  .qc-item h3 { font-size: .96rem; margin: 0 0 .3rem; color: var(--fg); }
+  .qc-item p { color: var(--fg-soft); font-size: .85rem; line-height: 1.6; margin: 0; }
+  .qc-note {
+    margin-top: 1.4rem; padding: .85rem 1.05rem;
+    background: #fff; border-left: 3px solid var(--accent);
+    color: var(--fg-soft); font-size: .83rem; line-height: 1.65;
+  }
+  .qc-note strong { color: var(--fg); }
+
+  /* ---- Stats band ---- */
+  .stats-band { position: relative; padding: 4rem 0; overflow: hidden; }
+  .stats-inner { position: relative; z-index: 1; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; text-align: center; }
+  .stat-n { font-family: var(--font-head); font-size: clamp(2rem, 4.4vw, 3rem); font-weight: 800; color: var(--accent); line-height: 1; }
+  .stat-l { color: var(--fg-soft); margin-top: .6rem; font-size: .88rem; letter-spacing: .3px; }
+
+  /* ---- Why us (plain list) ---- */
+  .why-sec { padding: 4.5rem 0; }
+  .why-head { text-align: center; margin-bottom: 2.4rem; }
+  .why-h { font-size: clamp(1.5rem, 3vw, 2.2rem); margin: 0; }
+  .why-h .accent { color: var(--accent); }
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+  .why-item {
+    display: grid;
+    grid-template-columns: 54px 1fr;
+    gap: 1.1rem;
+    align-items: start;
+    background: #fff; border: 1px solid var(--line); border-radius: 4px;
+    padding: 1.15rem 1.35rem 1.25rem;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .why-item:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .why-n { font-family: var(--font-head); font-size: 1.5rem; font-weight: 800; color: var(--accent); line-height: 1; padding-top: .1rem; }
+  .why-txt h3 { font-size: .98rem; margin: 0 0 .3rem; color: var(--fg); letter-spacing: .3px; }
+  .why-txt p { color: var(--fg-soft); font-size: .86rem; line-height: 1.6; margin: 0; }
+
+  /* ---- CTA ---- */
+  .tapecta { padding: 4.5rem 0; }
+  .cta-inner { text-align: center; max-width: 680px; margin: 0 auto; }
+  .cta-inner .eyebrow { display: inline-block; }
+  .cta-inner h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); margin: .6rem 0 .8rem; }
+  .cta-inner p { color: var(--fg-soft); margin: 0 auto 1.8rem; max-width: 560px; }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 1080px) {
+    .img-card-grid.four { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .hero-grid, .split, .split.alt { grid-template-columns: 1fr; gap: 2rem; }
+    .split.alt .split-img, .split-img { order: 1; }
+    .split.alt .split-body, .split-body { order: 2; }
+    .img-card-grid.three { grid-template-columns: repeat(2, 1fr); }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .why-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 620px) {
+    .img-card-grid.three, .img-card-grid.four, .qc-grid { grid-template-columns: 1fr; }
+  }
 </style>

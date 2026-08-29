@@ -24,6 +24,14 @@ DEEPSEEK_MODEL=deepseek-v4-flash
 ```
 ⚠️ `.env` 已被 `.gitignore` 忽略，**切勿提交**。
 
+## 联系表单线索落库（CRM）
+
+`/api/contact` 接收报价表单，并把线索 POST 到 `CRM_WEBHOOK` 指向的中央接收器（即 `workbench` 里的 `python -m core.api_server`，默认 `http://localhost:8000/webhook/lead`，本机若端口被占用用 `PORT=8077`）。
+
+- **本地开发**：先启动中央接收器，再把 `.env` 的 `CRM_WEBHOOK` 设为 `http://localhost:8077/webhook/lead`。
+- **生产环境**：把 `CRM_WEBHOOK` 改为控制面部署后的真实 Webhook URL（在 Cloudflare Pages 的 Environment variables 里设置，运行时变量）。
+- 未配置 `CRM_WEBHOOK` 时表单仍返回"已收到"（演示降级），但线索不会写入 CRM，上线前务必配置。
+
 ## 部署到 Cloudflare Pages（只需一次）
 1. 注册免费账号：https://dash.cloudflare.com/sign-up
 2. 进入 **Workers & Pages → 创建 → Pages → 连接到 Git**

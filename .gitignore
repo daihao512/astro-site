@@ -9,6 +9,8 @@ node_modules/
 # editor / os
 .vscode/
 .DS_Store
+__pycache__/
+*.pyc
 
 # environment / secrets (never commit real keys)
 .env

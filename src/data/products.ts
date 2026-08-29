@@ -180,6 +180,78 @@ export const products: Product[] = [
     applications: [" laminating 复合", "铭牌固定", "泡棉复合", "通用轻粘接"],
     base: "棉纸",
   },
+  {
+    slug: "low-odor",
+    name: "低气味双面胶带",
+    en: "Low-Odor Double Sided Tape",
+    img: "/products/low-odor.jpg",
+    tagline: "低 VOC · 车内环保",
+    intro:
+      "采用环保型低气味压敏胶配方，VOCs 释放低、几乎无刺激气味，满足 OEM 车内空气质量标准。适合汽车内饰、驾驶舱及家居等密闭空间中对皮革、织物、塑料的贴合固定。",
+    features: [
+      "低 VOC、低气味环保配方",
+      "满足车内空气质量要求",
+      "对皮革、织物、塑料服帖",
+      "适合密闭空间长期使用",
+    ],
+    specs: [
+      { label: "基材", value: "棉纸 / PET (可选)" },
+      { label: "厚度范围", value: "0.05 – 0.20 mm (可定制)" },
+      { label: "耐温", value: "-20 ~ 100 ℃" },
+      { label: "胶系", value: "环保型丙烯酸" },
+      { label: "气味等级", value: "≤ 3.0 (VDA 270)" },
+    ],
+    applications: ["汽车内饰件固定", "驾驶舱贴合", "皮革 / 织物贴合", "家居环保装配"],
+    base: "低气味亚克力",
+  },
+  {
+    slug: "flame-retardant",
+    name: "阻燃双面胶带",
+    en: "Flame Retardant Double Sided Tape",
+    img: "/products/flame-retardant.jpg",
+    tagline: "UL94 V-0 · 自熄阻燃",
+    intro:
+      "添加阻燃剂的整体配方使胶带达到 UL94 V-0 阻燃等级，离火自熄、不滴落、低烟低毒。专为电子电气、电池包、动力电池模组等对防火有严苛要求的场景设计。",
+    features: [
+      "通过 UL94 V-0 阻燃等级",
+      "离火自熄，低烟低毒",
+      "对金属、塑料粘接力稳定",
+      "适合电池包与电气装配",
+    ],
+    specs: [
+      { label: "基材", value: "PET / 阻燃棉纸" },
+      { label: "厚度范围", value: "0.05 – 0.30 mm" },
+      { label: "耐温", value: "-20 ~ 120 ℃" },
+      { label: "胶系", value: "阻燃丙烯酸" },
+      { label: "阻燃等级", value: "UL94 V-0" },
+    ],
+    applications: ["电池包固定", "电子电气装配", "PCB 临时固定", "动力电池模组"],
+    base: "阻燃",
+  },
+  {
+    slug: "substrate-free",
+    name: "无基材双面胶带",
+    en: "Substrate-Free Double Sided Tape",
+    img: "/products/substrate-free.jpg",
+    tagline: "纯胶层 · 极薄透明",
+    intro:
+      "不含基材（无载体）的纯胶层双面带结构，厚度可低至 30μm，透明度高、服帖性强，专为屏幕超薄贴合、铭牌极薄固定与精密模切设计。",
+    features: [
+      "纯胶层结构，无基材",
+      "极薄，最低 30μm",
+      "高透明度，视觉无痕",
+      "适合超薄模切与精密贴合",
+    ],
+    specs: [
+      { label: "基材", value: "无基材（纯胶）" },
+      { label: "厚度范围", value: "0.03 – 0.10 mm" },
+      { label: "耐温", value: "-20 ~ 100 ℃" },
+      { label: "胶系", value: "丙烯酸压敏胶" },
+      { label: "颜色", value: "透明" },
+    ],
+    applications: ["屏幕超薄贴合", "铭牌极薄固定", "精密模切", "光学组件贴合"],
+    base: "无基材",
+  },
 ];
 
 export function getProduct(slug: string) {

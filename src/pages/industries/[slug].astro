@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import SubHero from '../../components/SubHero.astro';
 import { industries } from '../../data/industries';
 import { products } from '../../data/products';
 
@@ -19,78 +20,464 @@ const recommendMap: Record<string, string[]> = {
   signage: ["acrylic", "pet", "tissue"],
   electronics: ["pet", "acrylic", "tissue"],
 };
-const recommended = (recommendMap[industry.slug] ?? [])
+const recSlugs =
+  recommendMap[industry.slug] ?? industry.recommended.map((r) => r.slug);
+const recommended = recSlugs
   .map((s) => products.find((p) => p.slug === s))
   .filter(Boolean);
+
+const solutions = industry.solutionsEn ?? industry.solutions;
+const fallbackImg = "/products/acrylic.jpg";
+const appCount = industry.appBlocks?.length ?? industry.applications.length;
+const recCount = recommended.length;
+/** "01 · HVAC", "02 · Seats" ...  (falls back to short segment of title) */
+const navItems = (industry.appBlocks ?? []).map((a, i) => {
+  const code = String(i + 1).padStart(2, "0");
+  const label = a.short
+    ?? a.title.replace(/\s*\(.*?\)/g, "").split(/[&,/]/)[0].trim().split(" ").slice(-2).join(" ");
+  return { id: `app-${i + 1}`, code, label };
+});
 ---
 
-<Layout title={`${industry.name}行业方案 — LubandArt Tape`} description={industry.desc}>
-  <div class="container" style="padding-top:1.5rem">
-    <nav class="crumbs"><a href="/">首页</a> / <a href="/industries">行业方案</a> / <span>{industry.name}</span></nav>
-  </div>
+<Layout title={`${industry.en} Solutions — LubandArt Tape`} description={industry.descEn ?? industry.desc}
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Applications', href: '/industries' }, { name: industry.en, href: `/industries/${industry.slug}` }]}
+>
+  <!-- ====== HERO ====== -->
+  <SubHero
+    eyebrow={`${industry.icon} ${industry.en} Industry`}
+    title={`${industry.en} Tape Solutions`}
+    sub={industry.descEn ?? industry.desc}
+    breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Applications', href: '/industries' }, { name: industry.en, href: `/industries/${industry.slug}` }]}
+    ctas={[{ label: 'Get a Custom Quote', href: '/contact' }]}
+  />
 
-  <section style="background:var(--bg-soft); padding:2rem 0">
-    <div class="container ind-head">
-      <div class="ind-ico">{industry.icon}</div>
-      <div>
-        <div class="eyebrow">{industry.en}</div>
-        <h1 class="ind-title">{industry.name}行业解决方案</h1>
-        <p class="ind-desc">{industry.desc}</p>
+  <!-- ====== APPLICATION QUICK NAV (sticky, horizontally scrollable) ====== -->
+  {navItems.length > 0 && (
+    <nav class="app-nav" aria-label="Applications">
+      <div class="container app-nav-inner">
+        <span class="app-nav-label">QUICK JUMP</span>
+        <div class="app-nav-scroll">
+          {navItems.map((n) => (
+            <a href={`#${n.id}`} class="app-nav-chip">
+              <span class="code">{n.code}</span>
+              <span class="label">{n.label}</span>
+            </a>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
+    </nav>
+  )}
 
-  <section style="padding:4rem 0">
+  <!-- ====== OUR SOLUTIONS — WHITE ====== -->
+  <section class="mod mod-light">
     <div class="container">
-      <div class="section-head" style="text-align:left; margin:0 0 2rem">
-        <div class="eyebrow">Solutions</div>
-        <h2>我们的方案</h2>
+      <div class="section-head" style="text-align:left; margin:0 0 2.4rem">
+        <div class="eyebrow">SOLUTIONS</div>
+        <h2>Our <span class="accent">Solutions</span></h2>
       </div>
-      <div class="grid sols">
-        {industry.solutions.map((s, i) => (
-          <div class="card sol-card"><div class="dot">{i + 1}</div><p>{s}</p></div>
+      <div class="sol-grid">
+        {solutions.map((s, i) => (
+          <div class="sol-item reveal">
+            <span class="sol-num">{String(i + 1).padStart(2, "0")}</span>
+            <p>{s}</p>
+          </div>
         ))}
       </div>
     </div>
   </section>
 
-  <section style="background:var(--bg-soft); padding:4rem 0">
-    <div class="container">
-      <div class="section-head" style="text-align:left; margin:0 0 2rem">
-        <div class="eyebrow">Recommended</div>
-        <h2>推荐产品</h2>
+  <!-- ====== APPLICATIONS — image + text (图文结合) — GRAY ====== -->
+  {industry.appBlocks && industry.appBlocks.length > 0 && (
+    <section class="mod mod-gray" id="applications">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">APPLICATIONS</div>
+          <h2>Tape Applications in <span class="accent">{industry.en}</span></h2>
+          <p>Proven bonding solutions mapped to real production steps — each paired with the tape family we specify most.</p>
+        </div>
+
+        <div class="app-zig">
+          {industry.appBlocks.map((a, i) => {
+            const firstSlug = a.products[0];
+            const pimg = (products.find((x) => x.slug === firstSlug)?.img) ?? fallbackImg;
+            const code = String(i + 1).padStart(2, "0");
+            return (
+              <div class={`zig-row ${i % 2 === 1 ? "reverse" : ""} reveal`} id={`app-${i + 1}`}>
+                <div class="zig-img">
+                  <span class="zig-badge" aria-hidden="true">
+                    <span class="badge-no">0{i + 1}</span>
+                    <span class="badge-lbl">Application</span>
+                  </span>
+                  <img src={pimg} alt={a.title} loading="lazy" />
+                </div>
+                <div class="zig-text">
+                  <span class="zig-tag">{industry.en} / Application {code}</span>
+                  <h3>{a.title}</h3>
+                  <p>{a.desc}</p>
+                  {a.tags && a.tags.length > 0 && (
+                    <div class="app-tags">
+                      {a.tags.map((t) => <span class="tag">{t}</span>)}
+                    </div>
+                  )}
+                  <div class="app-prods">
+                    {a.products.map((s) => {
+                      const p = products.find((x) => x.slug === s);
+                      return p ? <a class="chip" href={`/products/${p.slug}`}>{p.en}</a> : null;
+                    })}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
-      <div class="grid">
+    </section>
+  )}
+
+  <!-- ====== STATS BAND — WHITE (4 elevated cards) ====== -->
+  <section class="mod mod-light stats-band">
+    <div class="container">
+      <div class="section-head" style="margin:0 0 2.6rem; text-align:center">
+        <div class="eyebrow">AT A GLANCE</div>
+        <h2>Built for {industry.en.toLowerCase()}, <span class="accent">certified for the world</span></h2>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card reveal">
+          <div class="stat-ico stat-ico-1" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </div>
+          <div class="stat-num">{appCount}<span class="stat-plus">+</span></div>
+          <div class="stat-lbl">Key Applications Covered</div>
+          <div class="stat-desc">From HVAC to interior trim — proven bonding solutions for every major production stage.</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-ico stat-ico-2" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7L12 12l8.7-5"/><path d="M12 22V12"/></svg>
+          </div>
+          <div class="stat-num">{recCount}</div>
+          <div class="stat-lbl">Recommended Tape Families</div>
+          <div class="stat-desc">Each application paired with the specific tape family our engineers specify most.</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-ico stat-ico-3" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stat-num">≤&nbsp;24<span class="stat-unit">h</span></div>
+          <div class="stat-lbl">Engineering Response</div>
+          <div class="stat-desc">Submit specs today — receive tailored samples and pricing within one business day.</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-ico stat-ico-4" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg>
+          </div>
+          <div class="stat-num">ISO&nbsp;9001</div>
+          <div class="stat-lbl">Quality Certified</div>
+          <div class="stat-desc">Documented traceability, RoHS &amp; REACH compliance — verified by SGS.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== RECOMMENDED PRODUCTS — GRAY (alternating with stats) ====== -->
+  <section class="mod mod-gray">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">RECOMMENDED</div>
+        <h2>Recommended <span class="accent">Products</span></h2>
+        <p>Tapes our engineers most often specify for {industry.en.toLowerCase()} applications.</p>
+      </div>
+      <div class="rec-grid">
         {recommended.map((r) => (
-          <a class="card rec-card" href={`/products/${r!.slug}`}>
-            <img src={r!.img} alt={r!.en} class="rec-img" loading="lazy" />
-            <h3>{r!.name}</h3>
-            <p class="en">{r!.en}</p>
-            <p class="tagline">{r!.tagline}</p>
+          <a class="rec-card reveal" href={`/products/${r!.slug}`}>
+            <div class="rec-img"><img src={r!.img} alt={r!.en} loading="lazy" /></div>
+            <div class="rec-body">
+              <h3>{r!.en}</h3>
+              <span class="rec-more">View Product →</span>
+            </div>
           </a>
         ))}
       </div>
-      <p style="margin-top:2rem"><a class="btn" href="/contact">为该行业定制方案 →</a></p>
+    </div>
+  </section>
+
+  <!-- ====== CTA BAND ====== -->
+  <section class="ind-cta-band">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="cta-text">
+          <h2>Need a custom solution for {industry.en}?</h2>
+          <p>Our engineering team responds within 24 hours with tailored specifications and pricing.</p>
+        </div>
+        <a class="btn btn-ghost" href="/contact">Get a Custom Solution →</a>
+      </div>
     </div>
   </section>
 </Layout>
 
+<script>
+  // Reveal-on-scroll (progressive enhancement: only animates when JS is on)
+  document.documentElement.classList.add("js");
+  const items = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && items.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-visible");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    items.forEach((el) => io.observe(el));
+  } else {
+    items.forEach((el) => el.classList.add("is-visible"));
+  }
+</script>
+
 <style>
-  .crumbs { font-size: .85rem; color: var(--fg-soft); }
-  .crumbs a { color: var(--fg-soft); } .crumbs a:hover { color: var(--accent); }
-  .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; }
-  .ind-head { display: grid; grid-template-columns: auto 1fr; gap: 1.8rem; align-items: center; }
-  .ind-ico { width: 84px; height: 84px; border-radius: 20px; background: rgba(246,130,31,.12); display: grid; place-items: center; font-size: 2.6rem; }
-  .ind-title { font-size: clamp(1.8rem, 3.5vw, 2.6rem); margin: .4rem 0 .5rem; }
-  .ind-desc { color: var(--fg-soft); line-height: 1.7; max-width: 720px; }
-  .sols { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-  .sol-card { display: flex; gap: 1rem; align-items: flex-start; }
-  .sol-card .dot { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 9px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; }
-  .sol-card p { margin: 0; }
-  .rec-card { color: inherit; }
-  .rec-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent); }
-  .rec-img { width: 100%; height: 150px; object-fit: cover; border-radius: 12px; margin-bottom: .8rem; }
-  .rec-card .en { color: var(--accent); font-size: .78rem; font-weight: 600; margin: -.2rem 0 .3rem; }
-  .rec-card .tagline { color: var(--fg-soft); font-size: .88rem; margin: 0; }
-  @media (max-width: 600px) { .ind-head { grid-template-columns: 1fr; text-align: center; } .ind-ico { margin: 0 auto; } }
+  /* ============================================================
+     HERO (self-contained industrial scene)
+     ============================================================ */
+  .ind-hero {
+    position: relative; overflow: hidden; background: #0e0e10;
+  }
+  .ind-hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(900px 460px at 85% -10%, rgba(200,84,43,.26), transparent 60%),
+      radial-gradient(620px 380px at 5% 115%, rgba(200,84,43,.10), transparent 60%),
+      linear-gradient(135deg, #141316 0%, #1b1816 55%, #0e0e10 100%);
+  }
+  .ind-hero-bg::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+    background-size: 46px 46px;
+    -webkit-mask-image: radial-gradient(circle at 50% 30%, #000 0%, transparent 80%);
+    mask-image: radial-gradient(circle at 50% 30%, #000 0%, transparent 80%);
+  }
+  .ind-hero-bg::after {
+    content: ""; position: absolute; right: -180px; top: 50%; transform: translateY(-50%);
+    width: 520px; height: 520px; border-radius: 50%;
+    border: 1px solid rgba(200,84,43,.20);
+    box-shadow: 0 0 0 56px rgba(200,84,43,.05), inset 0 0 0 56px rgba(200,84,43,.04), 0 0 0 150px rgba(255,255,255,.012);
+    opacity: .8;
+  }
+  .ind-hero-grid {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: 1.6fr .95fr; gap: 3rem; align-items: center;
+    padding: 4.8rem 1.5rem 3.4rem; max-width: var(--maxw);
+  }
+  .crumbs { font-size: .82rem; color: #9a9a9a; margin-bottom: 1.5rem; letter-spacing: .5px; }
+  .crumbs a { color: #b8b8b8; }
+  .crumbs a:hover { color: var(--accent); }
+  .crumbs span { margin: 0 .5rem; opacity: .5; }
+  .crumbs .here { color: #fff; }
+  .ind-eyebrow { display: inline-block; color: var(--accent); font-family: var(--font-head); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; font-size: .82rem; margin-bottom: 1rem; }
+  .ind-title { font-family: var(--font-head); text-transform: uppercase; font-size: clamp(2.1rem, 5vw, 3.8rem); font-weight: 700; line-height: 1.08; color: #fff; margin: 0 0 1.2rem; letter-spacing: 1px; }
+  .ind-title .hl { color: var(--accent); }
+  .ind-lead { color: #d2d2d2; font-size: 1.08rem; line-height: 1.7; max-width: 620px; margin: 0 0 2rem; }
+  .ind-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-ghost-light { background: transparent; color: #fff; border: 2px solid #fff; }
+  .btn-ghost-light:hover { background: #fff; color: var(--bg-3); }
+
+  /* hero side spec panel */
+  .ind-spec { border: 1px solid rgba(255,255,255,.14); border-left: 3px solid var(--accent); background: rgba(20,20,22,.55); padding: 1.4rem 1.5rem; color: #fff; }
+  .spec-head { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-head); letter-spacing: 2px; font-size: .76rem; color: #b8b8b8; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,.12); padding-bottom: .7rem; }
+  .spec-head .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  .spec-list { list-style: none; margin: 0; padding: 0; }
+  .spec-list li { display: flex; justify-content: space-between; align-items: center; padding: .7rem 0; border-bottom: 1px solid rgba(255,255,255,.08); font-size: .9rem; color: #d2d2d2; }
+  .spec-list b { font-family: var(--font-head); color: var(--accent); letter-spacing: 1px; font-size: 1rem; }
+  .spec-foot { margin-top: .9rem; font-family: var(--font-head); letter-spacing: 1.5px; font-size: .7rem; color: #9a9a9a; text-transform: uppercase; }
+
+  /* ============================================================
+     APPLICATION QUICK NAV — sticky, horizontally scrollable chips
+     (was: cramped, all on one wrapped row)
+     ============================================================ */
+  .app-nav { background: var(--bg-1); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); position: sticky; top: 70px; z-index: 40; }
+  .app-nav-inner { display: flex; align-items: center; gap: 1.2rem; padding: .9rem 1.5rem; }
+  .app-nav-label {
+    flex: 0 0 auto;
+    font-family: var(--font-head); font-size: .7rem; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--fg-soft); padding-right: 1.2rem; border-right: 1px solid var(--line);
+  }
+  .app-nav-scroll {
+    flex: 1 1 auto; min-width: 0;
+    display: flex; gap: .55rem; overflow-x: auto; overflow-y: hidden;
+    scrollbar-width: thin; -webkit-overflow-scrolling: touch;
+    padding: 4px 4px 4px 0;  /* breathing room for hover lift */
+  }
+  .app-nav-scroll::-webkit-scrollbar { height: 4px; }
+  .app-nav-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 4px; }
+  .app-nav-chip {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center; gap: .55rem;
+    font-size: .82rem; color: var(--fg-soft); text-decoration: none;
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: .5rem 1rem; transition: all .2s;
+    background: #fff;
+  }
+  .app-nav-chip .code {
+    font-family: var(--font-head); font-weight: 700; font-size: .72rem;
+    background: var(--accent); color: #fff;
+    padding: .15rem .45rem; border-radius: 999px; letter-spacing: .5px;
+  }
+  .app-nav-chip:hover {
+    color: #fff; border-color: var(--accent);
+    background: rgba(200,84,43,.16); transform: translateY(-2px);
+  }
+
+  /* ============================================================
+     SOLUTIONS (white)
+     ============================================================ */
+  .sol-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .sol-item {
+    display: flex; gap: 1.1rem; align-items: flex-start;
+    background: #fff; border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    border-radius: var(--radius-lg); padding: 1.6rem 1.7rem;
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+  }
+  .sol-item:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: var(--accent); }
+  .sol-num { flex: 0 0 auto; font-family: var(--font-head); font-weight: 700; color: var(--accent); font-size: 1.5rem; line-height: 1; letter-spacing: 1px; }
+  .sol-item p { margin: 0; color: var(--fg-soft); font-size: .98rem; line-height: 1.6; }
+
+  /* ============================================================
+     APPLICATIONS — 图文结合 zigzag (gray band)
+     ============================================================ */
+  .app-zig { display: flex; flex-direction: column; gap: 5rem; }
+  .zig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; scroll-margin-top: 140px; }
+  .zig-row.reverse .zig-img { order: 2; }
+  .zig-row.reverse .zig-text { order: 1; }
+
+  .zig-img { position: relative; aspect-ratio: 5 / 4; border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 18px 40px -16px rgba(0,0,0,.28); background: #d8d8d4; }
+  .zig-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+  .zig-img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,0,0,.18), transparent 55%); pointer-events: none; }
+  .zig-row:hover .zig-img img { transform: scale(1.05); }
+
+  /* ============ 改 #3：APPLICATION 0X 大号倾斜徽章 ============ */
+  .zig-badge {
+    position: absolute; top: 22px; left: 22px; z-index: 3;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 14px 18px 12px; min-width: 72px;
+    background: linear-gradient(135deg, var(--accent) 0%, #d65c34 100%);
+    color: #fff; border-radius: 4px;
+    box-shadow: 0 10px 24px -6px rgba(200,84,43,.55), 0 0 0 3px rgba(255,255,255,.92);
+    transform: rotate(-3deg);
+    transform-origin: center;
+  }
+  .zig-badge .badge-no {
+    font-family: var(--font-head); font-weight: 700; font-size: 1.7rem; line-height: 1;
+    letter-spacing: .5px;
+  }
+  .zig-badge .badge-lbl {
+    font-family: var(--font-head); font-size: .58rem; letter-spacing: 1.6px;
+    text-transform: uppercase; margin-top: 5px; opacity: .92;
+  }
+
+  .zig-text .zig-tag {
+    display: inline-block; font-family: var(--font-head); font-size: .7rem;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--accent);
+    background: rgba(200,84,43,.08); border: 1px solid rgba(200,84,43,.25);
+    border-radius: 999px; padding: .3rem .85rem; margin-bottom: 1.1rem;
+  }
+  .zig-text h3 { font-size: 1.75rem; margin: 0 0 .9rem; color: var(--fg); line-height: 1.25; letter-spacing: -.2px; }
+  .zig-text p { color: var(--fg-soft); font-size: 1rem; line-height: 1.75; margin: 0 0 1.2rem; }
+  .app-tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.2rem; }
+  .app-tags .tag { font-family: var(--font-head); font-size: .7rem; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); background: rgba(200,84,43,.10); border: 1px solid rgba(200,84,43,.3); border-radius: 999px; padding: .28rem .75rem; }
+  .app-prods { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .chip { font-size: .78rem; font-weight: 600; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: .35rem .8rem; transition: background .15s, color .15s; }
+  .chip:hover { background: var(--accent); color: #fff; }
+
+  /* ============================================================
+     STATS BAND — white background, 4 elevated stat cards
+     (was: dark band, plain text — too plain for an industrial site)
+     ============================================================ */
+  .stats-band { background: #fff; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.4rem; }
+  .stat-card {
+    position: relative; overflow: hidden;
+    background: #fff; border: 1px solid var(--line); border-top: 3px solid var(--accent);
+    border-radius: var(--radius-lg); padding: 2rem 1.7rem 2.1rem;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .stat-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+  .stat-card::before {
+    content: ""; position: absolute; right: -40px; bottom: -40px;
+    width: 130px; height: 130px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,84,43,.08), transparent 70%);
+    pointer-events: none;
+  }
+  .stat-ico {
+    width: 44px; height: 44px; display: grid; place-items: center; margin-bottom: 1.1rem;
+    background: rgba(200,84,43,.10); color: var(--accent);
+    border-radius: 10px; border: 1px solid rgba(200,84,43,.22);
+  }
+  .stat-ico svg { width: 22px; height: 22px; }
+  .stat-num {
+    font-family: var(--font-head); font-weight: 700; font-size: 2.6rem; line-height: 1;
+    color: var(--fg); letter-spacing: 1px; margin-bottom: .4rem;
+  }
+  .stat-num .stat-plus, .stat-num .stat-unit {
+    color: var(--accent); font-size: 1.6rem; font-weight: 600;
+  }
+  .stat-num .stat-unit { font-size: 1.1rem; margin-left: 2px; }
+  .stat-lbl {
+    font-family: var(--font-head); font-size: .82rem; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--fg);
+    margin-bottom: .7rem;
+  }
+  .stat-desc { color: var(--fg-soft); font-size: .9rem; line-height: 1.6; margin: 0; }
+
+  /* ============================================================
+     RECOMMENDED PRODUCTS (gray band — alternates with white stats)
+     ============================================================ */
+  .rec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.8rem; }
+  .rec-card { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius-lg); overflow: hidden; transition: transform .25s, box-shadow .25s, border-color .25s; color: inherit; }
+  .rec-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+  .rec-img { aspect-ratio: 4 / 3; overflow: hidden; background: #d8d8d4; }
+  .rec-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+  .rec-card:hover .rec-img img { transform: scale(1.06); }
+  .rec-body { padding: 1.4rem 1.6rem 1.6rem; display: flex; flex-direction: column; gap: .5rem; }
+  .rec-body h3 { font-size: 1.2rem; margin: 0; color: var(--fg); }
+  .rec-more { font-family: var(--font-head); font-weight: 700; font-size: .78rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: .15rem; align-self: flex-start; }
+
+  /* ============================================================
+     CTA BAND (dark)
+     ============================================================ */
+  .ind-cta-band { background: var(--bg-2); border-top: 3px solid var(--accent); padding: 3.4rem 0; }
+  .cta-inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+  .cta-text h2 { color: var(--fg); font-size: clamp(1.5rem, 3vw, 2.1rem); margin: 0 0 .5rem; }
+  .cta-text p { color: var(--fg-soft); font-size: 1rem; margin: 0; line-height: 1.6; max-width: 560px; }
+
+  /* ============================================================
+     REVEAL ANIMATION
+     ============================================================ */
+  .js .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+  .js .reveal.is-visible { opacity: 1; transform: none; }
+
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+  @media (max-width: 980px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 880px) {
+    .ind-hero-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 760px) {
+    .ind-hero-grid { padding: 3.4rem 1.5rem 2.6rem; }
+    .app-nav-inner { gap: .8rem; padding: .8rem 1rem; }
+    .app-nav-label { font-size: .6rem; padding-right: .8rem; }
+    .zig-row, .zig-row.reverse { grid-template-columns: 1fr; gap: 1.4rem; }
+    .zig-row.reverse .zig-img, .zig-row.reverse .zig-text { order: initial; }
+    .zig-badge { top: 16px; left: 16px; padding: 11px 14px 9px; min-width: 64px; }
+    .zig-badge .badge-no { font-size: 1.4rem; }
+    .cta-inner { flex-direction: column; align-items: flex-start; }
+  }
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+  }
 </style>

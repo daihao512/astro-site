@@ -8,126 +8,976 @@ export function getStaticPaths() {
 
 const { slug } = Astro.params;
 const product = getProduct(slug!);
-if (!product) return Astro.redirect("/products");
+if (!product) return Astro.redirect('/products');
 
 const related = products.filter((p) => p.slug !== product.slug).slice(0, 4);
+
+// --- English label/value maps so the page renders in English while keeping products.ts as the single source of truth ---
+const specLabelEn: Record<string, string> = {
+  '基材': 'Base Material',
+  '厚度范围': 'Thickness Range',
+  '耐温': 'Temperature Range',
+  '胶系': 'Adhesive System',
+  '离型': 'Release Liner',
+  '颜色': 'Color',
+  '可选': 'Options',
+  '气味等级': 'Odor Grade',
+  '阻燃等级': 'Flame Retardant Rating',
+};
+const specValueEn: Record<string, string> = {
+  '丙烯酸胶 / PET 离型膜': 'Acrylic adhesive / PET release film',
+  '0.05 – 3.0 mm (可定制)': '0.05 – 3.0 mm (customizable)',
+  '-40 ~ 180 ℃': '-40 ~ 180 ℃',
+  '丙烯酸压敏胶': 'Acrylic pressure-sensitive adhesive',
+  '双面离型纸 / 离型膜': 'Double-sided release paper / film',
+  'EVA 泡棉': 'EVA foam',
+  '0.5 – 6.0 mm': '0.5 – 6.0 mm',
+  '-20 ~ 80 ℃': '-20 ~ 80 ℃',
+  '丙烯酸 / 橡胶': 'Acrylic / Rubber',
+  '白 / 黑 (可选)': 'White / Black (optional)',
+  'OPP 薄膜': 'OPP film',
+  '0.03 – 0.12 mm': '0.03 – 0.12 mm',
+  '-10 ~ 70 ℃': '-10 ~ 70 ℃',
+  'PE 泡棉 (闭孔)': 'PE foam (closed-cell)',
+  '0.5 – 8.0 mm': '0.5 – 8.0 mm',
+  '-30 ~ 90 ℃': '-30 ~ 90 ℃',
+  '白 / 黑 / 灰 (可选)': 'White / Black / Grey (optional)',
+  'PET 薄膜': 'PET film',
+  '0.02 – 0.20 mm': '0.02 – 0.20 mm',
+  '-20 ~ 120 ℃': '-20 ~ 120 ℃',
+  'PVC 薄膜': 'PVC film',
+  '0.05 – 0.25 mm': '0.05 – 0.25 mm',
+  '透明 / 黑 / 白': 'Clear / Black / White',
+  '棉纸 / 无纺布': 'Tissue / non-woven',
+  '0.06 – 0.16 mm': '0.06 – 0.16 mm',
+  '-10 ~ 90 ℃': '-10 ~ 90 ℃',
+  '丙烯酸 / 热熔': 'Acrylic / Hot-melt',
+  '低气味 / 阻燃': 'Low-odor / Flame-retardant',
+  '单面离型纸': 'Single-side release paper',
+  '双面离型膜': 'Double-sided release film',
+  '棉纸 / PET (可选)': 'Tissue / PET (optional)',
+  '0.05 – 0.20 mm (可定制)': '0.05 – 0.20 mm (customizable)',
+  '-20 ~ 100 ℃': '-20 ~ 100 ℃',
+  '环保型丙烯酸': 'Eco-friendly acrylic',
+  '≤ 3.0 (VDA 270)': '≤ 3.0 (VDA 270)',
+  'PET / 阻燃棉纸': 'PET / flame-retardant tissue',
+  '0.05 – 0.30 mm': '0.05 – 0.30 mm',
+  '-20 ~ 120 ℃': '-20 ~ 120 ℃',
+  '阻燃丙烯酸': 'Flame-retardant acrylic',
+  'UL94 V-0': 'UL94 V-0',
+  '无基材（纯胶）': 'Carrier-free (pure adhesive)',
+  '0.03 – 0.10 mm': '0.03 – 0.10 mm',
+  '透明': 'Clear',
+};
+const baseEn: Record<string, string> = {
+  '亚克力': 'Acrylic', 'EVA': 'EVA', 'OPP': 'OPP', 'PE 泡棉': 'PE foam',
+  'PET': 'PET', 'PVC': 'PVC', '棉纸': 'Tissue',
+  '低气味亚克力': 'Low-odor acrylic',
+  '阻燃': 'Flame-retardant',
+  '无基材': 'Carrier-free',
+};
+const taglineEn: Record<string, string> = {
+  acrylic: 'High initial tack · Weather & UV resistant',
+  eva: 'Cushioning & sealing · Conformable',
+  opp: 'High tensile · General purpose',
+  'pe-foam': 'Gap filling · Waterproof seal',
+  pet: 'Ultra-thin · Dimensionally stable',
+  pvc: 'Flexible · Light insulation',
+  tissue: 'Easy die-cut · Highly conformable',
+  'low-odor': 'Low VOC · Cabin-air safe',
+  'flame-retardant': 'UL94 V-0 · Self-extinguishing',
+  'substrate-free': 'Carrier-free · Ultra-thin & clear',
+};
+const featuresEn: Record<string, string> = {
+  '高初粘力，贴合即粘': 'High initial tack for instant grab',
+  '优异的耐候性与抗 UV 老化': 'Excellent weathering and UV-aging resistance',
+  '耐温范围宽，适应车规环境': 'Wide temperature range for automotive use',
+  '后期持粘稳定，抗蠕变': 'Stable long-term hold with anti-creep performance',
+  '柔软缓冲，吸收震动': 'Soft cushioning that absorbs shock and vibration',
+  '良好填缝与密封性能': 'Good gap-filling and sealing performance',
+  '对曲面、粗糙面服帖': 'Conforms to curves and rough surfaces',
+  '易模切、分切加工': 'Easy to die-cut and slit',
+  '高抗拉强度，不易断裂': 'High tensile strength, resistant to breakage',
+  '薄型基材，贴合平整': 'Thin carrier for flat, neat bonding',
+  '通用性强，适用面广': 'Versatile across many applications',
+  '成本可控，适合批量': 'Cost-controlled for volume production',
+  '闭孔泡棉，防水防尘': 'Closed-cell foam, waterproof and dust-proof',
+  '强力填缝与减震': 'Strong gap filling and cushioning',
+  '对玻璃 / 金属粘接力强': 'Strong bond to glass and metal',
+  '可定制厚度与宽度': 'Customizable thickness and width',
+  '超薄基材，节省空间': 'Ultra-thin carrier that saves space',
+  '尺寸稳定，抗拉伸': 'Dimensionally stable, resists stretching',
+  '贴合平整，不翘曲': 'Lays flat without curling',
+  '适合精密模切': 'Suited to precision die-cutting',
+  '柔韧服帖，易施工': 'Flexible and conformable, easy to apply',
+  '具备基础绝缘性能': 'Basic electrical insulation',
+  '轻量固定可靠': 'Reliable light-duty fixing',
+  '适合分切 / 模切': 'Suited to slitting / die-cutting',
+  '超薄柔软，服帖性强': 'Ultra-thin and soft, highly conformable',
+  '易模切、复合加工': 'Easy to die-cut and laminate',
+  '通用轻粘接首选': 'First choice for general light bonding',
+  '可选低气味环保型': 'Low-odor eco-friendly option available',
+  '低 VOC、低气味环保配方': 'Low VOC, low-odor eco-friendly formulation',
+  '满足车内空气质量要求': 'Meets automotive cabin air-quality requirements',
+  '对皮革、织物、塑料服帖': 'Conforms to leather, fabric and plastic',
+  '适合密闭空间长期使用': 'Suitable for long-term use in enclosed spaces',
+  '通过 UL94 V-0 阻燃等级': 'Meets UL94 V-0 flame-retardant rating',
+  '离火自熄，低烟低毒': 'Self-extinguishing with low smoke and toxicity',
+  '对金属、塑料粘接力稳定': 'Stable bond to metal and plastic',
+  '适合电池包与电气装配': 'Suitable for battery packs and electrical assemblies',
+  '纯胶层结构，无基材': 'Pure adhesive layer, no carrier',
+  '极薄，最低 30μm': 'Ultra-thin down to 30μm',
+  '高透明度，视觉无痕': 'Optically clear, visually unobtrusive',
+  '适合超薄模切与精密贴合': 'Suited to ultra-thin die-cutting and precision lamination',
+};
+
+const appEn: Record<string, string> = {
+  '汽车外饰件固定': 'Automotive exterior trim',
+  '金属 / 玻璃铭牌贴合': 'Metal / glass nameplate bonding',
+  '装饰条安装': 'Trim & molding installation',
+  '电子结构粘接': 'Electronic structural bonding',
+  '包装缓冲固定': 'Packaging cushioning',
+  '工业组件垫贴': 'Industrial component padding',
+  '轻量面板安装': 'Light panel mounting',
+  '门窗密封': 'Window & door sealing',
+  '线束 / 线材捆绑': 'Wire harnessing & bundling',
+  '封缄固定': 'Carton sealing',
+  '通用轻粘接': 'General light bonding',
+  '铭牌临时定位': 'Nameplate temporary positioning',
+  '汽车密封条': 'Automotive weatherstrips',
+  '建筑幕墙填缝': 'Curtain-wall gap filling',
+  '镜面 / 标识安装': 'Mirror & sign mounting',
+  '家电面板固定': 'Appliance panel fixing',
+  '显示屏超薄贴合': 'Display thin bonding',
+  '塑料件精密固定': 'Plastic-part precision fixing',
+  '铭牌 / 标贴': 'Nameplate / label',
+  '薄膜复合': 'Film lamination',
+  '线材整理': 'Wire management',
+  '标牌固定': 'Signage fixing',
+  '表面保护': 'Surface protection',
+  '轻量装配': 'Light assembly',
+  ' laminating 复合': 'Laminating',
+  'laminating 复合': 'Laminating',
+  '泡棉复合': 'Foam lamination',
+  '铭牌固定': 'Nameplate fixing',
+  '汽车内饰件固定': 'Automotive interior trim fixing',
+  '驾驶舱贴合': 'Cabin lamination',
+  '皮革 / 织物贴合': 'Leather / fabric bonding',
+  '家居环保装配': 'Eco-friendly home assembly',
+  '电池包固定': 'Battery pack fixing',
+  '电子电气装配': 'Electronic & electrical assembly',
+  'PCB 临时固定': 'PCB temporary fixing',
+  '动力电池模组': 'Power battery module',
+  '屏幕超薄贴合': 'Screen ultra-thin lamination',
+  '铭牌极薄固定': 'Nameplate ultra-thin fixing',
+  '精密模切': 'Precision die-cutting',
+  '光学组件贴合': 'Optical component lamination',
+};
+
+const baseName = baseEn[product.base] ?? product.base;
+const overview = `LubandArt manufactures ${product.en} built on a ${baseName} carrier with pressure-sensitive adhesive. Thickness, width, roll length, adhesive system and release liner can be customized according to the substrate, application environment and production requirements.`;
+
+// Quick spec pills for the hero
+const quickSpecs = [
+  { l: 'Base', v: baseName },
+  ...product.specs
+    .filter((s) => ['厚度范围', '耐温'].includes(s.label))
+    .map((s) => ({ l: specLabelEn[s.label] ?? s.label, v: specValueEn[s.value] ?? s.value })),
+];
+
+// Imagery uses the local product photo (product.img) or CSS gradients — no external hosts, so it loads reliably in every environment.
+const productImg = product.img; // local product photo (e.g. /products/acrylic.jpg)
+
+// Tape structure (generic double-coated construction)
+const layers = [
+  { t: 'Release Liner', d: 'Protects the adhesive until application. Paper or film options.' },
+  { t: 'Pressure-Sensitive Adhesive', d: 'Engineered for immediate grab and long-term hold.' },
+  { t: `${baseName} Carrier`, d: `The ${baseName.toLowerCase()} core provides the cushioning, gap compensation and conformability of the construction.`, carrier: true },
+  { t: 'Pressure-Sensitive Adhesive', d: 'Bonds securely to the mounting surface.' },
+  { t: 'Release Liner', d: 'Protects the adhesive until application. Paper or film options.' },
+];
+
+const configGroups = [
+  { t: 'Adhesive System', opts: ['Acrylic', 'Rubber', 'Hot-Melt'] },
+  { t: 'Thickness & Width', opts: ['Custom Thickness', 'Custom Width', 'Custom Length'] },
+  { t: 'Release Liner', opts: ['Paper', 'Film', 'Custom'] },
+  { t: 'Converting Format', opts: ['Log Roll', 'Cut Roll', 'Die-Cut', 'Spool'] },
+];
+
+const oem = [
+  { t: 'Typical MOQ', d: 'Depends on model, width, length, adhesive system and customization level. Trial orders on standard specs are welcome.', ico: 'M' },
+  { t: 'Sample Lead Time', d: '1–3 working days — standard samples are usually prepared within 1–3 days subject to specification and stock.', ico: 'S' },
+  { t: 'Bulk Production', d: 'Usually 7–10 working days, depending on specification, converting requirements and quantity.', ico: 'B' },
+  { t: 'OEM Customization', d: 'Width, thickness, roll length, adhesive system, density, color, liner, core, printing and packaging can all be customized.', ico: 'C' },
+];
+
+const workflow = [
+  { n: '01', t: 'Requirement Analysis', d: 'Evaluate application environment, stress factors and bonding parameters.' },
+  { n: '02', t: 'Material Selection', d: 'Match carrier and adhesive chemistry to your technical requirements.' },
+  { n: '03', t: 'Sample Confirmation', d: 'Produce precision prototypes for client-side testing and validation.' },
+  { n: '04', t: 'Mass Production', d: 'Scaled manufacturing with controlled coating, laminating and converting.' },
+  { n: '05', t: 'Quality Inspection', d: 'Test peel adhesion, shear strength and dimensional accuracy.' },
+  { n: '06', t: 'On-Time Delivery', d: 'Pack per agreed requirements and prepare for shipping.' },
+];
+
+// FAQ — product-specific (each slug gets 6 questions tuned to that tape's real properties).
+const faqBySlug: Record<string, { q: string; a: string }[]> = {
+  acrylic: [
+    { q: 'What temperature range can acrylic tape handle?',
+      a: 'Our acrylic adhesive systems are rated for continuous service from approximately -40°C up to 120-150°C, with short-term peaks higher for processes such as paint baking. Send us your exact temperature profile and we will select the right grade.' },
+    { q: 'Is acrylic tape suitable for long-term outdoor exposure?',
+      a: 'Yes. Acrylic adhesive provides excellent UV, oxidation and humidity resistance — that is the main reason it is preferred over rubber or hot-melt for permanent outdoor applications such as curtain-wall spacer bonding, automotive exterior trim and signage installation.' },
+    { q: 'How long does the bond take to reach full strength?',
+      a: 'Acrylic adhesive reaches handling strength within minutes but continues to build toward full bond strength over 24-72 hours at room temperature. Holding pressure and cleanliness at application strongly affect ultimate strength — we will share application notes with your sample.' },
+    { q: 'Will acrylic tape bond to LSE plastics like PP or PE?',
+      a: 'By itself acrylic has limited adhesion to low-surface-energy plastics. We offer primer / corona-treated constructions and selected LSE-grade formulations. Tell us the exact substrate and we will recommend a tested combination rather than guessing.' },
+    { q: 'How does acrylic foam tape compare to 3M VHB for permanent mounting?',
+      a: 'Our high-performance acrylic foam core tapes are designed for comparable VHB-class mounting duty — architectural panel bonding, elevator fixings, nameplates and heavy trims. We will share test data (90° peel, dynamic shear, holding power at temperature) for your specific substrate on request.' },
+    { q: 'Can acrylic tape be supplied in custom widths and roll lengths?',
+      a: 'Yes. We slit to width from 5 mm up to ~1040 mm and supply log rolls, converted rolls or die-cut parts. Custom release liners and printed branding are available for OEM runs.' },
+  ],
+  'pe-foam': [
+    { q: 'How compressible is PE foam tape, and will it recover after compression?',
+      a: 'Closed-cell PE foam recovers close to 100% after short-term compression. For long-term load or gap compensation we recommend choosing density (typically 60-120 kg/m³) and thickness (0.5-3 mm stock) matched to your expected compression cycle and recovery time.' },
+    { q: 'Is PE foam tape waterproof / suitable for sealing?',
+      a: 'The closed-cell PE foam carrier absorbs almost no water, so the tape doubles as a gasket / sealing strip in many applications. Final sealing performance depends on compression set, joint design and surface contact — we can recommend a tested construction for window glazing, façade panels and appliance gaskets.' },
+    { q: 'What gap thicknesses can PE foam tape bridge?',
+      a: 'From about 0.5 mm to 6 mm carrier thickness for stock products; thicker constructions on request. Pair with the right adhesive system (acrylic for outdoor, rubber for indoor quick-stick) to get a stable bond across uneven surfaces.' },
+    { q: 'Will PE foam tape yellow or degrade outdoors?',
+      a: 'With acrylic adhesive and white PE foam, outdoor service life is typically 5-10 years depending on UV load and temperature. Black PE foam is more UV-tolerant. White foam will gradually tone but does not lose mechanical properties in the same range.' },
+    { q: 'Is PE foam tape paintable or printable?',
+      a: 'Standard PE foam is not paintable. Printable / paintable variants use a coextruded top layer — ask for our printable grade if the part needs to be decorated after lamination.' },
+    { q: 'Can PE foam tape be supplied as die-cut gaskets?',
+      a: 'Yes — converted rolls or kiss-cut / die-cut gasket parts to drawing, supplied on rolls or as individual pieces. Common for appliance panel gaskets, electronics spacers and façade EPDM alternatives.' },
+  ],
+  eva: [
+    { q: 'Is EVA foam tape removable?',
+      a: 'We offer low-tack EVA constructions specifically designed for controlled removal — used in point-of-sale displays, temporary mounting and protective pads. Bond holds during service but lifts cleanly within ~6 months from most substrates. Tell us the substrate and intended dwell time.' },
+    { q: 'What is the temperature limit of EVA foam tape?',
+      a: 'EVA softens at ~70°C, so it is suited to indoor, ambient-temperature and short-term outdoor use. For higher temperature or long-term outdoor exposure we usually recommend PE foam or acrylic foam instead.' },
+    { q: 'Is EVA tape suitable for cushioning and vibration damping?',
+      a: 'Yes — that is one of its strongest uses. EVA absorbs impact and dampens vibration in electronics, appliance feet, glass spacer pads and packaging inserts. Pick density (40-100 kg/m³) to the required cushion profile.' },
+    { q: 'Can EVA foam tape follow curved or textured surfaces?',
+      a: 'EVA is softer and more conformable than PE foam, which helps it sit on mild curves and textured surfaces. For very tight radii, we offer thinner EVA grades with high-tack adhesive.' },
+    { q: 'Will EVA foam yellow or degrade in sunlight?',
+      a: 'Standard EVA is not UV-resistant. We supply a UV-stabilised grade (or recommend PE foam / acrylic carrier) for any application with sustained sunlight exposure.' },
+    { q: 'Is EVA foam tape die-cuttable for gaskets and pads?',
+      a: 'Yes — EVA cuts cleanly and is one of our most-used die-cut materials for gaskets, spacers and anti-slip pads.' },
+  ],
+  opp: [
+    { q: 'What is OPP film tape used for?',
+      a: 'OPP (oriented polypropylene) double-sided tape is mainly used for laminating, label mounting, packaging closures, envelope sealing and graphic overlay where thin profile and clarity matter. It handles heat better than tissue-backed tape and is stable under most converting processes.' },
+    { q: 'What thickness of OPP tape should I choose?',
+      a: '0.06-0.1 mm for label stock and laminate thin films; 0.1-0.2 mm for general mounting and packaging closures. Heavier adhesive coat-weight gives higher tack on rough substrates — talk to us about balancing adhesive vs. carrier thickness for your application.' },
+    { q: 'Can OPP tape withstand high-temperature converting?',
+      a: 'Yes. OPP carrier is dimensionally stable up to ~140°C short term, which makes it friendly to die-cutting, hot-stamping and oven-cure processes compared to tissue or PVC carriers.' },
+    { q: 'Does OPP tape yellow over time?',
+      a: 'Clear OPP stays clear; coloured OPP is pigmented. Acrylic-based OPP adhesive has good UV stability and resists yellowing better than rubber-based adhesives over time.' },
+    { q: 'Will OPP tape bond to silicone-coated release paper?',
+      a: 'Yes — we supply matched release-liner / OPP constructions for label stock. Let us know whether the finished laminate needs to be punched, laser-cut or printed so we can specify the right liner.' },
+    { q: 'Is OPP tape food-contact / medical compliant?',
+      a: 'Standard construction is not certified. We can supply food-contact or low-migration adhesive systems on request; certification documents are project-specific.' },
+  ],
+  pet: [
+    { q: 'Why choose PET film tape over tissue or OPP tape?',
+      a: 'PET carrier is dimensionally stable, has higher temperature resistance (up to ~150-200°C depending on grade) and is unusually thin for its tensile strength. That makes it ideal for electronics, membrane switches, graphic overlays and any application where the tape must not stretch during processing.' },
+    { q: 'What is the thinnest PET tape you supply?',
+      a: 'From 0.05 mm total thickness upward. Very thin PET tape is widely used in mobile electronics, RFID inlay bonding and FPC grounding — we can also supply 0.025 mm ultra-thin variants on request.' },
+    { q: 'Does PET tape offer electrical insulation?',
+      a: 'Yes — PET is a good dielectric and our PET double-sided tape is used as an insulation / bonding layer in transformers, batteries and consumer electronics. Dielectric data is available on request.' },
+    { q: 'Can PET tape survive reflow-solder or wave-solder processes?',
+      a: 'Selected grades with high-temperature acrylic adhesive are designed for SMT reflow and selective wave-solder masking. Send us your thermal profile and we will recommend a tested grade rather than asking you to find out in production.' },
+    { q: 'Can PET tape be laser-cut?',
+      a: 'Yes — PET is one of the cleanest laser-cutting carriers. Common for RFID tag production, smartphone gaskets and small die-cut shapes. We can supply laser-cut parts to drawing with tight tolerance.' },
+    { q: 'Is PET tape die-cuttable for precision parts?',
+      a: 'Yes — PET die-cuts extremely cleanly and is the standard choice for precision parts in electronics and medical devices. Standard tooling or digital cutting both supported.' },
+  ],
+  pvc: [
+    { q: 'Is PVC tape flame-retardant?',
+      a: 'Yes — PVC carrier is inherently flame-retardant compared to tissue or PE foam. We supply UL94 V-0 / VTM-0 grades for electronics, signage and public-space applications. Test certificates are available per project.' },
+    { q: 'Can PVC tape be removed cleanly?',
+      a: 'We offer a removable PVC construction for point-of-sale, temporary signage and protective applications. Bond holds in service but lifts cleanly within the intended dwell window — substrate-dependent, so please confirm with us.' },
+    { q: 'Will PVC tape discolour over time?',
+      a: 'Standard white / coloured PVC is light-stable; clear PVC is more prone to slight yellowing under UV. For permanent outdoor exposure we recommend acrylic-foam construction instead.' },
+    { q: 'Is PVC tape suitable for curved surfaces?',
+      a: 'PVC is more conformable than PET and thinner than PE foam, so it handles moderate curves well. For tight radii (e.g. small diameter pipes), ask for our soft-PVC grade.' },
+    { q: 'Does PVC tape resist plasticiser migration?',
+      a: 'Plasticiser migration can happen with flexible PVC substrates. We use carefully selected adhesives that resist migration; pair with a specific substrate is tested before supply.' },
+    { q: 'Is PVC tape die-cuttable for gaskets and signage mounts?',
+      a: 'Yes — PVC die-cuts cleanly to common tolerances and is widely used as gaskets, spacers and signage mounts. Custom die-cut parts are quoted per drawing.' },
+  ],
+  tissue: [
+    { q: 'What is tissue double-sided tape best used for?',
+      a: 'Tissue carrier is soft, thin and conformable — ideal for mounting paper, posters, nameplates, splicing, light laminating and any application where you need a low-profile bond that follows surface texture. Acrylic-tissue versions are widely used as a more universal "everyday" double-sided tape.' },
+    { q: 'Is tissue tape removable?',
+      a: 'Standard tissue tape is permanent. We supply a removable / repositionable tissue grade for temporary mounting — let us know the substrate and dwell time so we specify the correct tack level.' },
+    { q: 'Can tissue tape be hand-torn?',
+      a: 'Selected grades are designed to tear cleanly by hand for quick shop-floor application. Most production processes prefer precision slit rolls or die-cut parts, which we can also supply.' },
+    { q: 'Will tissue tape yellow or curl over time?',
+      a: 'With acrylic adhesive and good liner, tissue tape stays flat and clear. Rubber-based or low-grade tissue tape can yellow over years — we use only UV-stable adhesive systems unless the project is explicitly short-term indoor.' },
+    { q: 'Is tissue tape suitable for high-temperature environments?',
+      a: 'Standard tissue is limited to ~80°C continuous. For higher temperatures, choose our high-temperature tissue grade (acrylic, ~120-150°C) or move up to PET carrier.' },
+    { q: 'Can tissue tape be supplied as die-cut pieces?',
+      a: 'Yes — converted rolls, kiss-cut pieces or individual die-cuts, supplied on roll for automated application. Common for nameplate assembly, lens mounting and POS display.' },
+  ],
+  'low-odor': [
+    { q: 'How low is the odor of low-odor tape?',
+      a: 'Our low-odor construction is formulated to meet VDA 270 ≤ 3.0 odor grade, well within typical OEM cabin air-quality limits. We can supply test data and certified low-VOC adhesive options for stricter programs such as Asian OEM or EV interior specifications.' },
+    { q: 'Will the low-odor tape yellow or outgas over time?',
+      a: 'No. The eco-friendly acrylic system is designed to minimise plasticiser migration and secondary outgassing during the vehicle service life. Long-term aging tests under 80°C / 95% RH confirm stable bond and minimal cabin odor shift after 1000 hours.' },
+    { q: 'What substrates can low-odor tape bond to?',
+      a: 'Leather, fabric, foam, ABS and other interior plastics, plus painted or coated metal. For low-surface-energy substrates such as PP or TPO we offer a corona / primer-treated construction to maintain bond strength without compromising the low-odor claim.' },
+    { q: 'Is the low-odor tape suitable for high-temperature automotive interiors?',
+      a: 'Standard grade is rated to 100°C continuous. For dashboard or sunlit cabin zones we recommend our high-temperature low-odor grade tested to 120°C, paired with a release liner suitable for automated die-cut application.' },
+    { q: 'Can the low-odor tape be supplied as die-cut pieces?',
+      a: 'Yes — kiss-cut pieces, individual gaskets and converted rolls, all using the same eco-friendly adhesive system. Common applications include A-pillar trims, headliner attachments, door panel fixings and EV battery interior NVH pads.' },
+    { q: 'Does the low-odor tape meet OEM specifications for cabin air quality?',
+      a: 'Yes. We supply test reports aligned with VDA 270, VDA 278 and GB/T 27630 cabin air standards. For program-specific approval, share the OEM spec and we will match an existing certified grade or run a project qualification with you.' },
+  ],
+  'flame-retardant': [
+    { q: 'Is flame-retardant tape UL94 V-0 certified?',
+      a: 'Yes — our standard flame-retardant construction meets UL94 V-0 at typical 0.1-0.3 mm thicknesses. Test certificates and lot-traceable documentation are available per shipment, and we can support project-specific fire ratings including FMVSS 302 and GB 8410.' },
+    { q: 'What is the temperature range of flame-retardant tape?',
+      a: 'Standard grade: -20°C to 120°C continuous, with short-term peaks up to 150°C during battery pack assembly or paint bake. For higher service temperatures we offer a high-temperature flame-retardant grade rated to 150°C continuous.' },
+    { q: 'Will flame-retardant tape drip when exposed to flame?',
+      a: 'No. The construction is formulated to be self-extinguishing and non-dripping — once the flame source is removed the tape stops burning within seconds and does not release flaming drips that could spread fire to adjacent materials.' },
+    { q: 'Can flame-retardant tape be used in battery packs?',
+      a: 'Yes — this is one of its main applications. The tape is used for cell-to-cell bonding, module-to-pack fixing, and busbar insulation in EV battery packs. We supply low-impedance / dielectric versions on request for electrical isolation layers.' },
+    { q: 'How does flame-retardant tape differ from regular PET tape?',
+      a: 'Standard PET tape has limited flame performance. Our flame-retardant grade uses a flame-retardant carrier and a flame-retardant adhesive system so the entire construction — not just one layer — passes UL94 V-0 and self-extinguishes cleanly.' },
+    { q: 'Is flame-retardant tape available in custom thicknesses and widths?',
+      a: 'Yes — 0.05-0.30 mm thickness and slit widths from 5 mm to 1040 mm. Custom die-cut shapes for battery pack assembly, PCB masking and electrical insulation are supplied to drawing with lot-traceable documentation.' },
+  ],
+  'substrate-free': [
+    { q: 'What is substrate-free double-sided tape?',
+      a: 'Substrate-free (also called carrier-free) tape is a pure adhesive film without any carrier — just the pressure-sensitive adhesive layer, sandwiched between two release liners. It is the thinnest possible double-sided bond and is widely used where conventional tape thickness is unacceptable.' },
+    { q: 'What is the thinnest substrate-free tape you supply?',
+      a: 'From 30 μm total thickness upward. Standard stock runs 50-100 μm. Below 30 μm, we offer transfer tape constructions with a similar function but easier converting behaviour — let us know your target thickness and we will specify the right grade.' },
+    { q: 'Is substrate-free tape optically clear?',
+      a: 'Yes — the pure adhesive layer is water-clear and invisible after lamination. It is the standard choice for display bonding, optical film lamination, capacitive touch sensors and other applications where the bond line must be visually undetectable.' },
+    { q: 'How is substrate-free tape applied?',
+      a: 'Substrate-free tape needs careful handling: expose one liner, apply to substrate A, remove the second liner, then bond to substrate B under light pressure. We can supply pre-cut pieces on liner for automated pick-and-place, or slit rolls for manual application.' },
+    { q: 'Does substrate-free tape provide good shear strength?',
+      a: 'Pure adhesive films have lower cohesive strength than carrier-reinforced tapes, so they are best suited to flat or near-flat bonding surfaces with moderate shear loads. For structural or high-shear applications, use a carrier-reinforced acrylic foam construction instead.' },
+    { q: 'Is substrate-free tape suitable for high-temperature environments?',
+      a: 'Standard grade: up to 100°C continuous. High-temperature substrate-free tape (acrylic, ~150°C) is available for display bonding, FPC grounding and reflow-solder processes — share your thermal profile so we specify the right adhesive system.' },
+  ],
+};
+const faqs = faqBySlug[product.slug] ?? [
+  { q: 'Which tape is suitable for outdoor use?',
+    a: 'For many outdoor applications, a tape with a suitable acrylic adhesive is generally preferred because acrylic systems typically provide better aging and weather resistance than general-purpose hot-melt adhesives. Final suitability should be confirmed by substrate, temperature range, moisture exposure and service life.' },
+  { q: 'How do I choose the right thickness?',
+    a: 'Suitable thickness depends on surface condition, gap size, required compression and application method. Thin tape suits smooth surfaces; thicker, more compressible foam compensates for uneven surfaces and larger gaps. Sample testing is recommended before mass production.' },
+  { q: 'What surfaces can the tape bond to?',
+    a: 'It can be used on metals, glass, painted surfaces, wood and selected plastics. Adhesion varies by adhesive system, surface energy, cleanliness and application pressure. Low-surface-energy plastics such as PP and PE may need a selected adhesive or surface treatment.' },
+  { q: 'Is the tape waterproof?',
+    a: 'Closed-cell foam absorbs very little moisture and supports sealing. However, the final moisture resistance of the bonded assembly depends on the adhesive system, substrate, compression and installation conditions.' },
+  { q: 'What is the difference between acrylic, rubber and hot-melt adhesive?',
+    a: 'Acrylic generally gives better aging, temperature and weather resistance. Hot-melt provides fast initial tack and a more economical solution for indoor use. Rubber gives high initial tack for fast indoor mounting. Choose by substrate and service environment.' },
+  { q: 'Can the tape be customized?',
+    a: 'Yes. LubandArt can customize adhesive system, thickness, width, roll length, release liner, core, die-cut shape, printing and packaging according to project requirements.' },
+];
+
+const industries = [
+  { t: 'Automotive Assembly', slug: 'automotive' },
+  { t: 'Construction & Facade', slug: 'construction' },
+  { t: 'Electronics', slug: 'electronics' },
+  { t: 'Home Appliance', slug: 'appliance' },
+  { t: 'Signage & Display', slug: 'signage' },
+  { t: 'Mechanical & Industrial', slug: 'machinery' },
+];
+
+// Supply forms — real product-form photography (Unsplash, verified reachable)
+const supplyForms = [
+  { title: 'Jumbo Roll', tag: 'For converters', desc: 'Master rolls supplied by width and length for converters and die-cutters — ready for your own slitting and converting.' },
+  { title: 'Converted Roll', tag: 'For distributors', desc: 'Slit and rewound to your required width, roll length, liner and core — direct-application rolls for wholesalers and distributors.' },
+  { title: 'Finished / Die-Cut', tag: 'For assembly lines', desc: 'Die-cut shapes and parts produced to drawing, ready to apply on your assembly line with no further conversion.' },
+];
 ---
 
-<Layout title={`${product.name} — LubandArt Tape`} description={product.intro.slice(0, 120)}>
-  <!-- 面包屑 -->
-  <div class="container" style="padding-top:1.5rem">
-    <nav class="crumbs"><a href="/">首页</a> / <a href="/products">产品中心</a> / <span>{product.name}</span></nav>
-  </div>
-
-  <!-- 头部 -->
-  <section style="background:var(--bg-soft); padding:2rem 0">
-    <div class="container prod-head">
-      <img src={product.img} alt={product.en} class="prod-img" />
-      <div>
-        <div class="eyebrow">{product.en}</div>
-        <h1 class="prod-title">{product.name}</h1>
-        <p class="prod-tagline">{product.tagline}</p>
-        <p class="prod-intro">{product.intro}</p>
-        <div class="prod-cta">
-          <a class="btn" href="/contact">获取报价</a>
-          <a class="btn btn-ghost" href="/contact">技术咨询</a>
+<Layout
+  title={`${product.en} — LubandArt Tape`}
+  description={overview.slice(0, 150)}
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Products', href: '/products' }, { name: product.en, href: `/products/${product.slug}` }]}
+>
+  <!-- ===== HERO (compact, product-focused) ===== -->
+  <section class="prod-hero">
+    <div class="container">
+      <div class="prod-hero-inner">
+        <div class="prod-info">
+          <div class="eyebrow">{baseName} Tape</div>
+          <h1 class="prod-title">{product.en}</h1>
+          <p class="prod-tagline">{taglineEn[product.slug] ?? product.en}</p>
+          <p class="prod-intro">{overview}</p>
+          <div class="phero-pills">
+            {quickSpecs.map((q) => (
+              <div class="qp"><span class="qp-l">{q.l}</span><span class="qp-v">{q.v}</span></div>
+            ))}
+          </div>
+          <div class="prod-cta">
+            <a class="btn" href="/contact">Get a Quote</a>
+            <a class="btn btn-ghost" href="/contact">Request Samples</a>
+          </div>
+        </div>
+        <div class="prod-img-col">
+          <img class="prod-hero-img" src={product.img} alt={product.en} />
+          <div class="prod-img-badge">Jumbo · Converted · Finished</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 特性 -->
-  <section style="padding:4rem 0">
+  <!-- ===== SUPPLY FORMS (母卷 / 复卷 / 成品) ===== -->
+  <section class="mod mod-gray supply">
     <div class="container">
-      <div class="section-head" style="text-align:left; margin:0 0 2rem">
-        <div class="eyebrow">Features</div>
-        <h2>产品特性</h2>
+      <div class="section-head head-left">
+        <div class="eyebrow">Supply Forms</div>
+        <h2>Jumbo Roll · Converted Roll · Finished Parts</h2>
+        <p>Built for converters, wholesalers and distributors — LubandArt supplies {product.en} in the form your production line needs.</p>
       </div>
-      <div class="grid feats">
-        {product.features.map((f, i) => (
-          <div class="card feature"><div class="dot">{i + 1}</div><div><p>{f}</p></div></div>
+      <div class="supply-grid">
+        {supplyForms.map((s) => (
+          <div class="supply-card">
+            <div class="supply-media">
+              <img src={productImg} alt={s.title} loading="lazy" />
+              <span class="supply-tag">{s.tag}</span>
+            </div>
+            <div class="supply-body">
+              <h3>{s.title}</h3>
+              <p>{s.desc}</p>
+            </div>
+          </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- 规格参数 -->
-  <section style="background:var(--bg-soft); padding:4rem 0">
-    <div class="container">
-      <div class="section-head" style="text-align:left; margin:0 0 2rem">
-        <div class="eyebrow">Specifications</div>
-        <h2>技术规格</h2>
-        <p>以下为常规范围，具体以选型确认书 / 检测报告为准，支持非标定制。</p>
+  <!-- ===== OVERVIEW (zigzag: text + image) ===== -->
+  <section class="mod mod-gray">
+    <div class="container overview">
+      <div class="overview-text">
+        <div class="section-head head-left">
+          <div class="eyebrow">Overview</div>
+          <h2>Industrial {product.en} Solutions</h2>
+        </div>
+        <p>{overview}</p>
+        <p class="muted">
+          Adhesive system, carrier density, thickness, width, roll length and release liner can all be
+          adjusted to the substrate, application environment and production process.
+        </p>
+        <ul class="ov-points">
+          <li><span>✓</span> Engineered for consistent, repeatable performance</li>
+          <li><span>✓</span> Customized to your substrate and service environment</li>
+          <li><span>✓</span> Free samples for in-house validation before mass production</li>
+        </ul>
       </div>
-      <div class="spec-table">
-        {product.specs.map((s) => (
-          <div class="spec-row"><span class="spec-label">{s.label}</span><span class="spec-value">{s.value}</span></div>
-        ))}
+      <div class="overview-img">
+        <img src={productImg} alt={`${product.en} manufacturing`} loading="lazy" />
+        <div class="ov-badge">{baseName} Carrier</div>
       </div>
     </div>
   </section>
 
-  <!-- 应用场景 -->
-  <section style="padding:4rem 0">
-    <div class="container">
-      <div class="section-head" style="text-align:left; margin:0 0 2rem">
-        <div class="eyebrow">Applications</div>
-        <h2>典型应用</h2>
+  <!-- ===== KEY BENEFITS (image left + list right) ===== -->
+  <section class="mod mod-light">
+    <div class="container benefit-row">
+      <div class="benefit-media">
+        <img src={productImg} alt={`${product.en} performance`} loading="lazy" />
+        <div class="benefit-media-cap">Built for real production lines</div>
       </div>
-      <div class="grid apps">
+      <div class="benefit-body">
+        <div class="section-head head-left">
+          <div class="eyebrow">Key Benefits</div>
+          <h2>Why Choose {product.en}</h2>
+        </div>
+        <div class="benefit-list">
+          {product.features.map((f, i) => (
+            <div class="benefit">
+              <span class="benefit-n">{String(i + 1).padStart(2, '0')}</span>
+              <p>{featuresEn[f] ?? f}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STRUCTURE (cross-section diagram) ===== -->
+  <section class="mod mod-gray">
+    <div class="container">
+      <div class="section-head head-left">
+        <div class="eyebrow">Construction</div>
+        <h2>{product.en} Structure</h2>
+        <p>Double-sided {baseName.toLowerCase()} tape consists of a {baseName.toLowerCase()} carrier coated on both sides with pressure-sensitive adhesive and protected by release liners.</p>
+      </div>
+      <div class="xsec">
+        <div class="xsec-bar">
+          <div class="xseg seg-liner"><span>Release<br/>Liner</span></div>
+          <div class="xseg seg-adh"><span>Adhesive</span></div>
+          <div class="xseg seg-carrier"><span>{baseName}<br/>Carrier</span></div>
+          <div class="xseg seg-adh"><span>Adhesive</span></div>
+          <div class="xseg seg-liner"><span>Release<br/>Liner</span></div>
+        </div>
+        <div class="xsec-legend">
+          {layers.map((l) => (
+            <div class={`xleg ${l.carrier ? 'xleg-on' : ''}`}>
+              <span class="xleg-t">{l.t}</span>
+              <span class="xleg-d">{l.d}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SPECIFICATIONS (product image + table) ===== -->
+  <section class="mod mod-light">
+    <div class="container spec-row">
+      <div class="spec-media">
+        <img src={product.img} alt={product.en} loading="lazy" />
+        <div class="spec-media-cap">{product.en}</div>
+      </div>
+      <div class="spec-body">
+        <div class="section-head head-left">
+          <div class="eyebrow">Specifications</div>
+          <h2>Technical <span class="accent">Specifications</span></h2>
+          <p>Ranges below are typical. Final values are confirmed by the selected specification and test report, and non-standard customization is supported.</p>
+        </div>
+        <div class="spec-table">
+          {product.specs.map((s) => (
+            <div class="spec-row-row">
+              <span class="spec-label">{specLabelEn[s.label] ?? s.label}</span>
+              <span class="spec-value">{specValueEn[s.value] ?? s.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== APPLICATIONS (banner + grid) ===== -->
+  <section class="mod mod-gray">
+    <div class="container">
+      <div class="app-banner">
+        <div class="app-banner-veil"></div>
+        <div class="app-banner-txt">
+          <div class="eyebrow eyebrow-light">Applications</div>
+          <h2>Where {product.en} Works</h2>
+          <p>From automotive trim to electronics assembly, the same construction adapts across industries.</p>
+        </div>
+      </div>
+      <div class="app-grid">
         {product.applications.map((a) => (
-          <div class="card app-card"><span class="app-ico">✓</span><p>{a}</p></div>
+          <div class="app"><span class="app-ico">✓</span><p>{appEn[a.trim()] ?? a}</p></div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- 相关产品 -->
-  <section style="background:var(--bg-soft); padding:4rem 0">
+  <!-- ===== INDUSTRIES (image cards) ===== -->
+  <section class="mod mod-light">
     <div class="container">
-      <div class="section-head" style="text-align:left; margin:0 0 2rem">
-        <div class="eyebrow">Related</div>
-        <h2>相关产品</h2>
+      <div class="section-head head-left">
+        <div class="eyebrow">Industries</div>
+        <h2>{product.en} Across Industries</h2>
       </div>
-      <div class="grid">
-        {related.map((r) => (
-          <a class="card rel-card" href={`/products/${r.slug}`}>
-            <img src={r.img} alt={r.en} class="rel-img" loading="lazy" />
-            <h3>{r.name}</h3>
-            <p class="en">{r.en}</p>
+      <div class="ind-grid">
+        {industries.map((ind) => (
+          <a class="ind-card" href={`/industries/${ind.slug}`}>
+            <div class="ind-media">
+              <div class="ind-veil"></div>
+            </div>
+            <div class="ind-body">
+              <h3>{ind.t}</h3>
+              <span class="ind-more">Explore solutions →</span>
+            </div>
           </a>
         ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CUSTOMIZE (image stack + 4-step config + CTA) ===== -->
+  <section class="mod mod-gray">
+    <div class="container benefit-row customize-row">
+      <div class="benefit-media customize-media">
+        <div class="customize-hero">
+          <img class="customize-hero-img" src={productImg} alt={`${product.en} custom converting line`} loading="lazy" />
+          <div class="customize-hero-cap">
+            <span class="customize-hero-cap-tag">CUSTOM CONVERTING</span>
+            <span class="customize-hero-cap-line">Slitting · Laminating · Die-Cutting</span>
+          </div>
+        </div>
+        <div class="customize-stats">
+          <div class="cust-stat"><span class="cust-stat-n">3</span><span class="cust-stat-l">days free sample</span></div>
+          <div class="cust-stat"><span class="cust-stat-n">100%</span><span class="cust-stat-l">spec confirmation before bulk</span></div>
+          <div class="cust-stat"><span class="cust-stat-n">5mm–1040</span><span class="cust-stat-l">slitting width range</span></div>
+          <div class="cust-stat"><span class="cust-stat-n">OEM/ODM</span><span class="cust-stat-l">branding & packaging supported</span></div>
+        </div>
+      </div>
+      <div class="benefit-body">
+        <div class="section-head head-left">
+          <div class="eyebrow">Customize</div>
+          <h2>Configure {product.en} for Your Application</h2>
+          <p>Select adhesive system, carrier thickness, release liner and converting format for your substrate, environment and assembly process.</p>
+        </div>
+        <div class="config-list">
+          {configGroups.map((g, i) => (
+            <div class="config-row">
+              <span class="config-num">{String(i + 1).padStart(2, '0')}</span>
+              <div class="config-body">
+                <h3>{g.t}</h3>
+                <div class="chips">
+                  {g.opts.map((o, j) => <span class={`chip ${j === 0 ? 'chip-default' : ''}`}>{o}</span>)}
+                </div>
+              </div>
+              <a class="config-link" href="/contact" aria-label={`Discuss ${g.t}`}>Discuss →</a>
+            </div>
+          ))}
+        </div>
+        <a class="config-cta" href="/contact">
+          <span class="config-cta-t">Request a Custom Configuration</span>
+          <span class="config-cta-d">Send your substrate, environment and quantity profile — your engineered sample ships within 3 working days.</span>
+          <span class="config-cta-a">Get Sample Kit →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== OEM & SUPPLY ===== -->
+  <section class="mod mod-light">
+    <div class="container">
+      <div class="section-head head-left">
+        <div class="eyebrow">OEM & Supply</div>
+        <h2>Custom Supply &amp; OEM</h2>
+      </div>
+      <div class="oem-banner">
+        <div class="oem-banner-veil"></div>
+        <div class="oem-banner-txt">
+          <h3>From pilot sample to bulk shipment</h3>
+          <p>One coordinated production line handles coating, converting and export packaging under controlled quality.</p>
+        </div>
+      </div>
+      <div class="oem-grid">
+        {oem.map((o) => (
+          <div class="oem">
+            <div class="oem-ico">{o.ico}</div>
+            <h3>{o.t}</h3>
+            <p>{o.d}</p>
+          </div>
+        ))}
+      </div>
+      <div class="oem-cta">
+        <a class="btn" href="/contact">Request OEM Quote</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WORKFLOW (timeline) ===== -->
+  <section class="mod mod-gray">
+    <div class="container">
+      <div class="section-head head-left">
+        <div class="eyebrow">Process</div>
+        <h2>From Requirement to Mass Production</h2>
+        <p>A streamlined workflow designed to deliver reliable, high-performance adhesive solutions.</p>
+      </div>
+      <div class="wf-track">
+        {workflow.map((w) => (
+          <div class="wf">
+            <span class="wf-n">{w.n}</span>
+            <h3>{w.t}</h3>
+            <p>{w.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="mod mod-light">
+    <div class="container">
+      <div class="section-head head-left">
+        <div class="eyebrow">FAQ</div>
+        <h2>Frequently Asked Questions about {product.en}</h2>
+      </div>
+      <div class="faq">
+        {faqs.map((f) => (
+          <div class="faq-item">
+            <h3><span class="faq-q">Q</span>{f.q}</h3>
+            <p>{f.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RELATED ===== -->
+  <section class="mod mod-gray">
+    <div class="container">
+      <div class="section-head head-left">
+        <div class="eyebrow">Related</div>
+        <h2>Related Products</h2>
+      </div>
+      <div class="rel-grid">
+        {related.map((r) => (
+          <a class="rel-card" href={`/products/${r.slug}`}>
+            <div class="rel-media"><img src={r.img} alt={r.en} loading="lazy" /></div>
+            <h3>{r.en}</h3>
+            <p class="rel-base">{baseEn[r.base] ?? r.base}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section class="mod mod-light">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="eyebrow">Need Help?</div>
+        <h2>Not Sure Which {product.en} Fits?</h2>
+        <p>Tell us your substrate, tape size and application. Our team will recommend a suitable construction and supply free samples for testing.</p>
+        <a class="btn" href="/contact">Discuss Your Application</a>
       </div>
     </div>
   </section>
 </Layout>
 
 <style>
-  .crumbs { font-size: .85rem; color: var(--fg-soft); }
-  .crumbs a { color: var(--fg-soft); }
-  .crumbs a:hover { color: var(--accent); }
-  .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; }
-  .prod-head { display: grid; grid-template-columns: .8fr 1.2fr; gap: 2.5rem; align-items: center; }
-  .prod-img { width: 100%; height: 280px; object-fit: cover; border-radius: 16px; background: #fff; }
-  .prod-title { font-size: clamp(1.8rem, 3.5vw, 2.6rem); margin: .4rem 0 .3rem; }
-  .prod-tagline { color: var(--accent); font-weight: 600; margin: 0 0 1rem; }
-  .prod-intro { color: var(--fg-soft); line-height: 1.7; }
-  .prod-cta { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 1.5rem; }
-  .feats { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-  .feats .feature { display: flex; gap: 1rem; align-items: flex-start; }
-  .feature .dot { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 9px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; }
-  .spec-table { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fff; }
-  .spec-row { display: flex; padding: .9rem 1.2rem; border-bottom: 1px solid var(--line); }
-  .spec-row:last-child { border-bottom: 0; }
-  .spec-label { width: 160px; flex: 0 0 auto; color: var(--fg-soft); font-weight: 600; }
+  .eyebrow-light { color: #ffd9c9; letter-spacing: 2px; text-transform: uppercase; font-size: .78rem; font-family: var(--font-head); font-weight: 700; }
+  .accent { color: var(--accent); }
+  .muted { color: var(--fg-soft); line-height: 1.7; }
+  .head-left { text-align: left; max-width: none; margin-bottom: 2.4rem; }
+  .head-left .eyebrow { display: inline-block; }
+
+  /* ===== HERO (compact, product-focused) ===== */
+  .prod-hero {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(900px 480px at 82% -8%, rgba(200,84,43,.26), transparent 60%),
+      radial-gradient(680px 420px at 8% 110%, rgba(200,84,43,.10), transparent 60%),
+      linear-gradient(135deg, #141316 0%, #1b1816 55%, #0e0e10 100%);
+    color: #fff; padding: 5rem 0 3.4rem;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .prod-hero-inner { display: grid; grid-template-columns: 1.05fr .95fr; gap: 2.8rem; align-items: center; }
+  .prod-img-col { position: relative; }
+  .prod-hero-img { width: 100%; height: 380px; object-fit: cover; border-radius: 16px; display: block; background: #fff; border: 1px solid rgba(255,255,255,.12); box-shadow: var(--shadow); }
+  .prod-img-badge { position: absolute; left: 16px; bottom: 16px; background: var(--accent); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: .8rem; padding: .4rem .9rem; border-radius: 8px; letter-spacing: .4px; }
+  .prod-title { font-size: clamp(2.4rem, 5.2vw, 4rem); margin: .4rem 0 .5rem; line-height: 1.05; color: #fff; font-weight: 700; }
+  .prod-tagline { color: var(--accent); font-weight: 600; font-size: 1.05rem; margin: 0 0 1rem; }
+  .prod-intro { color: #cfcfcf; line-height: 1.75; margin: 0 0 1.5rem; }
+  .prod-cta { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 1.6rem; }
+  .prod-hero .btn-ghost { background: transparent; color: #fff; border: 2px solid #fff; }
+  .prod-hero .btn-ghost:hover { background: #fff; color: var(--bg-3); }
+  .phero-pills { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: .2rem; }
+  .qp { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: .55rem 1.1rem; min-width: 120px; }
+  .qp-l { display: block; font-size: .7rem; letter-spacing: 1px; text-transform: uppercase; color: #b8b8b8; }
+  .qp-v { display: block; font-weight: 700; color: #fff; font-size: 1rem; margin-top: .1rem; }
+
+  /* ===== SUPPLY FORMS (photo cards) ===== */
+  .supply-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.4rem; }
+  .supply-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; transition: transform .2s, border-color .2s, box-shadow .2s; }
+  .supply-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .supply-media { position: relative; height: 190px; overflow: hidden; }
+  .supply-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s; }
+  .supply-card:hover .supply-media img { transform: scale(1.06); }
+  .supply-tag { position: absolute; left: 14px; top: 14px; background: var(--accent); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: .72rem; padding: .3rem .7rem; border-radius: 7px; letter-spacing: .4px; }
+  .supply-body { padding: 1.4rem 1.6rem 1.7rem; }
+  .supply-body h3 { font-size: 1.12rem; margin: 0 0 .6rem; color: var(--fg); }
+  .supply-body p { margin: 0; color: var(--fg-soft); font-size: .92rem; line-height: 1.65; }
+
+  /* ===== OVERVIEW (zigzag) ===== */
+  .overview { display: grid; grid-template-columns: 1.05fr .95fr; gap: 3rem; align-items: center; }
+  .overview-text p { color: var(--fg-soft); line-height: 1.75; margin: 0 0 1rem; }
+  .ov-points { list-style: none; padding: 0; margin: 1.4rem 0 0; display: grid; gap: .7rem; }
+  .ov-points li { display: flex; align-items: center; gap: .7rem; color: var(--fg); font-size: .95rem; }
+  .ov-points li span { color: #fff; background: var(--accent); width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .72rem; flex: 0 0 auto; }
+  .overview-img { position: relative; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); }
+  .overview-img img { width: 100%; height: 340px; object-fit: cover; display: block; }
+  .ov-badge { position: absolute; left: 16px; bottom: 16px; background: var(--accent); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: .82rem; padding: .4rem .9rem; border-radius: 8px; letter-spacing: .4px; }
+
+  /* ===== BENEFITS (media + list) ===== */
+  .benefit-row { display: grid; grid-template-columns: .9fr 1.1fr; gap: 3rem; align-items: center; }
+  .benefit-media { position: relative; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); }
+  .benefit-media img { width: 100%; height: 420px; object-fit: cover; display: block; }
+  .benefit-media-cap { position: absolute; left: 16px; bottom: 16px; right: 16px; color: #fff; font-family: var(--font-head); font-weight: 600; font-size: .92rem; text-shadow: 0 1px 6px rgba(0,0,0,.5); }
+  .benefit-list { display: grid; gap: 1rem; margin-top: 1.6rem; }
+  .benefit { display: flex; gap: 1rem; align-items: flex-start; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.3rem; transition: transform .2s, border-color .2s, box-shadow .2s; }
+  .benefit:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .benefit-n { font-family: var(--font-head); font-weight: 800; font-size: 1.3rem; color: var(--accent); flex: 0 0 auto; line-height: 1; }
+  .benefit p { margin: 0; color: var(--fg); line-height: 1.55; font-size: .96rem; }
+
+  /* ===== STRUCTURE (cross-section) ===== */
+  .xsec { max-width: 860px; }
+  .xsec-bar { display: flex; height: 96px; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+  .xseg { display: grid; place-items: center; text-align: center; color: #fff; font-family: var(--font-head); font-weight: 700; font-size: .82rem; line-height: 1.15; padding: .3rem; }
+  .seg-liner { background: #9aa0a6; flex: 0 0 15%; }
+  .seg-adh { background: #d98a5f; flex: 0 0 17%; }
+  .seg-carrier { background: var(--accent); flex: 1 1 36%; font-size: .95rem; }
+  .xsec-legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.3rem; }
+  .xleg { border-left: 3px solid var(--line-strong, #cfcfcf); padding: .2rem 0 .2rem 1rem; }
+  .xleg-on { border-left-color: var(--accent); }
+  .xleg-t { display: block; font-weight: 700; color: var(--fg); font-size: .92rem; }
+  .xleg-d { display: block; color: var(--fg-soft); font-size: .84rem; line-height: 1.5; margin-top: .2rem; }
+
+  /* ===== SPECIFICATIONS (media + table) ===== */
+  .spec-row { display: grid; grid-template-columns: .85fr 1.15fr; gap: 3rem; align-items: start; }
+  .spec-media { position: relative; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); position: sticky; top: 90px; }
+  .spec-media img { width: 100%; height: 360px; object-fit: cover; display: block; background: #fff; }
+  .spec-media-cap { position: absolute; left: 16px; bottom: 16px; background: rgba(26,26,26,.82); color: #fff; font-family: var(--font-head); font-weight: 600; font-size: .82rem; padding: .4rem .9rem; border-radius: 8px; }
+  .spec-table { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+  .spec-row-row { display: flex; padding: 1rem 1.4rem; border-bottom: 1px solid var(--line); }
+  .spec-row-row:last-child { border-bottom: 0; }
+  .spec-label { width: 200px; flex: 0 0 auto; color: var(--fg-soft); font-weight: 600; }
   .spec-value { color: var(--fg); }
-  .apps { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-  .app-card { display: flex; align-items: center; gap: .8rem; }
-  .app-ico { color: #fff; background: var(--accent); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; flex: 0 0 auto; }
-  .app-card p { margin: 0; }
-  .rel-card { color: inherit; }
-  .rel-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent); }
-  .rel-img { width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: .8rem; }
-  .rel-card .en { color: var(--accent); font-size: .78rem; font-weight: 600; margin: -.2rem 0 0; }
-  @media (max-width: 760px) { .prod-head { grid-template-columns: 1fr; } .spec-label { width: 120px; } }
+
+  /* ===== APPLICATIONS (banner + grid) ===== */
+  .app-banner { position: relative; border-radius: 16px; overflow: hidden; margin-bottom: 2rem; min-height: 220px; display: flex; align-items: flex-end; box-shadow: var(--shadow); background: linear-gradient(120deg, #1d1a17 0%, #2c241b 55%, #3a2a1c 100%); }
+  .app-banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .app-banner-veil { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(20,18,16,.8) 0%, rgba(20,18,16,.35) 60%, rgba(20,18,16,.1) 100%); }
+  .app-banner-txt { position: relative; z-index: 2; color: #fff; padding: 1.8rem 2rem; max-width: 560px; }
+  .app-banner-txt h2 { color: #fff; margin: .4rem 0 .5rem; font-size: clamp(1.5rem, 3vw, 2.1rem); }
+  .app-banner-txt p { color: rgba(255,255,255,.85); margin: 0; line-height: 1.6; }
+  .app-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem 1.6rem; }
+  .app { display: flex; align-items: center; gap: .8rem; }
+  .app-ico { color: #fff; background: var(--accent); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; flex: 0 0 auto; font-size: .8rem; }
+  .app p { margin: 0; color: var(--fg); }
+
+  /* ===== INDUSTRIES (image cards) ===== */
+  .ind-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.4rem; }
+  .ind-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; color: inherit; transition: transform .2s, border-color .2s, box-shadow .2s; }
+  .ind-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .ind-media { position: relative; height: 170px; overflow: hidden; background: linear-gradient(135deg, #1e1c1a 0%, #2e2a26 100%); background-image: radial-gradient(circle at 28% 22%, rgba(200,84,43,.32), transparent 58%); }
+  .ind-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+  .ind-card:hover .ind-media img { transform: scale(1.07); }
+  .ind-veil { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.35) 100%); }
+  .ind-body { padding: 1.3rem 1.4rem 1.5rem; }
+  .ind-card h3 { font-size: 1.12rem; margin: 0 0 .5rem; color: var(--fg); }
+  .ind-more { color: var(--accent); font-family: var(--font-head); font-weight: 600; font-size: .85rem; letter-spacing: .4px; }
+
+  /* ===== CUSTOMIZE (one hero image + stats) ===== */
+  .customize-row { align-items: stretch; }
+  .customize-media {
+    position: relative;
+    border-radius: 16px; overflow: hidden;
+    background: transparent; border: 0; box-shadow: none;
+    display: flex; flex-direction: column; gap: 1rem; height: 100%;
+  }
+  .customize-hero {
+    position: relative; flex: 1; min-height: 340px;
+    border-radius: 14px; overflow: hidden;
+    box-shadow: var(--shadow); background: #1a1a1a;
+  }
+  .customize-hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .customize-hero-cap {
+    position: absolute; left: 16px; bottom: 16px;
+    display: flex; align-items: center; gap: .7rem;
+    padding: .55rem 1rem;
+    background: rgba(255,255,255,.94); border-radius: 999px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.18);
+  }
+  .customize-hero-cap-tag {
+    font-family: var(--font-head); font-size: .7rem; font-weight: 800; letter-spacing: 1.4px;
+    color: var(--accent); padding-right: .7rem; border-right: 1px solid var(--line);
+  }
+  .customize-hero-cap-line { font-size: .78rem; color: var(--fg); font-weight: 500; }
+
+  .customize-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem;
+    background: var(--bg-2); color: var(--fg);
+    padding: 1.1rem .8rem; border-radius: 14px; border: 1px solid var(--line); box-shadow: var(--shadow);
+  }
+  .cust-stat { display: flex; flex-direction: column; align-items: center; gap: .3rem; padding: .25rem; border-right: 1px solid var(--line); }
+  .cust-stat:last-child { border-right: 0; }
+  .cust-stat-n { font-family: var(--font-head); font-weight: 800; font-size: 1.05rem; color: var(--accent); letter-spacing: .3px; line-height: 1.1; text-align: center; }
+  .cust-stat-l { font-size: .68rem; color: var(--fg-soft); text-align: center; line-height: 1.35; text-transform: uppercase; letter-spacing: .3px; }
+
+  .config-list { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.1rem; }
+  .config-row {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 1rem 1.2rem; align-items: center;
+    background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: .85rem 1.2rem;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .config-row:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .config-num { font-family: var(--font-head); font-weight: 800; font-size: 1.2rem; color: var(--accent); min-width: 36px; letter-spacing: 1px; }
+  .config-body h3 { margin: 0 0 .42rem; font-size: .98rem; color: var(--fg); }
+  .chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .chip { font-size: .78rem; color: var(--fg-soft); border: 1px solid var(--line); border-radius: 999px; padding: .22rem .65rem; transition: .15s; cursor: default; }
+  .chip-default { background: rgba(200,84,43,.08); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .config-link { color: var(--accent); font-weight: 600; font-size: .8rem; font-family: var(--font-head); text-transform: uppercase; letter-spacing: .4px; white-space: nowrap; }
+
+  .config-cta {
+    display: grid; grid-template-columns: 1.4fr 1.2fr auto; gap: 1rem 1.6rem; align-items: center;
+    background: var(--bg-2); color: var(--fg);
+    border-radius: 14px; border: 1px solid var(--line); padding: 1.1rem 1.4rem;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .config-cta:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .config-cta-t { font-family: var(--font-head); font-weight: 800; font-size: 1.05rem; color: var(--fg); }
+  .config-cta-d { font-size: .82rem; color: var(--fg-soft); line-height: 1.5; }
+  .config-cta-a { color: var(--accent); font-weight: 700; font-size: .88rem; font-family: var(--font-head); text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; }
+  @media (max-width: 820px) {
+    .config-row { grid-template-columns: auto 1fr; }
+    .config-link { grid-column: 2; justify-self: end; }
+    .config-cta { grid-template-columns: 1fr; gap: .6rem; }
+    .customize-hero { min-height: 240px; }
+    .customize-hero-cap { left: 12px; bottom: 12px; padding: .45rem .8rem; gap: .5rem; }
+    .customize-hero-cap-line { display: none; }
+    .customize-stats { grid-template-columns: repeat(2, 1fr); }
+    .customize-media { position: static; }
+  }
+
+  /* ===== OEM ===== */
+  .oem-banner { position: relative; border-radius: 16px; overflow: hidden; margin-bottom: 2rem; min-height: 240px; display: flex; align-items: flex-end; box-shadow: var(--shadow); background: linear-gradient(120deg, #1a1a1a 0%, #2b2118 60%, #3a2a1c 100%); }
+  .oem-banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .oem-banner-veil { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(20,18,16,.82) 0%, rgba(20,18,16,.4) 58%, rgba(20,18,16,.08) 100%); }
+  .oem-banner-txt { position: relative; z-index: 2; color: #fff; padding: 2rem; max-width: 560px; }
+  .oem-banner-txt h3 { color: #fff; margin: 0 0 .5rem; font-size: clamp(1.3rem, 2.6vw, 1.8rem); }
+  .oem-banner-txt p { color: rgba(255,255,255,.85); margin: 0; line-height: 1.6; }
+  .oem-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.4rem; }
+  .oem { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 1.6rem 1.7rem; transition: transform .2s, box-shadow .2s; }
+  .oem:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .oem-ico { width: 42px; height: 42px; border-radius: 12px; background: rgba(200,84,43,.12); color: var(--accent); display: grid; place-items: center; font-family: var(--font-head); font-weight: 800; font-size: 1.1rem; margin-bottom: .9rem; }
+  .oem h3 { margin: 0 0 .5rem; font-size: 1.05rem; color: var(--fg); }
+  .oem p { margin: 0; color: var(--fg-soft); font-size: .9rem; line-height: 1.65; }
+  .oem-cta { margin-top: 2rem; }
+
+  /* ===== WORKFLOW (timeline) ===== */
+  .wf-track { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.4rem; position: relative; }
+  .wf { position: relative; padding-top: 1.4rem; border-top: 2px solid var(--accent); }
+  .wf-n { font-family: var(--font-head); font-weight: 800; font-size: 1.5rem; color: var(--accent); }
+  .wf h3 { margin: .3rem 0 .4rem; font-size: 1.05rem; color: var(--fg); }
+  .wf p { margin: 0; color: var(--fg-soft); font-size: .88rem; line-height: 1.6; }
+
+  /* ===== FAQ ===== */
+  .faq { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.4rem 2rem; }
+  .faq-item { border: 1px solid var(--line); border-radius: 12px; padding: 1.3rem 1.5rem; background: #fff; }
+  .faq-item h3 { font-size: 1.02rem; margin: 0 0 .5rem; color: var(--fg); line-height: 1.4; display: flex; gap: .6rem; align-items: baseline; }
+  .faq-q { flex: 0 0 auto; color: var(--accent); font-family: var(--font-head); font-weight: 800; }
+  .faq-item p { margin: 0; color: var(--fg-soft); font-size: .9rem; line-height: 1.65; }
+
+  /* ===== RELATED ===== */
+  .rel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.4rem; }
+  .rel-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; color: inherit; transition: transform .2s, border-color .2s, box-shadow .2s; }
+  .rel-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .rel-media { overflow: hidden; height: 160px; }
+  .rel-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+  .rel-card:hover .rel-media img { transform: scale(1.07); }
+  .rel-card h3 { font-size: 1rem; margin: .9rem 1rem .2rem; color: var(--fg); }
+  .rel-base { color: var(--accent); font-size: .78rem; font-weight: 600; margin: 0 1rem 1rem; }
+
+  /* ===== CTA ===== */
+  .tapecta { padding: 4.5rem 0; }
+  .cta-inner { text-align: center; max-width: 640px; margin: 0 auto; }
+  .cta-inner h2 { font-size: clamp(1.6rem, 3.2vw, 2.3rem); margin: .6rem 0 .8rem; color: var(--fg); }
+  .cta-inner p { color: var(--fg-soft); margin: 0 auto 1.8rem; max-width: 540px; }
+
+  @media (max-width: 820px) {
+    .overview, .benefit-row, .spec-row, .prod-hero-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .spec-media { position: static; }
+    .benefit-media img { height: 300px; }
+    .overview-img img { height: 260px; }
+    .prod-hero-img { height: 300px; }
+  }
 </style>

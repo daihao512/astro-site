@@ -1,0 +1,199 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SubHero from '../components/SubHero.astro';
+import { posts, postCategories } from '../data/posts';
+
+const stats = [
+  { n: '10+', l: 'Years of adhesive R&D' },
+  { n: '2', l: 'In-house coating lines' },
+  { n: '30+', l: 'Countries served' },
+  { n: '24h', l: 'Technical reply for RFQ' },
+];
+
+const highlights = [
+  'Understand carrier, adhesive and liner differences before you specify',
+  'Compare materials by substrate, load and service environment',
+  'Use the articles as internal reference for your engineering team',
+];
+
+const heroImg = '';
+
+const catCounts = postCategories.map((c) => ({
+  name: c,
+  count: posts.filter((p) => p.category === c).length,
+}));
+
+const fmtDate = (d: string) =>
+  new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+
+<Layout
+  title="Resources — LubandArt Tape | Adhesive Tape Guides & Articles"
+  description="Practical guides for engineers and buyers to choose the right double sided tape, foam tape and specialty tape — compare materials, carriers and service environments."
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Resources', href: '/blogs' }]}
+>
+  <!-- ===== 1. HERO ===== -->
+  <SubHero
+    eyebrow="Resources"
+    title="Industrial Tape Knowledge Hub"
+    sub="Practical guides for engineers and buyers to choose the right tape, compare materials and evaluate constructions before requesting samples."
+    breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Resources', href: '/blogs' }]}
+    ctas={[{ label: 'Get a Tape Recommendation', href: '/contact' }, { label: 'Download Factory Catalog', href: '/contact', variant: 'ghost' }]}
+  />
+
+  <!-- ===== 2. STATS BAND ===== -->
+  <section class="mod mod-gray stats-band">
+    <div class="container">
+      <div class="stats-grid">
+        {stats.map((s) => (
+          <div class="stat">
+            <div class="stat-n">{s.n}</div>
+            <div class="stat-l">{s.l}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3. ARTICLES + CATEGORY FILTER ===== -->
+  <section class="mod mod-light">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Latest Articles</div>
+        <h2>Technical Articles &amp; <span class="accent">Guides</span></h2>
+        <p>
+          Browse our latest insights on double sided tape, foam tape, specialty constructions and
+          industrial application practice.
+        </p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-cat="All">All ({posts.length})</button>
+        {catCounts.map((c) => (
+          <button class="tab" data-cat={c.name}>{c.name} ({c.count})</button>
+        ))}
+      </div>
+
+      <div class="posts">
+        {posts.map((p) => (
+          <article class="post" data-cat={p.category}>
+            <a class="post-img" href={`/blogs/${p.slug}`}></a>
+            <div class="post-body">
+              <div class="post-meta">
+                <span class="post-cat">{p.category}</span>
+                <span class="post-date">{fmtDate(p.date)}</span>
+                <span class="post-read">{p.readMin} min read</span>
+              </div>
+              <h3><a href={`/blogs/${p.slug}`}>{p.title}</a></h3>
+              <p class="post-ex">{p.excerpt}</p>
+              <div class="post-cta">
+                <a class="post-more" href={`/blogs/${p.slug}`}>View details →</a>
+                <a class="post-eng" href="/contact">Discuss with our engineer ›</a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. CTA ===== -->
+  <section class="mod mod-light">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="eyebrow">Not Sure Where To Start?</div>
+        <h2>Get a <span class="accent">Tape Recommendation</span></h2>
+        <p>
+          Send us your substrate, load case and service environment. Our engineering team will
+          recommend a construction and arrange samples for validation.
+        </p>
+        <a class="btn" href="/contact">Discuss Your Application</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>('.tab');
+  const items = document.querySelectorAll<HTMLElement>('.post');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const cat = tab.dataset.cat;
+      tabs.forEach((t) => t.classList.toggle('active', t === tab));
+      items.forEach((el) => {
+        el.style.display = !cat || cat === 'All' || el.dataset.cat === cat ? '' : 'none';
+      });
+    });
+  });
+</script>
+
+<style>
+  /* Hero */
+  .blog-hero { padding: 4.5rem 0 3.5rem; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 3rem; align-items: center; }
+  .eyebrow { color: var(--accent); font-family: var(--font-head); font-weight: 600; letter-spacing: 3px; font-size: .82rem; text-transform: uppercase; margin-bottom: .8rem; }
+  .hero-img:hover img { transform: scale(1.04); }
+
+  /* Stats */
+  .stats-band { padding: 3.4rem 0; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; text-align: center; }
+  .stat-n { font-family: var(--font-head); font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 800; color: var(--accent); line-height: 1; }
+  .stat-l { color: var(--fg-soft); margin-top: .55rem; font-size: .86rem; letter-spacing: .3px; }
+
+  /* Filter tabs */
+  .tabs { display: flex; flex-wrap: wrap; gap: .55rem; justify-content: center; margin-bottom: 2.6rem; }
+  .tab {
+    cursor: pointer; font-family: var(--font-head); font-weight: 600;
+    letter-spacing: .4px; text-transform: uppercase; font-size: .8rem;
+    padding: .5rem 1rem; border-radius: 999px;
+    background: #fff; color: var(--fg-soft); border: 1px solid var(--line);
+    transition: .18s;
+  }
+  .tab:hover { border-color: var(--accent); color: var(--accent); }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* Post list — horizontal card: photo left, copy right */
+  .posts { display: grid; gap: 1.5rem; }
+  .post {
+    display: grid; grid-template-columns: 300px 1fr;
+    background: #fff; border: 1px solid var(--line); border-radius: 4px;
+    overflow: hidden; transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .post:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .post-img { display: block; overflow: hidden; aspect-ratio: 16 / 10; background: radial-gradient(120% 120% at 25% 15%, rgba(200,84,43,.22), transparent 55%), linear-gradient(135deg,#241f1a,#33291f 55%,#433423); }
+  .post-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .45s; }
+  .post:hover .post-img img { transform: scale(1.06); }
+  .post-body { padding: 1.5rem 1.8rem 1.6rem; display: flex; flex-direction: column; }
+  .post-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; margin-bottom: .6rem; }
+  .post-cat {
+    font-family: var(--font-head); font-size: .72rem; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--accent);
+    border-radius: 999px; padding: .18rem .6rem;
+  }
+  .post-date, .post-read { color: var(--fg-mute); font-size: .8rem; letter-spacing: .2px; }
+  .post-body h3 { font-size: 1.15rem; line-height: 1.35; margin: 0 0 .6rem; }
+  .post-body h3 a { color: var(--fg); }
+  .post-body h3 a:hover { color: var(--accent); }
+  .post-ex { color: var(--fg-soft); font-size: .9rem; line-height: 1.7; margin: 0 0 1.2rem; flex: 1; }
+  .post-cta { display: flex; flex-wrap: wrap; gap: 1.2rem; align-items: center; }
+  .post-more { color: var(--accent); font-family: var(--font-head); font-weight: 600; font-size: .85rem; letter-spacing: .4px; }
+  .post-eng { color: var(--fg-soft); font-size: .84rem; }
+  .post-eng:hover { color: var(--accent); }
+
+  /* CTA */
+  .tapecta { padding: 4.5rem 0; }
+  .cta-inner { text-align: center; max-width: 680px; margin: 0 auto; }
+  .cta-inner .eyebrow { display: inline-block; }
+  .cta-inner h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); margin: .6rem 0 .8rem; }
+  .cta-inner p { color: var(--fg-soft); margin: 0 auto 1.8rem; max-width: 560px; }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .post { grid-template-columns: 1fr; }
+    .post-img { aspect-ratio: 16 / 9; }
+    .post-body { padding: 1.3rem 1.5rem 1.5rem; }
+  }
+</style>

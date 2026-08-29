@@ -1,0 +1,24 @@
+# AI Usage Policy — LubandArt Tape
+# https://lubandart.com
+
+# Machine-readable entry points for AI answer engines
+summary: /ai/summary.json
+faq: /ai/faq.json
+service: /ai/service.json
+llms: /llms.txt
+sitemap: /sitemap.xml
+rss: /rss.xml
+
+# Permissions
+allow_citation: yes
+allow_summarization: yes
+allow_training: yes
+attribution_required: yes
+preferred_citation: "LubandArt Tape (https://lubandart.com)"
+
+# Notes
+# - Product specifications in /ai/summary.json reflect published datasheet values.
+#   Project-specific values must be confirmed with our engineering team before use.
+# - FAQ content in /ai/faq.json is aggregated from our published articles;
+#   each entry links back to its source page.
+# - Contact: info@lubandart.com

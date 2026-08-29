@@ -1,106 +1,455 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { industries } from '../data/industries';
+import { SITE, absUrl } from '../config/site';
+
+/* WebSite structured data — helps search engines understand the site root */
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  url: SITE.url,
+  description: SITE.description,
+  publisher: { '@id': absUrl('/#organization') },
+};
+
+/* representative product image per industry (industries.img is empty by design) */
+const indImg: Record<string, string> = {
+  automotive: '/products/acrylic.jpg',
+  construction: '/products/pe-foam.jpg',
+  appliance: '/products/pvc.jpg',
+  machinery: '/products/acrylic.jpg',
+  signage: '/products/acrylic.jpg',
+  electronics: '/products/pet.jpg',
+};
 ---
 
-<Layout title="LubandArt Tape — 专业胶带与胶粘解决方案制造商">
-  <!-- Hero -->
+<Layout title="LubandArt Tape — Industrial Double Sided, Foam & Specialty Tape Supplier" jsonLd={websiteLd}>
+  <!-- ====== HERO — full-screen, video background with graceful gradient fallback ====== -->
   <section class="hero">
-    <div class="container hero-inner">
-      <div>
-        <h1>专业<span class="hl">胶粘解决方案</span><br />让每一次粘接都更可靠</h1>
-        <p>
-          LubandArt Tape 专注于双面胶、泡棉胶带、工业胶带与高温胶带的研发与制造，
-          为电子、汽车、包装、建筑等行业提供稳定可靠的粘接方案。
-        </p>
+    <div class="hero-bg" aria-hidden="true"></div>
+    <!-- Drop your hero loop at public/media/hero.mp4 (poster: public/media/hero-poster.jpg).
+         If the file is absent the gradient behind it shows through, so the hero never breaks. -->
+    <video class="hero-video" autoplay muted loop playsinline poster="/media/hero-poster.jpg" aria-hidden="true">
+      <source src="/media/hero.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="hero-grid container">
+      <div class="hero-copy">
+        <span class="hero-tag">INDUSTRIAL ADHESIVE SOLUTIONS</span>
+        <h1 class="hero-title">
+          <span class="line">Double Sided <span class="hl">Tape</span> · Foam <span class="hl">Tape</span> ·</span>
+          <span class="line">Specialty <span class="hl">Tape</span> Supplier</span>
+        </h1>
+        <p class="hero-sub">Industrial adhesive solutions for converting, distribution and manufacturing — engineered for permanent, invisible bonding across surfaces, with tight tolerances and certified quality.</p>
         <div class="hero-cta">
-          <a class="btn" href="/products">查看产品</a>
-          <a class="btn btn-ghost" href="/contact">联系我们</a>
+          <a class="btn" href="/products">Explore Products</a>
+          <a class="btn btn-ghost-light" href="/contact">Get a Quote</a>
         </div>
       </div>
-      <div class="hero-visual">
-        <span class="tag">核心能力</span>
-        <ul>
-          <li><span>厚度公差控制</span><span>±0.01mm</span></li>
-          <li><span>耐温范围</span><span>-40~260℃</span></li>
-          <li><span>初粘 / 持粘</span><span>行业领先</span></li>
-          <li><span>定制分切</span><span>支持</span></li>
-          <li><span>环保认证</span><span>RoHS</span></li>
-        </ul>
+      <div class="data-bar">
+        <div><strong>ISO 9001 Certified</strong><span>Quality Management</span></div>
+        <div><strong>14+ Years Experience</strong><span>In Adhesives</span></div>
+        <div><strong>Global Export</strong><span>30+ Countries</span></div>
       </div>
     </div>
   </section>
 
-  <!-- 核心优势概览（简述） -->
-  <section id="advantages">
+  <!-- ====== WHO WE SERVE (icon cards) ====== -->
+  <section class="mod mod-light">
     <div class="container">
       <div class="section-head">
-        <div class="eyebrow">Why Us</div>
-        <h2>为什么选择我们</h2>
-        <p>从品质到服务，构建可持续的供应链合作。</p>
+        <div class="eyebrow">PARTNERS</div>
+        <h2>Who We <span class="accent">Serve</span></h2>
+        <p>Reliable adhesive supply for every link of the value chain — from converters and distributors to large-scale OEMs.</p>
       </div>
-      <div class="grid">
-        <div class="card feature">
-          <div class="dot">1</div>
-          <div><h3>品质稳定</h3><p>全流程品控与批次追溯，关键指标可检测、可复现。</p></div>
-        </div>
-        <div class="card feature">
-          <div class="dot">2</div>
-          <div><h3>快速打样</h3><p>技术团队响应迅速，支持非标定制与小批量试产。</p></div>
-        </div>
-        <div class="card feature">
-          <div class="dot">3</div>
-          <div><h3>柔性供应</h3><p>多基地协同，交期可控，支持长期框架合作。</p></div>
-        </div>
-        <div class="card feature">
-          <div class="dot">4</div>
-          <div><h3>技术支持</h3><p>提供选型建议、应用测试与售后跟踪服务。</p></div>
+      <div class="icon-grid">
+        <article class="icon-card reveal">
+          <div class="ico">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="24" r="11"/><circle cx="30" cy="24" r="11"/><line x1="7" y1="24" x2="41" y2="24"/></svg>
+          </div>
+          <h3>Converters</h3>
+          <p>Die-cutting and slitting partners relying on consistent, convert-ready rolls with tight tolerance.</p>
+          <span class="more">Talk to Engineering →</span>
+        </article>
+        <article class="icon-card reveal">
+          <div class="ico">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="14" width="22" height="16" rx="1"/><path d="M28 20h8l6 6v4H28z"/><circle cx="15" cy="34" r="3"/><circle cx="35" cy="34" r="3"/></svg>
+          </div>
+          <h3>Distributors</h3>
+          <p>Wholesalers sourcing a broad tape portfolio with stable quality and flexible MOQ for every market.</p>
+          <span class="more">View Catalog →</span>
+        </article>
+        <article class="icon-card reveal">
+          <div class="ico">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 38V20l10 7V20l10 7V20l12 8v10z"/><line x1="8" y1="38" x2="40" y2="38"/></svg>
+          </div>
+          <h3>OEM Manufacturers</h3>
+          <p>Factories integrating our tapes into final products through OEM and ODM programs.</p>
+          <span class="more">Start OEM Project →</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== CORE PRODUCTS (local images) ====== -->
+  <section class="mod mod-gray">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">PRODUCTS</div>
+        <h2>Core <span class="accent2">Products</span></h2>
+        <p>Three families engineered for demanding industrial bonding — manufactured in-house from coating to finished roll.</p>
+      </div>
+      <div class="featured-layout">
+        <article class="featured-card feature-big reveal">
+          <div class="img-wrap"><img src="/products/acrylic.jpg" alt="Double Sided Tape" loading="lazy" /></div>
+          <div class="body">
+            <span class="tag">01 / DOUBLE SIDED</span>
+            <h3>Double Sided Tape</h3>
+            <p>Acrylic, PET, tissue and OPP carriers for permanent, invisible bonding across surfaces — engineered for high-temperature, UV-resistant and structural demands.</p>
+            <a href="/products/double-sided" class="more">Learn More →</a>
+          </div>
+        </article>
+        <div class="featured-side">
+          <article class="featured-card reveal">
+            <div class="img-wrap"><img src="/products/pe-foam.jpg" alt="Foam Tape" loading="lazy" /></div>
+            <div class="body">
+              <span class="tag">02 / FOAM</span>
+              <h3>Foam Tape</h3>
+              <p>PE and EVA foam tapes that absorb shock, seal gaps and fill uneven surfaces for mounting and weatherstripping.</p>
+              <a href="/products/foam" class="more">Learn More →</a>
+            </div>
+          </article>
+          <article class="featured-card reveal">
+            <div class="img-wrap"><img src="/products/pvc.jpg" alt="Specialty Tape" loading="lazy" /></div>
+            <div class="body">
+              <span class="tag">03 / SPECIALTY</span>
+              <h3>Specialty Tape</h3>
+              <p>High-temperature, flame-retardant and structural tapes for critical applications in transport, energy and electronics.</p>
+              <a href="/products/specialty" class="more">Learn More →</a>
+            </div>
+          </article>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 深入入口（引导到独立页面） -->
-  <section style="background:var(--bg-soft)">
+  <!-- ====== APPLICATIONS — driven by src/data/industries (same source as the nav) ====== -->
+  <section class="mod mod-light">
     <div class="container">
       <div class="section-head">
-        <div class="eyebrow">Explore</div>
-        <h2>深入了解 LubandArt</h2>
-        <p>点击下方版块，查看产品、行业方案、资质与公司的详细信息。</p>
+        <div class="eyebrow">INDUSTRIES</div>
+        <h2>Application <span class="accent">Areas</span></h2>
+        <p>Proven performance across six major industries — engineered tapes that meet the certification, durability and precision each sector demands.</p>
       </div>
-      <div class="grid entry-grid">
-        <a class="card entry-card" href="/products">
-          <div class="ico">🧪</div>
-          <h3>产品中心</h3>
-          <p>7 大胶粘产品系列，含规格、特性与应用详情。</p>
-          <span class="more">查看产品 →</span>
-        </a>
-        <a class="card entry-card" href="/industries">
-          <div class="ico">🏭</div>
-          <h3>行业方案</h3>
-          <p>汽车、建筑、家电、机械、标识、电子的定制方案。</p>
-          <span class="more">查看方案 →</span>
-        </a>
-        <a class="card entry-card" href="/certifications">
-          <div class="ico">📜</div>
-          <h3>资质与报告</h3>
-          <p>ISO 9001、RoHS、REACH 与第三方检测报告下载。</p>
-          <span class="more">查看资质 →</span>
-        </a>
-        <a class="card entry-card" href="/about">
-          <div class="ico">🏢</div>
-          <h3>关于我们</h3>
-          <p>公司实力、产能布局与研发检测能力介绍。</p>
-          <span class="more">了解公司 →</span>
-        </a>
+      <div class="zigzag">
+        {industries.map((it, i) => (
+          <div class={`zig-row ${i % 2 === 1 ? 'reverse' : ''} reveal`}>
+            <div class="zig-img"><img src={indImg[it.slug]} alt={it.en} loading="lazy" /></div>
+            <div class="zig-text">
+              <span class="num">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{it.icon} {it.en}</h3>
+              <p>{it.descEn}</p>
+              <a href={`/industries/${it.slug}`} class="explore">Explore {it.en} →</a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== CAPABILITIES (icon cards) ====== -->
+  <section class="mod mod-gray">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">IN-HOUSE</div>
+        <h2>Our <span class="accent2">Capabilities</span></h2>
+        <p>Vertical integration from adhesive coating to finished roll — every process under one roof, controlled and traceable.</p>
+      </div>
+      <div class="icon-grid icon-grid-4">
+        <article class="icon-card reveal">
+          <div class="ico">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="10" y="10" width="20" height="8" rx="2"/><line x1="30" y1="14" x2="38" y2="14"/><line x1="20" y1="18" x2="20" y2="34"/><line x1="12" y1="34" x2="28" y2="34"/></svg>
+          </div>
+          <h3>Coating</h3>
+          <p>Precision adhesive coating on varied carriers with controlled thickness and uniform coverage.</p>
+        </article>
+        <article class="icon-card reveal">
+          <div class="ico">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="M38 24a14 14 0 1 1-4-10"/><path d="M38 6v10h-10"/></svg>
+          </div>
+          <h3>Rewinding</h3>
+          <p>Rewinding to custom lengths and roll configurations for clean, ready-to-use delivery.</p>
+        </article>
+        <article class="icon-card reveal">
+          <div class="ico">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 40L36 12"/><path d="M30 10h10v10"/></svg>
+          </div>
+          <h3>Slitting</h3>
+          <p>Narrow slitting to exact widths with burr-free, consistent edges for downstream converting.</p>
+        </article>
+        <article class="icon-card reveal">
+          <div class="ico">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><circle cx="14" cy="14" r="5"/><circle cx="14" cy="34" r="5"/><path d="M18 17L38 34M18 31L38 14"/></svg>
+          </div>
+          <h3>Die-Cutting</h3>
+          <p>Custom shapes and pads cut to drawing for ready-to-assemble parts and OEM integration.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== WHY WORK WITH US (light) ====== -->
+  <section class="mod mod-gray">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">TRUST</div>
+        <h2>Why Work <span class="accent">With Us</span></h2>
+        <p>Standards, reach and control you can build supply on — backed by certifications and a fully traceable production line.</p>
+      </div>
+      <div class="trust-grid">
+        <div class="trust reveal">
+          <div class="trust-ico">🏅</div>
+          <h3>Certifications</h3>
+          <p>ISO 9001, RoHS, REACH and SGS verified — compliant for global markets.</p>
+          <div class="trust-badges"><span>ISO</span><span>RoHS</span><span>SGS</span></div>
+        </div>
+        <div class="trust reveal">
+          <div class="trust-ico">🌐</div>
+          <h3>Global Reach</h3>
+          <p>Serving <strong>30+ Countries</strong> with stable export and logistics support.</p>
+          <div class="trust-num">30+</div>
+        </div>
+        <div class="trust reveal">
+          <div class="trust-ico">🎯</div>
+          <h3>Quality Control</h3>
+          <p>In-house lab holding <strong>±0.01mm Precision</strong> on thickness tolerance.</p>
+          <div class="trust-num">±0.01mm</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== GET A QUOTE ====== -->
+  <section class="mod mod-light">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">START</div>
+        <h2>Get a <span class="accent">Quote</span></h2>
+        <p>Tell us your requirement and our engineering team will respond within 24 hours with a tailored specification and pricing.</p>
+      </div>
+      <div class="contact-grid">
+        <form class="quote-form" onsubmit="return false">
+          <div class="row">
+            <input type="text" name="name" placeholder="Your Name" required />
+            <input type="email" name="email" placeholder="Email Address" required />
+          </div>
+          <input type="text" name="company" placeholder="Company Name" />
+          <select name="product">
+            <option value="">Product Requirement</option>
+            <option>Double Sided Tape</option>
+            <option>Foam Tape</option>
+            <option>Specialty Tape</option>
+            <option>Custom / OEM Project</option>
+          </select>
+          <textarea name="message" placeholder="Specs, quantity, application — attach drawings or datasheets if available…"></textarea>
+          <button class="btn" type="submit">Submit Inquiry</button>
+        </form>
+        <div>
+          <ul class="info-list">
+            <li><strong>Email</strong><span>info@lubandart.com</span></li>
+            <li><strong>WhatsApp</strong><span>+86 138-0000-0000</span></li>
+            <li><strong>Address</strong><span>Adhesive Industrial Park, Guangdong, China</span></li>
+          </ul>
+          <p class="quote-hint">Prefer email? Write to us and attach your drawing or spec sheet for a faster, more accurate quote.</p>
+        </div>
       </div>
     </div>
   </section>
 </Layout>
 
 <style>
-  .entry-card { display: block; color: inherit; }
-  .entry-card { transition: transform .2s, box-shadow .2s, border-color .2s; }
-  .entry-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent); }
-  .entry-card .more { display: inline-block; margin-top: .8rem; color: var(--accent); font-weight: 600; font-size: .9rem; }
-  .entry-grid { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  /* ============================================================
+     HERO — full-screen, video background with graceful gradient fallback
+     ============================================================ */
+  .hero {
+    position: relative; overflow: hidden; background: #0e0e10;
+    min-height: 100svh; display: flex; align-items: center; justify-content: center;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(900px 480px at 82% -8%, rgba(200,84,43,.26), transparent 60%),
+      radial-gradient(680px 420px at 8% 110%, rgba(200,84,43,.10), transparent 60%),
+      linear-gradient(135deg, #141316 0%, #1b1816 55%, #0e0e10 100%);
+  }
+  .hero-bg::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: radial-gradient(circle at 50% 35%, #000 0%, transparent 78%);
+    -webkit-mask-image: radial-gradient(circle at 50% 35%, #000 0%, transparent 78%);
+  }
+  .hero-video { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; }
+  .hero-overlay {
+    position: absolute; inset: 0; z-index: 2;
+    background: linear-gradient(180deg, rgba(14,14,16,.55) 0%, rgba(14,14,16,.30) 45%, rgba(14,14,16,.80) 100%);
+  }
+  .hero-grid {
+    position: relative; z-index: 3;
+    display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+    padding: 5rem 1.5rem; max-width: var(--maxw); width: 100%;
+  }
+  .hero-copy { max-width: 980px; margin: 0 auto; text-align: center; }
+  .hero-tag {
+    display: inline-block; color: #fff;
+    font-family: var(--font-head); font-size: .82rem; font-weight: 600; letter-spacing: 4px;
+    text-transform: uppercase; padding: .55rem 1.2rem;
+    border: 1px solid rgba(255,255,255,.25); margin: 0 auto 1.8rem; background: rgba(0,0,0,.25);
+  }
+  .hero-title {
+    font-family: var(--font-head); font-size: clamp(2.2rem, 5.4vw, 4.8rem); font-weight: 700;
+    line-height: 1.08; letter-spacing: 1px; text-transform: uppercase; color: #fff; margin: 0 auto 1.4rem;
+    text-wrap: balance;
+  }
+  .hero-title .line { display: block; }
+  .hero-title .hl { color: var(--accent); }
+  @media (min-width: 760px) { .hero-title .line { white-space: nowrap; } }
+  .hero-sub { font-size: 1.12rem; color: #e6e6e6; max-width: 60ch; margin: 0 auto 2.2rem; line-height: 1.65; }
+  .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .btn-ghost-light { background: transparent; color: #fff; border: 2px solid #fff; }
+  .btn-ghost-light:hover { background: #fff; color: var(--bg-3); }
+  .data-bar {
+    position: relative; z-index: 3;
+    display: flex; gap: 2.5rem; flex-wrap: wrap; justify-content: center;
+    border-top: 1px solid rgba(255,255,255,.14); padding: 1.6rem 1.5rem 2.4rem; max-width: var(--maxw); width: 100%; margin: 0 auto;
+  }
+  .data-bar > div { display: flex; flex-direction: column; align-items: center; min-width: 200px; position: relative; padding-top: .8rem; }
+  .data-bar > div::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 36px; height: 3px; background: var(--accent); border-radius: 2px; }
+  .data-bar strong { font-family: var(--font-head); text-transform: uppercase; letter-spacing: 1px; color: #fff; font-size: 1.02rem; text-align: center; }
+  .data-bar span { color: #b8b8b8; font-size: .76rem; letter-spacing: .5px; text-transform: uppercase; text-align: center; }
+
+  /* ============================================================
+     ICON CARDS (Who We Serve / Capabilities) — inline SVG, no images
+     ============================================================ */
+  .icon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; }
+  .icon-grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .icon-card {
+    background: #fff; border: 1px solid var(--line); border-top: 3px solid var(--accent);
+    border-radius: var(--radius-lg); padding: 2rem 1.8rem 2.2rem;
+    transition: transform .25s, box-shadow .25s, border-color .25s; display: flex; flex-direction: column;
+  }
+  .icon-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+  .icon-card .ico {
+    width: 64px; height: 64px; display: grid; place-items: center; margin-bottom: 1.2rem;
+    background: rgba(200,84,43,.10); color: var(--accent); border: 1px solid rgba(200,84,43,.28); border-radius: 10px;
+  }
+  .icon-card .ico svg { width: 34px; height: 34px; }
+  .icon-card h3 { font-size: 1.3rem; margin: 0 0 .6rem; color: var(--fg); }
+  .icon-card p { color: var(--fg-soft); font-size: .94rem; margin: 0 0 1.2rem; line-height: 1.65; flex: 1; }
+  .icon-card .more { font-family: var(--font-head); font-weight: 700; font-size: .78rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: .15rem; align-self: flex-start; }
+
+  /* ============================================================
+     CORE PRODUCTS — featured offset layout
+     ============================================================ */
+  .featured-layout { display: grid; grid-template-columns: 1.35fr 1fr; gap: 1.8rem; align-items: stretch; }
+  .featured-card {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
+    transition: transform .25s, box-shadow .25s, border-color .25s; display: flex; flex-direction: column; position: relative; height: 100%;
+  }
+  .featured-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+  .featured-card .img-wrap { overflow: hidden; background: #d8d8d4; }
+  .featured-card .img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+  .featured-card:hover .img-wrap img { transform: scale(1.06); }
+  .featured-card .body { padding: 1.8rem 2rem 2rem; display: flex; flex-direction: column; flex: 1; }
+  .featured-card .tag { font-family: var(--font-head); font-size: .78rem; color: var(--accent); letter-spacing: 2px; font-weight: 600; display: inline-block; margin-bottom: .6rem; }
+  .featured-card h3 { font-size: 1.6rem; margin: 0 0 .7rem; color: var(--fg); }
+  .featured-card.feature-big h3 { font-size: 1.9rem; }
+  .featured-card p { color: var(--fg-soft); font-size: .96rem; line-height: 1.7; flex: 1; }
+  .featured-card .more { margin-top: 1.3rem; align-self: flex-start; font-family: var(--font-head); font-weight: 700; font-size: .82rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: .2rem; }
+  .featured-card.feature-big .img-wrap { aspect-ratio: 16 / 10; }
+  .featured-side { display: grid; grid-template-rows: 1fr 1fr; gap: 1.8rem; }
+  .featured-side .featured-card .img-wrap { aspect-ratio: 16 / 7; }
+  .featured-side .featured-card .body { padding: 1.5rem 1.6rem 1.6rem; }
+
+  /* ============================================================
+     APPLICATIONS — zigzag, local images
+     ============================================================ */
+  .zigzag { display: flex; flex-direction: column; gap: 5rem; }
+  .zig-row { display: grid; grid-template-columns: 1.15fr 1fr; gap: 4rem; align-items: center; }
+  .zig-row.reverse { grid-template-columns: 1fr 1.15fr; }
+  .zig-img { position: relative; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 5 / 4; box-shadow: var(--shadow-lg); }
+  .zig-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+  .zig-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(200,84,43,.10), transparent 60%); pointer-events: none; }
+  .zig-row:hover .zig-img img { transform: scale(1.05); }
+  .zig-row.reverse .zig-img { order: 2; }
+  .zig-row.reverse .zig-text { order: 1; }
+  .zig-text .num { font-family: var(--font-head); font-size: 1.5rem; color: var(--accent); display: block; font-weight: 700; margin-bottom: .4rem; letter-spacing: 2px; }
+  .zig-text h3 { font-size: 1.9rem; margin: 0 0 1rem; color: var(--fg); }
+  .zig-text p { color: var(--fg-soft); font-size: 1.02rem; line-height: 1.75; margin: 0 0 1.6rem; }
+  .zig-text .explore { font-family: var(--font-head); font-weight: 700; font-size: .85rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: .25rem; }
+
+  /* ============================================================
+     WHY WORK WITH US — dark
+     ============================================================ */
+  .trust-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; }
+  .trust { background: #fff; border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius-lg); padding: 2.4rem 2rem 2.6rem; text-align: center; }
+  .trust-ico { font-size: 2.4rem; margin-bottom: 1rem; }
+  .trust h3 { font-size: 1.3rem; margin: 0 0 .8rem; color: var(--fg); }
+  .trust p { color: var(--fg-soft); font-size: .96rem; margin: 0; line-height: 1.7; }
+  .trust p strong { color: var(--accent); font-weight: 700; }
+  .trust-badges { display: flex; gap: .5rem; justify-content: center; margin-top: 1.1rem; flex-wrap: wrap; }
+  .trust-badges span { font-family: var(--font-head); font-size: .72rem; letter-spacing: .5px; text-transform: uppercase; border: 1px solid rgba(200,84,43,.5); color: var(--accent); padding: .3rem .65rem; }
+  .trust-num { font-family: var(--font-head); font-size: 2.6rem; font-weight: 700; color: var(--accent); margin-top: 1.2rem; line-height: 1; letter-spacing: 1px; }
+
+  /* ============================================================
+     GET A QUOTE
+     ============================================================ */
+  .contact-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3rem; align-items: start; }
+  .quote-form { display: grid; gap: 1rem; background: #fff; padding: 2.2rem 2.2rem 2.4rem; border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius-lg); }
+  .quote-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .quote-form input, .quote-form select, .quote-form textarea { width: 100%; padding: .95rem 1.1rem; border: 1px solid var(--line); border-radius: var(--radius); font: inherit; background: #fafaf8; color: var(--fg); transition: border-color .2s, background .2s; }
+  .quote-form input:focus, .quote-form select:focus, .quote-form textarea:focus { outline: none; border-color: var(--accent); background: #fff; }
+  .quote-form textarea { min-height: 130px; resize: vertical; }
+  .quote-form .btn { justify-content: center; padding: .85rem 1.5rem; font-size: .95rem; margin-top: .4rem; }
+  .info-list { list-style: none; padding: 0; margin: 0 0 1.4rem; }
+  .info-list li { padding: 1.2rem 1.5rem; background: #fff; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: var(--radius); margin-bottom: .9rem; }
+  .info-list strong { display: block; font-family: var(--font-head); letter-spacing: 1.5px; text-transform: uppercase; font-size: .78rem; color: var(--accent); margin-bottom: .3rem; }
+  .info-list span { color: var(--fg); font-size: 1rem; font-weight: 500; }
+  .quote-hint { color: var(--fg-soft); font-size: .9rem; margin: 1.2rem 0 0; line-height: 1.7; }
+
+  /* ============================================================
+     REVEAL ANIMATION
+     ============================================================ */
+  .js .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+  .js .reveal.is-visible { opacity: 1; transform: none; }
+
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+  @media (max-width: 980px) {
+    .icon-grid, .icon-grid-4 { grid-template-columns: 1fr 1fr; }
+    .featured-layout { grid-template-columns: 1fr; }
+    .featured-side { grid-template-rows: auto; grid-template-columns: 1fr 1fr; }
+    .trust-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 880px) {
+    .hero-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    .icon-grid, .icon-grid-4, .trust-grid { grid-template-columns: 1fr; }
+    .featured-side { grid-template-columns: 1fr; }
+    .zig-row, .zig-row.reverse { grid-template-columns: 1fr; gap: 1.8rem; }
+    .zig-row.reverse .zig-img, .zig-row.reverse .zig-text { order: initial; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .quote-form .row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .data-bar { gap: 1.4rem; }
+    .data-bar > div { min-width: 130px; }
+    .hero-title { font-size: clamp(1.7rem, 7vw, 2.4rem); }
+    .hero-title .line { white-space: normal; overflow-wrap: break-word; }
+  }
 </style>

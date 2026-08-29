@@ -1,41 +1,204 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SubHero from '../components/SubHero.astro';
 import { industries } from '../data/industries';
+
+/* Hero credibility badges */
+const sellingPoints = [
+  { t: '10+ Years Manufacturing Experience', d: 'In-house adhesive coating, laminating and converting since day one.' },
+  { t: 'Integrated Converting Capabilities', d: 'Slitting, rewinding, die-cutting and spooling under one roof.' },
+  { t: 'OEM & Custom Engineered Solutions', d: 'Adhesive system, thickness, width and liner built to your specification.' },
+];
+
+/* How we support a project — mirrors the reference site's 3-step engineering story */
+const supportSteps = [
+  { n: '01', t: 'Understand Your Application', d: 'We analyze your specific bonding requirements, substrate materials, environmental stresses and production constraints.' },
+  { n: '02', t: 'Recommend the Right Solution', d: 'We match the optimal adhesive system and structure to your design, providing technical data and material samples for testing.' },
+  { n: '03', t: 'Support Production', d: 'We provide precision converting, die-cutting services and reliable fast delivery to keep your production lines moving.' },
+];
 ---
 
-<Layout title="行业解决方案 — LubandArt Tape" description="为汽车、建筑、家电、机械工业、标识、电子提供定制化的粘接、密封与缓冲方案。">
-  <section style="background:var(--bg-soft); padding:4rem 0 2.5rem">
+<Layout
+  title="Adhesive Tape Solutions by Industry — LubandArt Tape"
+  description="Engineered bonding and sealing solutions for automotive, electronics, construction, appliance, signage and industrial assembly applications."
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Applications', href: '/industries' }]}
+>
+  <!-- ===== HERO ===== -->
+  <SubHero
+    eyebrow="Industries"
+    title="Adhesive Solutions for Every Industry"
+    sub="From automotive to electronics, we provide engineered bonding and sealing solutions tailored to your application."
+    breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Applications', href: '/industries' }]}
+    ctas={[{ label: 'Discuss Your Application', href: '/contact' }]}
+  />
+
+  <!-- Credibility points -->
+  <section class="mod mod-gray">
     <div class="container">
-      <div class="eyebrow">Industries</div>
-      <h1 class="page-title">行业解决方案</h1>
-      <p class="page-sub">从汽车到电子，为各行业提供定制化的粘接、密封与缓冲方案。点击行业查看完整方案与推荐产品。</p>
+      <div class="selling-grid">
+        {sellingPoints.map((s) => (
+          <div class="selling">
+            <div class="selling-t">{s.t}</div>
+            <div class="selling-d">{s.d}</div>
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
-  <section style="padding:2.5rem 0 5rem">
+  <!-- ===== INDUSTRIES WE SERVE ===== -->
+  <section class="mod mod-light ind-serve">
     <div class="container">
-      <div class="grid">
+      <div class="section-head">
+        <div class="eyebrow">Industries We Serve</div>
+        <h2>Industries We <span class="accent">Serve</span></h2>
+        <p>
+          We don't just supply tape; we engineer bonds. Explore how our advanced adhesive and foam
+          solutions solve critical manufacturing challenges across major industries.
+        </p>
+      </div>
+
+      <div class="ind-blocks">
         {industries.map((it) => (
-          <a class="card ind-card" href={`/industries/${it.slug}`}>
-            <div class="ico">{it.icon}</div>
-            <h3>{it.name} <span class="en">/ {it.en}</span></h3>
-            <p>{it.desc}</p>
-            <span class="more">查看方案 →</span>
-          </a>
+          <div class="ind-block">
+            <div class="ind-block-img"></div>
+            <div class="ind-block-body">
+              <h3>{it.en}</h3>
+              <p class="ind-desc">{it.descEn}</p>
+
+              <div class="ind-sub">
+                <h4>Applications</h4>
+                <ul class="ind-app-list">
+                  {it.applications.map((a) => <li>{a}</li>)}
+                </ul>
+              </div>
+
+              <div class="ind-sub">
+                <h4>Recommended Solutions</h4>
+                <div class="ind-rec">
+                  {it.recommended.map((r) => (
+                    <a class="rec-chip" href={`/products/${r.slug}`}>{r.label}</a>
+                  ))}
+                </div>
+              </div>
+
+              <a class="btn btn-ghost ind-btn" href={`/industries/${it.slug}`}>Get Solution →</a>
+            </div>
+          </div>
         ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW WE SUPPORT YOUR PROJECT ===== -->
+  <section class="mod mod-gray ind-support">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">How We Work</div>
+        <h2>How We Support <span class="accent">Your Project</span></h2>
+        <p>
+          We act as an extension of your engineering team, ensuring the materials you choose perform
+          flawlessly in real-world conditions.
+        </p>
+      </div>
+      <div class="support-grid">
+        {supportSteps.map((s) => (
+          <div class="support-step">
+            <div class="support-n">{s.n}</div>
+            <h3>{s.t}</h3>
+            <p>{s.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section class="mod mod-light">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="eyebrow">Talk to an Engineer</div>
+        <h2>Need Help Selecting the Right <span class="accent">Tape</span>?</h2>
+        <p>
+          Our engineering team is ready to support your project with material selection, testing and
+          customization. Tell us about your application, and we will provide a tailored technical
+          proposal.
+        </p>
+        <a class="btn" href="/contact">Discuss Your Application</a>
       </div>
     </div>
   </section>
 </Layout>
 
 <style>
-  .page-title { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: .5rem 0 .6rem; }
-  .page-sub { color: var(--fg-soft); max-width: 640px; }
-  .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; }
-  .ind-card { display: block; color: inherit; }
-  .ind-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent); }
-  .ind-card .ico { width: 48px; height: 48px; border-radius: 12px; background: rgba(246,130,31,.12); color: var(--accent); display: grid; place-items: center; font-size: 1.5rem; margin-bottom: 1rem; }
-  .ind-card h3 { margin: .2rem 0 .5rem; }
-  .ind-card h3 .en { color: var(--fg-soft); font-weight: 500; font-size: .8rem; }
-  .ind-card .more { display: inline-block; margin-top: .8rem; color: var(--accent); font-weight: 600; font-size: .9rem; }
+  /* Hero */
+  .ind-hero { padding: 5rem 0 3.5rem; }
+  .selling-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; max-width: 980px; }
+  .selling { border-left: 2px solid var(--accent); padding-left: 1rem; }
+  .selling-t { font-family: var(--font-head); font-weight: 700; color: var(--fg); letter-spacing: .4px; margin-bottom: .3rem; font-size: .98rem; }
+  .selling-d { color: var(--fg-soft); font-size: .88rem; line-height: 1.55; }
+
+  /* Industry blocks — alternating left / right image */
+  .ind-blocks { display: grid; gap: 3.2rem; }
+  .ind-block {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    align-items: center;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .ind-block:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .ind-block-img { aspect-ratio: 4 / 3; overflow: hidden; background: radial-gradient(120% 120% at 25% 15%, rgba(200,84,43,.24), transparent 55%), linear-gradient(135deg,#241f1a,#33291f 55%,#433423); }
+  .ind-block-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; display: block; }
+  .ind-block:hover .ind-block-img img { transform: scale(1.05); }
+  .ind-block:nth-child(even) .ind-block-img { order: 2; }
+  .ind-block:nth-child(even) .ind-block-body { order: 1; }
+  .ind-block-body { padding: 2rem 2.2rem; }
+  .ind-block-body h3 { font-size: 1.45rem; margin: 0 0 .7rem; color: var(--fg); }
+  .ind-desc { color: var(--fg-soft); font-size: .95rem; line-height: 1.7; margin: 0 0 1.4rem; }
+  .ind-sub { margin-bottom: 1.3rem; }
+  .ind-sub h4 {
+    font-size: .76rem; color: var(--accent); font-family: var(--font-head);
+    font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 .6rem;
+  }
+  .ind-app-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: .35rem .9rem; }
+  .ind-app-list li { color: var(--fg-soft); font-size: .88rem; line-height: 1.5; padding-left: 1.1rem; position: relative; }
+  .ind-app-list li::before { content: '✓'; position: absolute; left: 0; color: var(--accent); font-size: .8rem; }
+  .ind-rec { display: flex; flex-wrap: wrap; gap: .45rem; }
+  .rec-chip {
+    font-size: .82rem; color: var(--accent); border: 1px solid var(--accent);
+    border-radius: 999px; padding: .3rem .75rem; transition: .18s;
+  }
+  .rec-chip:hover { background: var(--accent); color: #fff; }
+  .ind-btn { display: inline-flex; align-self: flex-start; }
+
+  /* How we support */
+  .support-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.4rem; }
+  .support-step {
+    background: #fff; border: 1px solid var(--line); border-radius: 4px;
+    padding: 1.8rem 1.9rem; transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .support-step:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: var(--shadow); }
+  .support-n { font-family: var(--font-head); font-size: 1.6rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: .8rem; }
+  .support-step h3 { font-size: 1.1rem; margin: 0 0 .6rem; color: var(--fg); }
+  .support-step p { color: var(--fg-soft); font-size: .9rem; line-height: 1.65; margin: 0; }
+
+  /* CTA */
+  .tapecta { padding: 5rem 0; }
+  .cta-inner { text-align: center; max-width: 680px; margin: 0 auto; }
+  .cta-inner .eyebrow { display: inline-block; color: var(--accent); font-family: var(--font-head); font-weight: 600; letter-spacing: 3px; font-size: .8rem; text-transform: uppercase; }
+  .cta-inner h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); margin: .6rem 0 .8rem; }
+  .cta-inner p { color: var(--fg-soft); margin: 0 auto 1.8rem; max-width: 560px; }
+
+  @media (max-width: 860px) {
+    .ind-block { grid-template-columns: 1fr; }
+    .ind-block:nth-child(even) .ind-block-img { order: 1; }
+    .ind-block:nth-child(even) .ind-block-body { order: 2; }
+    .ind-block-img { aspect-ratio: 16 / 10; }
+    .ind-block-body { padding: 1.6rem 1.8rem; }
+    .ind-app-list { grid-template-columns: 1fr; }
+  }
 </style>

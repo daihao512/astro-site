@@ -1,35 +1,37 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SubHero from '../components/SubHero.astro';
 
 const certs = [
-  { icon: "📜", name: "ISO 9001:2015", desc: "质量管理体系认证，规范研发、生产、品控全流程。", file: "/certs/iso-9001.pdf" },
-  { icon: "♻️", name: "RoHS 合规", desc: "材料符合 RoHS 有害物质限制指令，可下载检测报告。" },
-  { icon: "🌿", name: "REACH 合规", desc: "符合 REACH 化学品注册、评估与授权要求。" },
-  { icon: "🔍", name: "SGS 审核", desc: "第三方审核供应商，生产体系可验证。" },
-  { icon: "🧪", name: "自建实验室", desc: "初粘、持粘、剥离、老化等关键指标可检测。" },
+  { icon: "📜", name: "ISO 9001:2015", desc: "Quality Management System certification covering R&D, production and quality control across the full process.", file: "/certs/iso-9001.pdf" },
+  { icon: "♻️", name: "RoHS Compliance", desc: "Materials meet the Restriction of Hazardous Substances directive. Test reports are available for download.", file: "/certs/rohs.pdf" },
+  { icon: "🌿", name: "REACH Compliance", desc: "Compliant with REACH registration, evaluation and authorization requirements for chemical substances.", file: "/certs/reach.pdf" },
+  { icon: "🔍", name: "SGS Audited", desc: "Third-party audited supplier — the production system is independently verified and traceable.", file: "/certs/sgs.pdf" },
+  { icon: "🧪", name: "In-House Laboratory", desc: "Key indicators such as tack, holding power, peel strength and aging are tested in our own lab." },
 ];
 
 const reports = [
   { name: "PE Foam Tape — RoHS Report", file: "/reports/pe-foam-rohs.pdf" },
   { name: "PET Tape — RoHS Report", file: "/reports/pet-rohs.pdf" },
   { name: "PE Foam Tape — UV Aging Test", file: "/reports/pe-foam-uv-aging.pdf" },
-  { name: "双面 PET 胶带 — RoHS 报告", file: "/reports/pet-tape-rohs.pdf" },
-  { name: "双面 PE 泡棉胶带 — RoHS 报告", file: "/reports/pe-foam-tape-rohs.pdf" },
-  { name: "阻燃棉纸胶带 — RoHS 报告", file: "/reports/flame-retardant-tissue-rohs.pdf" },
-  { name: "低气味棉纸胶带 — 气味检测报告", file: "/reports/low-odor-tissue-odor.pdf" },
+  { name: "Double Sided PET Tape — RoHS Report", file: "/reports/pet-tape-rohs.pdf" },
+  { name: "Double Sided PE Foam Tape — RoHS Report", file: "/reports/pe-foam-tape-rohs.pdf" },
+  { name: "Flame-Retardant Tissue Tape — RoHS Report", file: "/reports/flame-retardant-tissue-rohs.pdf" },
+  { name: "Low-Odor Tissue Tape — Odor Test Report", file: "/reports/low-odor-tissue-odor.pdf" },
 ];
 ---
 
-<Layout title="资质认证与检测报告 — LubandArt Tape" description="ISO 9001、RoHS、REACH、SGS 审核与第三方检测报告下载。">
-  <section style="background:var(--bg-soft); padding:4rem 0 2.5rem">
-    <div class="container">
-      <div class="eyebrow">Quality</div>
-      <h1 class="page-title">资质认证与检测报告</h1>
-      <p class="page-sub">完善的质量体系与第三方检测报告，为长期稳定供货提供保障。下列资料可直接下载查阅。</p>
-    </div>
-  </section>
+<Layout title="Certifications & Test Reports — LubandArt Tape" description="ISO 9001, RoHS, REACH, SGS audit and third-party test report downloads for LubandArt industrial adhesive tapes."
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Certifications', href: '/certifications' }]}
+>
+  <SubHero
+    eyebrow="Quality"
+    title="Certifications & Test Reports"
+    sub="A complete quality system and third-party test reports give you confidence in stable, long-term supply. The documents below are available for direct download."
+    breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Certifications', href: '/certifications' }]}
+  />
 
-  <section style="padding:2.5rem 0">
+  <section class="mod mod-light">
     <div class="container">
       <div class="grid">
         {certs.map((c) => (
@@ -37,22 +39,22 @@ const reports = [
             <div class="ico">{c.icon}</div>
             <h3>{c.name}</h3>
             <p>{c.desc}</p>
-            {c.file && <a class="cert-link" href={c.file} target="_blank" rel="noopener">下载证书 ↗</a>}
+            {c.file && <a class="cert-link" href={c.file} target="_blank" rel="noopener">Download Certificate ↗</a>}
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <section style="padding:1.5rem 0 5rem">
+  <section class="mod mod-gray">
     <div class="container">
-      <h2 class="rep-h">检测报告下载</h2>
+      <h2 class="rep-h">Test Report Downloads</h2>
       <ul class="report-list">
         {reports.map((r) => (
           <li><a href={r.file} target="_blank" rel="noopener"><span class="pdf-ico">PDF</span> {r.name}</a></li>
         ))}
       </ul>
-      <p class="rep-note">需要特定产品的完整 TDS / SDS，或更多第三方报告？请 <a href="/contact">联系我们</a> 获取。</p>
+      <p class="rep-note">Need the full TDS / SDS for a specific product, or additional third-party reports? Please <a href="/contact">contact us</a> to request them.</p>
     </div>
   </section>
 </Layout>
