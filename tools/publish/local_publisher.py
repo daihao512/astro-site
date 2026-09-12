@@ -459,7 +459,7 @@ def main():
         log(f"QUEUE size = {len(manifests)}")
         for m in manifests:
             try:
-                status = publish_one_direct(m)
+                status = publish_one(m)
             except Exception as e:
                 log(f"[FATAL] {m.name}: {e}")
                 status = "ERROR"
