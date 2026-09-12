@@ -37,6 +37,49 @@ DONE_DIR = QUEUE_DIR / "done"
 RETRY_DIR = QUEUE_DIR / "retry"
 LOG_DIR = REPO_ROOT / "tools" / "publish" / "logs"
 WT_PARENT = REPO_ROOT / ".publish-wt"          # worktree 临时父目录
+LOCK_PATH = REPO_ROOT / "tools" / "publish" / ".publish.lock"  # 单实例锁
+LOCK_STALE_SEC = 1800                           # 锁超过 30 分钟视为陈旧（一次发布上限 ~10min）
+
+def acquire_lock() -> bool:
+    """单实例锁：禁止并发运行导致重复 push / worktree 竞争。
+    返回 True=拿到锁；False=已有实例在跑（直接退出）。"""
+    import time as _time
+    try:
+        if LOCK_PATH.exists():
+            age = _time.time() - LOCK_PATH.stat().st_mtime
+            # The scheduler can be interrupted after creating the lock. If
+            # its recorded PID is no longer alive, do not block every future
+            # publish until the 30-minute age threshold is reached.
+            pid_alive = False
+            try:
+                raw_pid = LOCK_PATH.read_text(encoding="utf-8").strip()
+                if raw_pid.isdigit():
+                    os.kill(int(raw_pid), 0)
+                    pid_alive = True
+            except (OSError, ValueError):
+                pid_alive = False
+            if age > LOCK_STALE_SEC or not pid_alive:
+                LOCK_PATH.unlink()           # 陈旧锁，强制释放
+            else:
+                return False
+    except Exception:
+        return False
+    try:
+        fd = os.open(str(LOCK_PATH), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    except FileExistsError:
+        return False
+    try:
+        os.write(fd, str(os.getpid()).encode("utf-8"))
+    finally:
+        os.close(fd)
+    return True
+
+def release_lock():
+    try:
+        if LOCK_PATH.exists():
+            LOCK_PATH.unlink()
+    except Exception:
+        pass
 
 BUILD_CMD = ["npm", "run", "build"]
 VERIFY_TIMEOUT = 600                            # Cloudflare 部署等待上限(秒)
@@ -49,7 +92,7 @@ def detect_proxy() -> str:
     try:
         p = subprocess.run(
             ["git", "-C", str(REPO_ROOT), "config", "--get", "http.proxy"],
-            capture_output=True, text=True,
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
         )
         return p.stdout.strip()
     except Exception:
@@ -83,7 +126,8 @@ def git(*args, cwd=None, env_extra=None):
     if env_extra:
         env.update(env_extra)
     r = subprocess.run(cmd, cwd=str(cwd) if cwd else None,
-                       capture_output=True, text=True, env=env)
+                       capture_output=True, text=True, encoding="utf-8",
+                       errors="replace", env=env)
     return r.returncode, r.stdout, r.stderr
 
 def run(cmd, cwd, env_extra=None, timeout=600):
@@ -118,7 +162,8 @@ def extract_array_body(ts_text: str) -> str:
 
 def extract_slugs(ts_text: str):
     import re
-    return re.findall(r"slug:\s*'([^']+)'", ts_text)
+    # 兼容单引号与双引号：slug: 'x' 与 slug: "x" 都匹配
+    return re.findall(r"slug:\s*['\"]([^'\"]+)['\"]", ts_text)
 
 def apply_content(worktree_root: Path, manifest: dict):
     """把 manifest.approved_files 的 content_ref 合并进目标文件。返回新增 slug 列表。"""
@@ -168,8 +213,13 @@ def allowlist_paths(manifest: dict):
 # ---------------------------------------------------------------------------
 # 生产 URL 校验
 # ---------------------------------------------------------------------------
-def verify_production(target_url: str) -> bool:
-    """等待 Cloudflare 部署完成并校验：HTTP 200 + canonical 正确 + 非 homepage fallback + slug 正确。"""
+def verify_production(target_url: str, slug: str = "") -> bool:
+    """等待 Cloudflare 部署完成并校验：HTTP 200 + canonical 正确 + 非 homepage fallback + slug 正确。
+    硬校验：<link rel=canonical href> == expected_canonical_url。
+    软校验：页面含 slug 文本且含目标 URL（排除 homepage fallback）。
+    slug 由 manifest 传入，不硬编码。
+    """
+    import re
     import urllib.request
     deadline = time.time() + VERIFY_TIMEOUT
     while time.time() < deadline:
@@ -178,18 +228,20 @@ def verify_production(target_url: str) -> bool:
             with urllib.request.urlopen(req, timeout=20) as resp:
                 html = resp.read().decode("utf-8", "ignore")
                 code = resp.getcode()
-            if code == 200 and target_url.rstrip("/") in html:
-                # 简单校验：页面含 canonical 且 slug 出现在 URL/canonical
-                import re
-                cano = re.search(r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)["\']', html)
-                if cano and target_url.rstrip("/") in cano.group(1):
-                    log(f"  [VERIFY] PASS {target_url} (HTTP 200, canonical ok)")
-                    return True
-                # 退而求其次：slug 出现在 <title>/<h1>
-                if re.search(r"pe-foam-tape-manufacturer", html):
-                    log(f"  [VERIFY] PASS(soft) {target_url} (HTTP 200, slug present)")
-                    return True
-            log(f"  [VERIFY] not ready yet (code={code}); retry in {VERIFY_POLL}s")
+            if code != 200:
+                log(f"  [VERIFY] HTTP {code}; retry in {VERIFY_POLL}s")
+                time.sleep(VERIFY_POLL)
+                continue
+            # 硬校验：canonical == expected
+            cano = re.search(r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)["\']', html)
+            if cano and target_url.rstrip("/") in cano.group(1).rstrip("/"):
+                log(f"  [VERIFY] PASS {target_url} (HTTP 200, canonical match)")
+                return True
+            # 软校验：页面含 slug 且含目标 URL（非 homepage fallback）
+            if slug and slug in html and target_url.rstrip("/") in html:
+                log(f"  [VERIFY] PASS(soft) {target_url} (HTTP 200, slug present, not homepage)")
+                return True
+            log(f"  [VERIFY] HTTP 200 but slug/canonical not confirmed; retry in {VERIFY_POLL}s")
         except Exception as e:
             log(f"  [VERIFY] fetch error: {e}; retry in {VERIFY_POLL}s")
         time.sleep(VERIFY_POLL)
@@ -220,6 +272,57 @@ def trigger_post_publish(manifest: dict):
 # ---------------------------------------------------------------------------
 # 单次发布事务
 # ---------------------------------------------------------------------------
+def publish_one_direct(manifest_path: Path) -> str:
+    """Publish exactly like a normal local website update.
+
+    The approved content is merged into the main worktree, the production
+    build is checked, only manifest-approved paths are staged, and that commit
+    is pushed to origin/main for the hosting integration to deploy.
+    """
+    name = manifest_path.name
+    log(f"=== DIRECT PUBLISH START: {name} ===")
+    try:
+        manifest = load_manifest(manifest_path)
+        if manifest.get("content_status") != "APPROVED":
+            log(f"  [SKIP] content_status={manifest.get('content_status')} != APPROVED")
+            return "SKIPPED"
+        target_url = manifest.get("expected_canonical_url")
+        slug = manifest.get("target_slug", "")
+        added = apply_content(REPO_ROOT, manifest)
+        if not added:
+            log("  [INFO] article already exists; no commit needed")
+            move_manifest(manifest_path, DONE_DIR)
+            return "PUBLISHED"
+        rc, out, err = run(BUILD_CMD, cwd=REPO_ROOT, timeout=600)
+        if rc != 0:
+            log(f"  [FAILED_BUILD] {(out + err)[-2000:]}")
+            return "FAILED_BUILD"
+        allow = allowlist_paths(manifest)
+        rc, out, err = git("add", *allow, cwd=REPO_ROOT)
+        if rc != 0:
+            log(f"  [ERROR] git add failed: {err.strip()}")
+            return "ERROR"
+        rc, out, err = git("commit", "-m", manifest.get("commit_message") or f"Publish: {slug}", cwd=REPO_ROOT)
+        if rc != 0:
+            log(f"  [ERROR] git commit failed: {err.strip()}")
+            return "ERROR"
+        rc, out, err = git("push", "origin", "main", cwd=REPO_ROOT)
+        if rc != 0:
+            log(f"  [PENDING_NETWORK] git push failed: {err.strip()}")
+            return "PENDING_NETWORK"
+        log("  [PUSH] PASS: origin/main updated")
+        if target_url and not verify_production(target_url, slug):
+            log("  [VERIFY_FAIL] target not live yet; keep manifest in retry queue")
+            move_manifest(manifest_path, RETRY_DIR)
+            return "VERIFY_FAIL"
+        move_manifest(manifest_path, DONE_DIR)
+        trigger_post_publish(manifest)
+        return "PUBLISHED"
+    except Exception as e:
+        log(f"  [ERROR] {type(e).__name__}: {e}")
+        return "ERROR"
+
+
 def publish_one(manifest_path: Path) -> str:
     """返回状态: PUBLISHED / FAILED_BUILD / PENDING_NETWORK / VERIFY_FAIL / ERROR"""
     name = manifest_path.name
@@ -268,7 +371,7 @@ def publish_one(manifest_path: Path) -> str:
         if not added:
             log("  [INFO] nothing new to add (idempotent); verify live URL")
             # 已存在 -> 直接校验线上
-            if target_url and verify_production(target_url):
+            if target_url and verify_production(target_url, slug):
                 move_manifest(manifest_path, DONE_DIR)
                 trigger_post_publish(manifest)
                 return "PUBLISHED"
@@ -299,7 +402,9 @@ def publish_one(manifest_path: Path) -> str:
         # push with network retry
         pushed = False
         for attempt in range(NETWORK_RETRIES):
-            rc, out, err = git("push", "origin", "main", cwd=wt)
+            # wt is intentionally detached. Push the commit just created,
+            # not the unrelated local branch named main.
+            rc, out, err = git("push", "origin", "HEAD:refs/heads/main", cwd=wt)
             if rc == 0:
                 pushed = True
                 log("  [PUSH] PASS")
@@ -308,11 +413,12 @@ def publish_one(manifest_path: Path) -> str:
             if attempt < NETWORK_RETRIES - 1:
                 time.sleep(NETWORK_BACKOFF[attempt])
         if not pushed:
-            log("  [PENDING_NETWORK] push failed after retries; keep in queue")
+            log("  [PENDING_NETWORK] push failed after retries; move to retry queue")
+            move_manifest(manifest_path, RETRY_DIR)
             return "PENDING_NETWORK"
 
         # 5) verify production
-        if target_url and verify_production(target_url):
+        if target_url and verify_production(target_url, slug):
             move_manifest(manifest_path, DONE_DIR)
             trigger_post_publish(manifest)
             return "PUBLISHED"
@@ -336,22 +442,31 @@ def publish_one(manifest_path: Path) -> str:
 # 主循环
 # ---------------------------------------------------------------------------
 def main():
-    QUEUE_DIR.mkdir(parents=True, exist_ok=True)
-    DONE_DIR.mkdir(parents=True, exist_ok=True)
-    RETRY_DIR.mkdir(parents=True, exist_ok=True)
-    manifests = sorted(QUEUE_DIR.glob("*.json"))
-    if not manifests:
-        log("QUEUE_EMPTY = PASS")
+    if not acquire_lock():
+        # 另一实例在跑，本实例立即退出（防止并发 push / worktree 竞争）
+        ts = datetime.datetime.now().isoformat(timespec="seconds")
+        print(f"[{ts}] LOCKED: another instance running; exit")
         return
-    log(f"QUEUE size = {len(manifests)}")
-    for m in manifests:
-        try:
-            status = publish_one(m)
-        except Exception as e:
-            log(f"[FATAL] {m.name}: {e}")
-            status = "ERROR"
-        log(f"=== PUBLISH END: {m.name} -> {status} ===")
-    log("RUN_COMPLETE")
+    try:
+        QUEUE_DIR.mkdir(parents=True, exist_ok=True)
+        DONE_DIR.mkdir(parents=True, exist_ok=True)
+        RETRY_DIR.mkdir(parents=True, exist_ok=True)
+        # 扫描 queue/（新任务）与 retry/（上轮网络/构建失败，下轮重试）
+        manifests = sorted(QUEUE_DIR.glob("*.json")) + sorted(RETRY_DIR.glob("*.json"))
+        if not manifests:
+            log("QUEUE_EMPTY = PASS")
+            return
+        log(f"QUEUE size = {len(manifests)}")
+        for m in manifests:
+            try:
+                status = publish_one_direct(m)
+            except Exception as e:
+                log(f"[FATAL] {m.name}: {e}")
+                status = "ERROR"
+            log(f"=== PUBLISH END: {m.name} -> {status} ===")
+        log("RUN_COMPLETE")
+    finally:
+        release_lock()
 
 if __name__ == "__main__":
     main()
