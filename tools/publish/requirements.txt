@@ -1,0 +1,14 @@
+# tools/publish — minimal runtime requirements
+#
+# The Publish Runner and its services (services/sitemap_health.py,
+# services/content_registry.py, services/index_health.py) use ONLY the Python
+# standard library (subprocess, urllib, sqlite3, argparse, json, re, hashlib,
+# datetime, ...). No third-party package is required for the publish path.
+#
+# The GSC client (google-api-python-client / oauth2client) is imported lazily
+# INSIDE services/index_health.build_gsc_service and is ONLY used by the local
+# P2 INDEX HEALTH step (REGISTRY_MODE=local). GitHub Actions runs with
+# REGISTRY_MODE=external and SKIP_P2_WITH_REASON, so it never needs that client.
+#
+# Keep this file minimal — do NOT add heavy dependencies (fastapi, chromadb,
+# sentence-transformers, etc.) that belong to the separate work-system venv.

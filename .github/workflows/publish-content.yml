@@ -1,0 +1,105 @@
+# Lubandart Auto Publisher (self-hosted, fully automated)
+#
+# TRIGGER:
+#   * schedule  -> every 15 min the runner scans F:/free site/tools/publish/queue/
+#                  for manifests with "content_status": "APPROVED" and publishes them.
+#   * workflow_dispatch -> publish one specific manifest immediately (first-run verify).
+#
+# SECURITY (per SELF_HOSTED_SECURITY_AUDIT.md S1-S6):
+#   * NO pull_request / pull_request_target trigger -> fork PRs can NEVER reach this
+#     self-hosted runner (supply-chain isolation preserved).
+#   * Code comes ONLY from this trusted repo; the local queue is written by our own
+#     AI automation on the same machine, never by external contributors.
+#   * permissions: contents: write -> GITHUB_TOKEN pushes (no PAT / GCM / tty).
+#
+# WHAT IT DOES (zero human action per blog):
+#   1. actions/checkout clean repo (GITHUB_WORKSPACE)
+#   2. copy AI-dropped content + manifest from local F:/free site into the checkout
+#   3. publish_runner --publish:
+#        isolate(temp worktree from origin/main, user tree untouched)
+#        -> apply approved files -> commit -> push via GITHUB_TOKEN
+#        -> Cloudflare auto-deploy -> Production Verify -> Registry PUBLISHED -> P2
+#   4. move processed manifest to done/
+name: Lubandart Auto Publisher
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      manifest_path:
+        description: "Optional: publish a specific manifest now (path relative to F:/free site). Leave empty to scan the queue."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: [self-hosted, Windows, X64, lubandart-publisher]
+    env:
+      GIT_TERMINAL_PROMPT: "0"
+      PUBLISH_REPO_ROOT: "F:/free site"
+      REGISTRY_DB_PATH: "F:/test/work/data/content_registry.db"
+      GSC_CREDENTIALS_PATH: "F:/test/work/tape-oauth-d85df41088c6.json"
+      PUBLISH_REGISTRY_MODE: "local"
+    steps:
+      - name: Checkout clean repo (GITHUB_WORKSPACE)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GSC libs (local P2 mode)
+        shell: bash
+        run: pip install -q google-api-python-client google-auth
+
+      - name: Configure GITHUB_TOKEN for all git ops (no GCM / no tty)
+        shell: bash
+        run: |
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+
+      - name: Scan queue and auto-publish ready manifests
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          REPO="$PUBLISH_REPO_ROOT"
+          WS="$GITHUB_WORKSPACE"
+          QUEUE="$REPO/tools/publish/queue"
+          DONE="$REPO/tools/publish/done"
+          CONTENT_SRC="$REPO/tools/publish/content"
+          CONTENT_DST="$WS/tools/publish/content"
+          mkdir -p "$DONE" "$CONTENT_DST"
+
+          MANIFESTS=()
+          if [ -n "${{ inputs.manifest_path }}" ]; then
+            MANIFESTS+=("$REPO/${{ inputs.manifest_path }}")
+          else
+            for f in "$QUEUE"/*.json; do
+              [ -e "$f" ] || continue
+              if grep -qiE '"content_status"[[:space:]]*:[[:space:]]*"APPROVED"' "$f"; then
+                MANIFESTS+=("$f")
+              fi
+            done
+          fi
+
+          if [ ${#MANIFESTS[@]} -eq 0 ]; then
+            echo "QUEUE_EMPTY=PASS (nothing to publish)"
+            exit 0
+          fi
+
+          for m in "${MANIFESTS[@]}"; do
+            echo "=== evaluating $m ==="
+            # copy AI-dropped content files into the clean checkout so content_ref resolves
+            if [ -d "$CONTENT_SRC" ]; then
+              cp -r "$CONTENT_SRC/." "$CONTENT_DST/" 2>/dev/null || true
+            fi
+            URL_ID=$(python -c "import json; print(json.load(open(r'$m'))['url_id'])")
+            echo "=== publishing url_id=$URL_ID ==="
+            python "$WS/tools/publish/publish_runner.py" --url-id "$URL_ID" --manifest "$m" --publish
+            mv "$m" "$DONE/$(basename "$m")"
+            echo "AUTO_PUBLISHED: $(basename "$m")"
+          done
+          echo "AUTO_PUBLISH=PASS"

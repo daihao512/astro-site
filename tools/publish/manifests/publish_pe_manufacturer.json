@@ -1,0 +1,27 @@
+{
+  "url_id": 42,
+  "target_slug": "pe-foam-tape-manufacturer",
+  "expected_canonical_url": "https://lubandart.com/blogs/pe-foam-tape-manufacturer/",
+  "primary_keyword": "pe foam tape manufacturer",
+  "primary_question": "Who manufactures custom PE foam tape for OEM applications?",
+  "search_intent": "manufacturer / OEM supplier",
+  "commercial_intent": "VERY HIGH",
+  "priority": "HIGH",
+  "approved_files": [
+    {
+      "path": "src/data/posts.ts",
+      "content_ref": "tools/publish/content/pe_foam_manufacturer_posts.ts"
+    }
+  ],
+  "registry_actions_required_before_publish": [
+    "INSERT urls row: url=/blogs/pe-foam-tape-manufacturer/, page_type=SUPPLIER, primary_keyword='pe foam tape manufacturer', primary_question_id=16, search_intent='manufacturer / OEM supplier', publish_status=DRAFT (Publish Runner flips DRAFT->BUILT->PUBLISHED)",
+    "INSERT questions row: question='Who manufactures custom PE foam tape for OEM applications?', primary_keyword='pe foam tape manufacturer', search_intent='manufacturer / OEM supplier', answer_status=ANSWERED, canonical_url_id=42",
+    "INSERT keywords rows for secondary queries (pe foam tape supplier / OEM PE foam tape / custom PE foam tape / wholesale PE foam tape) with primary_question_id=16, commercial_value=3",
+    "RELABEL content_opportunities id1 ('What is PE foam tape?') commercial_intent=LOW / priority=LOW (definition, Network Value HIGH only) — COMPLETED 2026-09-12",
+    "Backfill P2 index_health_snapshots after deploy (local --retry-registry, REGISTRY_MODE=local)"
+  ],
+  "commit_message": "Add PE foam tape manufacturer / OEM supplier commercial page",
+  "content_status": "APPROVED",
+  "created_at": "2026-09-12",
+  "publish_command_after_approval": "python tools/publish/publish_runner.py --url-id 42 --manifest tools/publish/manifests/publish_pe_manufacturer.json --publish"
+}
