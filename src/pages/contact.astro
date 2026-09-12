@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SubHero from '../components/SubHero.astro';
+import FaqSection from '../components/FaqSection.astro';
 ---
 
 <Layout title="Contact & Quote — LubandArt Tape" description="Tell us about your application and specifications, and LubandArt Tape will get back to you with product recommendations and a quote shortly."
@@ -62,6 +63,13 @@ import SubHero from '../components/SubHero.astro';
       </form>
     </div>
   </section>
+<FaqSection title="Before You Submit an Inquiry" items={[
+  { q: 'What should I include in my inquiry?', a: 'Please include your company, email or WhatsApp, product type, substrate, dimensions, application, estimated quantity and any required certification.' },
+  { q: 'Can I send a drawing or datasheet?', a: 'Yes. Drawings, product photos, technical datasheets and target specifications help us recommend the correct construction.' },
+  { q: 'Can you arrange samples?', a: 'Sample requests are welcome. We confirm the sample construction and preparation time after reviewing your requirements.' },
+  { q: 'When will I receive a reply?', a: 'We aim to review complete inquiries within one working day. Complex specifications may require additional confirmation from the technical team.' },
+  { q: 'Which documents can be supplied?', a: 'Depending on the product and project, we can discuss TDS, SDS, RoHS, REACH, ISO and selected test reports.' },
+]} />
 </Layout>
 
 <style>

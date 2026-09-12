@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import SubHero from '../components/SubHero.astro';
 import { industries } from '../data/industries';
+import FaqSection from '../components/FaqSection.astro';
 
 /* Hero credibility badges */
 const sellingPoints = [
@@ -61,7 +62,7 @@ const supportSteps = [
       <div class="ind-blocks">
         {industries.map((it) => (
           <div class="ind-block">
-            <div class="ind-block-img"></div>
+            <div class="ind-block-img"><img src={it.img || ({ automotive: '/products/acrylic.jpg', construction: '/products/pe-foam.jpg', appliance: '/products/pvc.jpg', machinery: '/products/acrylic.jpg', signage: '/products/acrylic.jpg', electronics: '/products/pet.jpg' } as Record<string, string>)[it.slug] || '/products/acrylic.jpg'} alt={it.imgAlt} loading="lazy" /></div>
             <div class="ind-block-body">
               <h3>{it.en}</h3>
               <p class="ind-desc">{it.descEn}</p>
@@ -128,6 +129,12 @@ const supportSteps = [
       </div>
     </div>
   </section>
+<FaqSection title="Choosing Tape for an Industrial Application" items={[
+  { q: 'Which application details are needed for product selection?', a: 'Share the application part, substrate, load direction, surface condition, service temperature, moisture or UV exposure and production format.' },
+  { q: 'Can one tape construction work across different parts?', a: 'Sometimes, but adhesive and carrier selection should follow the most demanding substrate and environment. Samples should be tested on each critical part.' },
+  { q: 'Which substrates can be evaluated?', a: 'Common substrates include painted metal, aluminum, glass, plastics, foam, fabric and coated surfaces. Low-surface-energy plastics may require a specific grade or treatment.' },
+  { q: 'Can recommended products be supplied as die-cut parts?', a: 'Yes. Slit rolls, rewound rolls, spools and die-cut parts can be discussed according to drawing, sample and assembly requirements.' },
+]} />
 </Layout>
 
 <style>

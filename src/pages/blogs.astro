@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import SubHero from '../components/SubHero.astro';
 import { posts, postCategories } from '../data/posts';
+import FaqSection from '../components/FaqSection.astro';
 
 const stats = [
   { n: '10+', l: 'Years of adhesive R&D' },
@@ -16,7 +17,9 @@ const highlights = [
   'Use the articles as internal reference for your engineering team',
 ];
 
-const heroImg = '';
+const heroImg = '/products/pe-foam.jpg';
+const postImage = (p: (typeof posts)[number], index: number) =>
+  p.img || ['/products/acrylic.jpg', '/products/pe-foam.jpg', '/products/pet.jpg', '/products/tissue.jpg'][index % 4];
 
 const catCounts = postCategories.map((c) => ({
   name: c,
@@ -77,7 +80,7 @@ const fmtDate = (d: string) =>
       <div class="posts">
         {posts.map((p) => (
           <article class="post" data-cat={p.category}>
-            <a class="post-img" href={`/blogs/${p.slug}`}></a>
+            <a class="post-img" href={`/blogs/${p.slug}`}><img src={postImage(p, posts.indexOf(p))} alt={p.imgAlt || p.title} loading="lazy" /></a>
             <div class="post-body">
               <div class="post-meta">
                 <span class="post-cat">{p.category}</span>
@@ -111,6 +114,12 @@ const fmtDate = (d: string) =>
       </div>
     </div>
   </section>
+<FaqSection title="Using the Tape Knowledge Hub" items={[
+  { q: 'Who are these articles written for?', a: 'The articles are intended for engineers, purchasers, converters and product teams comparing carriers, adhesive systems, substrates and service conditions.' },
+  { q: 'Can an article replace product testing?', a: 'No. Articles provide a selection framework. Final suitability should be confirmed with the actual tape grade, substrate, assembly and service environment.' },
+  { q: 'Can I request a recommendation after reading an article?', a: 'Yes. Send the article topic together with your substrate, dimensions, quantity and application conditions so the technical team can suggest a starting construction.' },
+  { q: 'Can you provide technical documents for a selected product?', a: 'Available TDS, SDS, certificates and test reports depend on the product grade. Request the document set together with your sample or quotation inquiry.' },
+]} />
 </Layout>
 
 <script>

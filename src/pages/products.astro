@@ -5,6 +5,7 @@ import { products } from '../data/products';
 
 import { categories } from '../data/categories';
 import CategorySection from '../components/CategorySection.astro';
+import FaqSection from '../components/FaqSection.astro';
 
 // Second navigation axis — by bonding requirement (cross-cuts the categories above).
 // Each need carries an Unsplash scene photo of the application in use.
@@ -13,47 +14,47 @@ const needs = [
     name: 'Heavy Duty Double Sided Tape',
     desc: 'High-strength bonding for demanding mounting, assembly and load-bearing applications.',
     rec: ['acrylic', 'pe-foam'],
-    scene: '',
+    scene: '/industries/machinery.webp',
     alt: 'Industrial robotic assembly line for heavy duty mounting',
   },
   {
     name: 'Double Sided Mounting Tape',
     desc: 'Mount panels, signs, nameplates and trims without bulky mechanical fasteners.',
     rec: ['acrylic', 'pe-foam', 'pet'],
-    scene: '',
+    scene: '/industries/construction.webp',
     alt: 'Construction worker mounting panels on site',
   },
   {
     name: 'Thin Double Sided Tape',
     desc: 'Low-profile solutions for lamination, labels, electronics and graphics where minimum thickness matters.',
     rec: ['pet', 'tissue', 'opp'],
-    scene: '',
+    scene: '/industries/electronics.webp',
     alt: 'Electronics and circuit board close-up for thin lamination tape',
   },
   {
     name: 'Outdoor Double Sided Tape',
     desc: 'Selected for outdoor exposure, moisture and aging under changing environmental conditions.',
     rec: ['acrylic', 'pe-foam'],
-    scene: '',
+    scene: '/industries/signage.webp',
     alt: 'Modern glass building exterior for facade and weatherstrip tape',
   },
   {
     name: 'Removable Double Sided Tape',
     desc: 'Repositionable constructions for controlled removal and reduced adhesive residue.',
     rec: ['eva', 'pvc'],
-    scene: '',
+    scene: '/industries/appliance.webp',
     alt: 'Interior wall decoration being mounted with repositionable tape',
   },
   {
     name: 'Heat Resistant Double Sided Tape',
     desc: 'Tape solutions selected for elevated operating or processing temperatures.',
     rec: ['pet', 'acrylic', 'opp'],
-    scene: '',
+    scene: '/industries/automotive.webp',
     alt: 'Industrial welding sparks and heat for high temperature tape',
   },
 ];
 
-// NOTE: stats are placeholders — replace with real Broadya figures before launch.
+// NOTE: stats are placeholders — replace with confirmed LubandArt figures before launch.
 const stats = [
   { n: '10+', l: 'Years of adhesive R&D' },
   { n: '2', l: 'In-house coating lines' },
@@ -65,25 +66,25 @@ const capabilities = [
   {
     n: '01', t: 'Adhesive Coating',
     d: 'Solvent-based and hot-melt coating for different tape constructions and adhesive systems.',
-    scene: '',
+    scene: '/capabilities/coating.webp',
     alt: 'Industrial adhesive coating line applying adhesive to film',
   },
   {
     n: '02', t: 'Rewinding',
     d: 'Controlled rewinding for jumbo rolls and finished tape formats to tight tolerance.',
-    scene: '',
+    scene: '/capabilities/rewinding.webp',
     alt: 'Tape rewinding production line in factory',
   },
   {
     n: '03', t: 'Slitting & Converting',
     d: 'Custom widths, roll lengths and die-cut parts produced to your project specification.',
-    scene: '',
+    scene: '/capabilities/slitting.webp',
     alt: 'Industrial slitting and converting machine cutting tape',
   },
   {
     n: '04', t: 'Testing & Packaging',
     d: 'Inspection against confirmed specs and export-grade packaging before shipment.',
-    scene: '',
+    scene: '/capabilities/testing.webp',
     alt: 'Quality testing and export packaging of finished tape',
   },
 ];
@@ -101,12 +102,12 @@ const supportSteps = [
 ];
 
 const industries = [
-  { t: 'Home Appliance Assembly', d: 'Improves sealing, noise reduction and panel bonding performance while raising durability and line efficiency.', slug: 'appliance', img: '', alt: 'Home appliance panel assembly line' },
-  { t: 'Automotive Assembly', d: 'Trim attachment, emblem bonding, sealing and vibration damping — selected by substrate and service environment.', slug: 'automotive', img: '', alt: 'Robotic automotive assembly line' },
-  { t: 'Signage & Display', d: 'Clean, invisible bonding for indoor and outdoor signage with strong adhesion and a neat appearance.', slug: 'signage', img: '', alt: 'Outdoor signage installation' },
-  { t: 'Mechanical & Industrial', d: 'Mounting, sealing, cushioning and vibration control for equipment and fabricated components.', slug: 'machinery', img: '', alt: 'Industrial machinery and fabricated components' },
-  { t: 'Construction & Facade', d: 'Panel bonding, sealing, cushioning and gap compensation for windows, doors and façades.', slug: 'construction', img: '', alt: 'Glass curtain wall for construction sealing' },
-  { t: 'Electronics', d: 'Component mounting, cushioning, insulation and vibration control inside electronic assemblies.', slug: 'electronics', img: '', alt: 'Electronics and circuit board close-up' },
+  { t: 'Home Appliance Assembly', d: 'Improves sealing, noise reduction and panel bonding performance while raising durability and line efficiency.', slug: 'appliance', img: '/industries/appliance.webp', alt: 'Home appliance panel assembly line' },
+  { t: 'Automotive Assembly', d: 'Trim attachment, emblem bonding, sealing and vibration damping — selected by substrate and service environment.', slug: 'automotive', img: '/industries/automotive.webp', alt: 'Automotive assembly application' },
+  { t: 'Signage & Display', d: 'Clean, invisible bonding for indoor and outdoor signage with strong adhesion and a neat appearance.', slug: 'signage', img: '/industries/signage.webp', alt: 'Signage and display application' },
+  { t: 'Mechanical & Industrial', d: 'Mounting, sealing, cushioning and vibration control for equipment and fabricated components.', slug: 'machinery', img: '/industries/machinery.webp', alt: 'Industrial machinery application' },
+  { t: 'Construction & Facade', d: 'Panel bonding, sealing, cushioning and gap compensation for windows, doors and façades.', slug: 'construction', img: '/industries/construction.webp', alt: 'Construction and facade application' },
+  { t: 'Electronics', d: 'Component mounting, cushioning, insulation and vibration control inside electronic assemblies.', slug: 'electronics', img: '/industries/electronics.webp', alt: 'Electronics assembly application' },
 ];
 
 const bySlug = Object.fromEntries(products.map((p) => [p.slug, p]));
@@ -245,6 +246,7 @@ const sellingPoints = [
         {capabilities.map((cap) => (
           <div class="cap">
             <div class="cap-scene">
+              <img src={cap.scene} alt={cap.alt} loading="lazy" />
               <div class="cap-scene-overlay"></div>
               <span class="cap-n">{cap.n}</span>
             </div>
@@ -282,7 +284,7 @@ const sellingPoints = [
       <div class="ind-grid">
         {industries.map((ind) => (
           <a class="ind-card" href={`/industries/${ind.slug}`}>
-            <div class="ind-img"></div>
+            <div class="ind-img"><img src={ind.img} alt={ind.alt} loading="lazy" /></div>
             <div class="ind-body">
               <h3>{ind.t}</h3>
               <p>{ind.d}</p>
@@ -308,6 +310,13 @@ const sellingPoints = [
       </div>
     </div>
   </section>
+<FaqSection title="Product Selection, Samples & Supply" items={[
+  { q: 'How do I choose between film, tissue and foam tape?', a: 'Film carriers suit thin and dimensionally stable bonding, tissue carriers suit conformable general mounting, and foam carriers help fill gaps, cushion and seal uneven surfaces.' },
+  { q: 'Can product thickness, width and roll length be customized?', a: 'Yes. Final options depend on carrier, adhesive system, liner, converting process and requested quantity.' },
+  { q: 'Can I request samples from the product range?', a: 'Yes. Tell us the product family, substrate, target size and application so the sample construction can be confirmed before preparation.' },
+  { q: 'How are MOQ and lead time quoted?', a: 'They are confirmed after product grade, dimensions, converting format, packaging and quantity are defined.' },
+  { q: 'Are technical documents available?', a: 'Selected certificates and test reports are available on product detail pages. Additional TDS or SDS documents can be requested for the selected grade.' },
+]} />
 </Layout>
 
 <style>

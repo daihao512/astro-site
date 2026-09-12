@@ -31,7 +31,7 @@ export const industries: Industry[] = [
     solutions: ["外饰件 / 徽标固定", "内饰件减震缓冲", "线束与密封条贴合", "低气味车内环保粘接"],
     descEn:
       "Engineered adhesive solutions for vehicle assembly — reducing weight, improving aesthetics and ensuring long-lasting durability in harsh automotive environments.",
-    img: '',
+    img: '/industries/automotive.webp',
     imgAlt: "Robotic automotive assembly line",
     applications: ["Interior bonding", "Exterior mounting", "Vibration damping", "Trim attachment"],
     recommended: [
@@ -106,7 +106,7 @@ export const industries: Industry[] = [
     solutions: ["中空玻璃密封", "幕墙填缝", "装饰条固定", "石材 / 金属贴合"],
     descEn:
       "High-strength bonding and sealing tapes designed to withstand extreme weather, UV exposure and structural stress in building envelopes.",
-    img: '',
+    img: '/industries/construction.webp',
     imgAlt: "Glass curtain wall on a modern building facade",
     applications: ["Panel bonding", "Sealing", "Mounting", "Insulation"],
     recommended: [
@@ -173,7 +173,7 @@ export const industries: Industry[] = [
     solutions: ["面板 / 标牌固定", "减震缓冲", "防尘密封", "线路整理"],
     descEn:
       "Reliable bonding solutions for white goods and small appliances, ensuring vibration damping, noise reduction and seamless assembly.",
-    img: '',
+    img: '/industries/appliance.webp',
     imgAlt: "Home appliance panel assembly",
     applications: ["General assembly", "Sealing & gasketing", "Noise reduction", "Panel fixing"],
     recommended: [
@@ -240,7 +240,7 @@ export const industries: Industry[] = [
     solutions: ["设备组装固定", "密封防护", "铭牌 / 标识贴合", "户外长期耐久"],
     descEn:
       "Versatile adhesive systems to replace mechanical fasteners, streamline your production processes and improve overall product design.",
-    img: '',
+    img: '/industries/machinery.webp',
     imgAlt: "Industrial machinery and fabricated components",
     applications: ["General bonding", "Fixing & mounting", "Surface protection", "Production support"],
     recommended: [
@@ -307,7 +307,7 @@ export const industries: Industry[] = [
     solutions: ["室内外招牌安装", "亚克力 / 金属字固定", "展板拼接", "灯箱贴合"],
     descEn:
       "Weather-resistant mounting tapes that provide clean, invisible bonds for commercial displays, nameplates and architectural signage.",
-    img: '',
+    img: '/industries/signage.webp',
     imgAlt: "Outdoor signage and display installation",
     applications: ["Sign mounting", "Display bonding", "Branding & nameplates", "Outdoor durability"],
     recommended: [
@@ -374,7 +374,7 @@ export const industries: Industry[] = [
     solutions: ["显示屏超薄贴合", "精密元件固定", "薄膜复合", "轻量结构粘接"],
     descEn:
       "Precision die-cut adhesives for thermal management, electrical insulation and secure component fixing in smart devices.",
-    img: '',
+    img: '/industries/electronics.webp',
     imgAlt: "Electronics and circuit board close-up",
     applications: ["Component fixing", "Insulation", "Heat management", "Assembly"],
     recommended: [

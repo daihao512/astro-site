@@ -16,7 +16,7 @@ export const products: Product[] = [
     slug: "acrylic",
     name: "双面亚克力胶",
     en: "Double Sided Acrylic Tape",
-    img: "/products/acrylic.jpg",
+    img: "/catalog-assets/acrylic-foam.webp",
     tagline: "高初粘 · 耐候抗老化",
     intro:
       "以丙烯酸压敏胶为胶粘层，对金属、玻璃、塑料等高表面能材料具备优异的初粘与持粘性能，耐紫外、耐高低温，长期户外使用不易黄变、脱胶。广泛应用于汽车外饰、铭牌固定与精密结构粘接。",
@@ -40,7 +40,7 @@ export const products: Product[] = [
     slug: "eva",
     name: "EVA 双面胶",
     en: "Double Sided EVA Tape",
-    img: "/products/eva.jpg",
+    img: "/catalog-assets/eva-new.jpg",
     tagline: "缓冲密封 · 柔韧服帖",
     intro:
       "以 EVA 泡棉为基材，质地柔软、回弹性好，可有效填缝、减震、密封，对不规则表面服帖性佳。常用于包装、工业组装与轻量固定，性价比高。",
@@ -64,7 +64,7 @@ export const products: Product[] = [
     slug: "opp",
     name: "OPP 双面胶",
     en: "Double Sided OPP Tape",
-    img: "/products/opp.jpg",
+    img: "/catalog-assets/opp-new.jpg",
     tagline: "高强度 · 通用捆绑",
     intro:
       "以 OPP（双向拉伸聚丙烯）薄膜为基材，强度高、厚度薄、成本低，适合线束固定、封缄与通用捆绑。是日常粘接与轻工业装配的高性价比选择。",
@@ -88,7 +88,7 @@ export const products: Product[] = [
     slug: "pe-foam",
     name: "PE 泡棉双面胶",
     en: "Double Sided PE Foam Tape",
-    img: "/products/pe-foam.jpg",
+    img: "/catalog-assets/pe-foam-new.webp",
     tagline: "填缝减震 · 密封首选",
     intro:
       "以 PE 泡棉为基材，闭孔结构具备良好的防水、防尘与缓冲性能，适用于汽车与建筑密封、镜面与标识安装。对玻璃、金属、烤漆面粘接力强。",
@@ -112,7 +112,7 @@ export const products: Product[] = [
     slug: "pet",
     name: "PET 双面胶",
     en: "Double Sided PET Tape",
-    img: "/products/pet.jpg",
+    img: "/catalog-assets/pet-new.webp",
     tagline: "超薄 · 尺寸稳定",
     intro:
       "以 PET 薄膜为基材，厚度极薄、尺寸稳定、抗拉伸，适合电子屏贴、铭牌与塑料件的精密固定。在薄型化组装中保持平整不翘曲。",
@@ -136,7 +136,7 @@ export const products: Product[] = [
     slug: "pvc",
     name: "PVC 双面胶",
     en: "Double Sided PVC Tape",
-    img: "/products/pvc.jpg",
+    img: "/catalog-assets/pvc-new.webp",
     tagline: "贴合绝缘 · 轻量固定",
     intro:
       "以 PVC 薄膜为基材，质地柔韧、具备一定绝缘性，适用于线材、标牌与表面保护等轻量固定场景，加工方便、成本低。",
@@ -160,7 +160,7 @@ export const products: Product[] = [
     slug: "tissue",
     name: "棉纸双面胶",
     en: "Double Sided Tissue Tape",
-    img: "/products/tissue.jpg",
+    img: "/catalog-assets/tissue.webp",
     tagline: "易模切 · 服帖性好",
     intro:
       "以棉纸（无纺）为基材，厚度薄、柔韧性好、服帖性佳，极易模切与复合，广泛用于 laminating 与通用轻粘接。低气味版本可满足车内环保要求。",
@@ -184,7 +184,7 @@ export const products: Product[] = [
     slug: "low-odor",
     name: "低气味双面胶带",
     en: "Low-Odor Double Sided Tape",
-    img: "/products/low-odor.jpg",
+    img: "/catalog-assets/low-odor-new.webp",
     tagline: "低 VOC · 车内环保",
     intro:
       "采用环保型低气味压敏胶配方，VOCs 释放低、几乎无刺激气味，满足 OEM 车内空气质量标准。适合汽车内饰、驾驶舱及家居等密闭空间中对皮革、织物、塑料的贴合固定。",
@@ -208,7 +208,7 @@ export const products: Product[] = [
     slug: "flame-retardant",
     name: "阻燃双面胶带",
     en: "Flame Retardant Double Sided Tape",
-    img: "/products/flame-retardant.jpg",
+    img: "/catalog-assets/flame-retardant-new.webp",
     tagline: "UL94 V-0 · 自熄阻燃",
     intro:
       "添加阻燃剂的整体配方使胶带达到 UL94 V-0 阻燃等级，离火自熄、不滴落、低烟低毒。专为电子电气、电池包、动力电池模组等对防火有严苛要求的场景设计。",
@@ -251,6 +251,39 @@ export const products: Product[] = [
     ],
     applications: ["屏幕超薄贴合", "铭牌极薄固定", "精密模切", "光学组件贴合"],
     base: "无基材",
+  },
+  {
+    slug: "nonwoven",
+    name: "双面无纺布胶带",
+    en: "Double Sided Nonwoven Tape",
+    img: "/catalog-assets/nonwoven.webp",
+    tagline: "柔韧服帖 · 稳定粘接",
+    intro: "以无纺布为基材，兼顾柔韧性、服帖性和加工稳定性，适合多种材料的层压、固定和模切加工。",
+    features: ["柔韧服帖，适合曲面", "对多种材料具备良好粘接", "适合分切、复合和模切", "可按应用定制胶系与厚度"],
+    specs: [{ label: "基材", value: "Nonwoven carrier" }, { label: "厚度范围", value: "Customizable" }, { label: "胶系", value: "Acrylic / hot-melt options" }, { label: "离型", value: "Paper / film options" }],
+    applications: ["家具装配", "包装与层压", "广告标识", "轻型工业固定"], base: "无纺布",
+  },
+  {
+    slug: "mesh",
+    name: "双面网格布胶带",
+    en: "Double Sided Mesh Tape",
+    img: "/catalog-assets/mesh.webp",
+    tagline: "增强承载 · 抗撕裂",
+    intro: "以网格布增强结构提供更好的抗拉、抗撕裂和尺寸稳定性，适合需要增强支撑和可靠固定的应用。",
+    features: ["网格增强，抗撕裂", "尺寸稳定，适合长条固定", "可选不同胶系和基材组合", "支持分切与定制长度"],
+    specs: [{ label: "基材", value: "Reinforced mesh carrier" }, { label: "厚度范围", value: "Customizable" }, { label: "胶系", value: "Acrylic / rubber options" }, { label: "颜色", value: "Custom options" }],
+    applications: ["地毯与地材固定", "家具装配", "线材与部件固定", "工业增强粘接"], base: "网格布",
+  },
+  {
+    slug: "acrylic-foam",
+    name: "亚克力泡棉胶带",
+    en: "Acrylic Foam Tape",
+    img: "/catalog-assets/acrylic-foam.webp",
+    tagline: "高强粘接 · 缓冲应力",
+    intro: "以亚克力泡棉为核心的高强双面胶带，通过泡棉层吸收不同材料之间的热胀冷缩和振动应力，适合长期固定和户外应用。",
+    features: ["高强度结构粘接", "吸收振动和热胀冷缩", "适合金属、玻璃和部分塑料", "支持定制厚度、宽度和模切形状"],
+    specs: [{ label: "基材", value: "Acrylic foam" }, { label: "厚度范围", value: "Customizable" }, { label: "胶系", value: "Acrylic pressure-sensitive adhesive" }, { label: "颜色", value: "Clear / black / grey options" }],
+    applications: ["汽车外饰", "广告标识", "铭牌固定", "建筑与工业装配"], base: "亚克力泡棉",
   },
 ];
 

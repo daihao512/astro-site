@@ -577,6 +577,8 @@ const ldBlocks = [
       @media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
       @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
     </style>
+      <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml" />
+      <link rel="alternate" type="application/json" title="FAQ" href="/ai/faq.json" />
   </head>
   <body>
     <header class="nav">
@@ -635,8 +637,8 @@ const ldBlocks = [
             </div>
           </div>
           <a href="/about">About Us</a>
-          <a href="/blogs">Blogs</a>
-          <a href="/contact">Contact</a>
+            <a href="/blogs">Blogs</a>
+            <a href="/contact">Contact</a>
         </nav>
         <div style="display:flex; gap:.6rem; align-items:center">
           <a class="btn btn-quote" href="/contact">Get a Quote</a>
@@ -700,7 +702,7 @@ const ldBlocks = [
     </footer>
 
     <!-- AI Assistant -->
-    <button class="chat-fab" id="chat-fab" aria-label="Open AI Assistant">
+    <button class="chat-fab" id="chat-fab" data-webmcp-tool="ai-assistant" data-webmcp-description="LubandArt AI Assistant" aria-label="Open AI Assistant">
       <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
     </button>
     <div class="chat-panel" id="chat-panel">

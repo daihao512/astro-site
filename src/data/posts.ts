@@ -31,7 +31,7 @@ const U = (_id: string, _w = 800) => '';
 
 /* NOTE: titles and excerpts are written from general adhesive-tape engineering
    knowledge. No fabricated test values (peel / shear / temperature ratings) are
-   asserted here — replace or extend with Broadya's measured data before launch. */
+   asserted here — replace or extend with LubandArt's measured data before launch. */
 export const posts: Post[] = [
   {
     slug: 'how-to-choose-double-sided-tape',
@@ -298,7 +298,7 @@ export const posts: Post[] = [
     faq: [
       {
         q: 'What temperature can PE foam tape handle?',
-        a: 'Broadya PE foam tape is rated for continuous service from −30 °C to 90 °C. For joints above that range, or with heavy outdoor UV, an acrylic foam tape or another high-temperature construction should be considered.',
+        a: 'LubandArt PE foam tape is rated for continuous service from −30 °C to 90 °C. For joints above that range, or with heavy outdoor UV, an acrylic foam tape or another high-temperature construction should be considered.',
       },
       {
         q: 'Is PE foam tape waterproof?',
@@ -309,8 +309,8 @@ export const posts: Post[] = [
         a: 'They are strong in different ways. PE foam tape excels at gap filling, sealing and cushioning at moderate temperature and lower cost. Acrylic foam tape is built for structural bonding of dissimilar materials with higher temperature and UV resistance. Which is "stronger" depends on whether your joint needs a seal or a structural hold.',
       },
       {
-        q: 'Can Broadya supply acrylic foam tape?',
-        a: 'Broadya’s verified foam product line is PE foam tape (specs above). Acrylic foam tape can be specified to requirement — share your substrate, temperature and load case with our engineering team and we will match a construction.',
+        q: 'Can LubandArt supply acrylic foam tape?',
+        a: 'LubandArt’s verified foam product line is PE foam tape (specs above). Acrylic foam tape can be specified to requirement — share your substrate, temperature and load case with our engineering team and we will match a construction.',
       },
     ],
     body: `
@@ -319,7 +319,7 @@ export const posts: Post[] = [
 <h2>PE foam tape vs acrylic foam tape at a glance</h2>
 <table>
   <thead>
-    <tr><th>Property</th><th>PE Foam Tape (Broadya verified)</th><th>Acrylic Foam Tape (construction class)</th></tr>
+    <tr><th>Property</th><th>PE Foam Tape (LubandArt verified)</th><th>Acrylic Foam Tape (construction class)</th></tr>
   </thead>
   <tbody>
     <tr><td>Core material</td><td>Closed-cell PE foam</td><td>Viscoelastic acrylic foam</td></tr>
@@ -332,7 +332,7 @@ export const posts: Post[] = [
     <tr><td>Typical uses</td><td>Automotive weatherstrip, curtain-wall gap fill, mirror &amp; sign mounting, appliance panel fixing</td><td>Sign faces, exterior trim, dissimilar-substrate structural assembly</td></tr>
   </tbody>
 </table>
-<p>Broadya's verified foam line is <a href="/products/pe-foam/">PE foam tape</a>; the acrylic-foam column above describes the tape class so you can weigh both before discussing your joint with our engineering team. (Broadya's cataloged acrylic-family product is a thin acrylic film tape, not a foam core — see <a href="/blogs/acrylic-foam-tape-for-signage/">acrylic foam tape for signage</a> for class background.)</p>
+<p>LubandArt's verified foam line is <a href="/products/pe-foam/">PE foam tape</a>; the acrylic-foam column above describes the tape class so you can weigh both before discussing your joint with our engineering team. (LubandArt's cataloged acrylic-family product is a thin acrylic film tape, not a foam core — see <a href="/blogs/acrylic-foam-tape-for-signage/">acrylic foam tape for signage</a> for class background.)</p>
 
 <h2>How to choose: selection guidance</h2>
 <ul>
@@ -342,14 +342,14 @@ export const posts: Post[] = [
 </ul>
 
 <h2>Application guidance</h2>
-<h3>Where PE foam tape fits (Broadya verified applications)</h3>
+<h3>Where PE foam tape fits (LubandArt verified applications)</h3>
 <ul>
   <li>Automotive weatherstrips and sealing strips</li>
   <li>Building curtain-wall gap filling and façade trim</li>
   <li>Mirror and sign mounting on glass, metal and painted surfaces</li>
   <li>Appliance panel fixing and door-gasket bonding</li>
 </ul>
-<p>These come from Broadya's PE foam tape product data — the closed-cell foam gives water/dust sealing and shock absorption, and the acrylic pressure-sensitive adhesive grips glass and metal well.</p>
+<p>These come from LubandArt's PE foam tape product data — the closed-cell foam gives water/dust sealing and shock absorption, and the acrylic pressure-sensitive adhesive grips glass and metal well.</p>
 <h3>Where acrylic foam tape is the usual pick</h3>
 <ul>
   <li>Outdoor sign faces and channel letters subject to wind and UV</li>

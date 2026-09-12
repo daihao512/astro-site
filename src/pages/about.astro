@@ -1,10 +1,18 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SubHero from '../components/SubHero.astro';
+import FaqSection from '../components/FaqSection.astro';
 
-const U = (_id: string, _w = 900) => '';
+const U = (id: string) => ({
+  '1565793298595-6a879b1d9492': '/products/pe-foam.jpg',
+  '1581092335397-9583eb92d232': '/products/acrylic.jpg',
+  '1565043666747-69f6646db940': '/products/pet.jpg',
+  '1530124566582-a618bc2615dc': '/products/opp.jpg',
+  '1567789884554-0b844b597180': '/products/tissue.jpg',
+  '1504917595217-d4dc5ebe6122': '/products/pvc.jpg',
+}[id] || '/products/acrylic.jpg');
 
-/* NOTE: placeholder figures — replace with real Broadya data before launch. */
+/* NOTE: placeholder figures — replace with confirmed LubandArt data before launch. */
 const stats = [
   { n: '10+', l: 'Years of adhesive R&D' },
   { n: '2', l: 'In-house coating lines' },
@@ -109,7 +117,7 @@ const statsBg = U('1565043666747-69f6646db940', 1600);
   <!-- ===== 3. WHO WE ARE — photo left, copy right (no centered section-head) ===== -->
   <section class="mod mod-gray">
     <div class="container split">
-      <div class="split-img"></div>
+      <div class="split-img"><img src={whoWeAre.img} alt={whoWeAre.alt} loading="lazy" /></div>
       <div class="split-body">
         <div class="eyebrow">Who We Are</div>
         <h2 class="split-h">Who We Are</h2>
@@ -139,7 +147,7 @@ const statsBg = U('1565043666747-69f6646db940', 1600);
       <div class="img-card-grid three">
         {capabilities.map((c) => (
           <div class="img-card">
-            <div class="img-card-img"></div>
+            <div class="img-card-img"><img src={c.img} alt={c.alt} loading="lazy" /></div>
             <div class="img-card-body">
               <h3>{c.t}</h3>
               <p>{c.d}</p>
@@ -173,7 +181,7 @@ const statsBg = U('1565043666747-69f6646db940', 1600);
           where available.
         </p>
       </div>
-      <div class="split-img"></div>
+      <div class="split-img"><img src={qc.img} alt={qc.alt} loading="lazy" /></div>
     </div>
   </section>
 
@@ -191,7 +199,7 @@ const statsBg = U('1565043666747-69f6646db940', 1600);
       <div class="img-card-grid four">
         {customers.map((c) => (
           <div class="img-card">
-            <div class="img-card-img"></div>
+            <div class="img-card-img"><img src={c.img} alt={c.alt} loading="lazy" /></div>
             <div class="img-card-body">
               <h3>{c.t}</h3>
               <p>{c.d}</p>
@@ -236,6 +244,12 @@ const statsBg = U('1565043666747-69f6646db940', 1600);
       </div>
     </div>
   </section>
+<FaqSection title="About LubandArt" items={[
+  { q: 'Where is production controlled?', a: 'Material selection, adhesive coating, laminating, slitting, rewinding and die-cutting are coordinated through the supplied production and converting workflow.' },
+  { q: 'What quality system supports production?', a: 'The site presents ISO 9001, RoHS, REACH and selected SGS or product test documents. The applicable document set is confirmed by product and project.' },
+  { q: 'Do you support OEM and private-label supply?', a: 'Yes. Custom dimensions, cores, liners, labels, cartons and packaging can be discussed for distributors and industrial brands.' },
+  { q: 'What production formats are available?', a: 'Depending on the construction, products can be supplied as jumbo rolls, slit rolls, rewound rolls, spools or die-cut parts.' },
+]} />
 </Layout>
 
 <style>

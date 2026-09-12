@@ -22,7 +22,7 @@ export const SITE = {
     addressCountry: '',
   },
   /** Social / directory profiles — helps entity disambiguation for GEO */
-  sameAs: [] as string[],
+  sameAs: ['https://www.linkedin.com/company/lubandart'] as string[],
 };
 
 /** Build an absolute URL from a site-relative path */

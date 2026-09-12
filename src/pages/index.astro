@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { industries } from '../data/industries';
 import { SITE, absUrl } from '../config/site';
+import FaqSection from '../components/FaqSection.astro';
 
 /* WebSite structured data — helps search engines understand the site root */
 const websiteLd = {
@@ -239,12 +240,16 @@ const indImg: Record<string, string> = {
         <p>Tell us your requirement and our engineering team will respond within 24 hours with a tailored specification and pricing.</p>
       </div>
       <div class="contact-grid">
-        <form class="quote-form" onsubmit="return false">
+        <form id="homeQuoteForm" class="quote-form">
           <div class="row">
             <input type="text" name="name" placeholder="Your Name" required />
             <input type="email" name="email" placeholder="Email Address" required />
           </div>
           <input type="text" name="company" placeholder="Company Name" />
+          <div class="row">
+            <input type="text" name="spec" placeholder="Width / thickness / length" />
+            <input type="text" name="qty" placeholder="Estimated quantity" />
+          </div>
           <select name="product">
             <option value="">Product Requirement</option>
             <option>Double Sided Tape</option>
@@ -252,8 +257,9 @@ const indImg: Record<string, string> = {
             <option>Specialty Tape</option>
             <option>Custom / OEM Project</option>
           </select>
-          <textarea name="message" placeholder="Specs, quantity, application — attach drawings or datasheets if available…"></textarea>
+          <textarea name="message" placeholder="Application, substrate, target market, sample or OEM needs…"></textarea>
           <button class="btn" type="submit">Submit Inquiry</button>
+          <p id="homeQuoteStatus" class="quote-status" role="status" aria-live="polite"></p>
         </form>
         <div>
           <ul class="info-list">
@@ -266,7 +272,42 @@ const indImg: Record<string, string> = {
       </div>
     </div>
   </section>
+<FaqSection title="Buying Industrial Tape: Frequently Asked Questions" intro="Common questions buyers ask before requesting samples or a quotation." items={[
+  { q: 'What information should I send for a tape recommendation?', a: 'Send the substrate, application area, target width and thickness, service temperature, estimated quantity and whether you need rolls or die-cut parts.' },
+  { q: 'Can LubandArt customize tape constructions and packaging?', a: 'Yes. Adhesive system, carrier, thickness, width, roll length, liner, core, die-cut shape, labels and export packaging can be discussed against the project requirement.' },
+  { q: 'Can I request samples before placing an order?', a: 'Yes. Sample availability and preparation time are confirmed against the requested construction. Testing the actual substrate and assembly is recommended before production approval.' },
+  { q: 'How are MOQ and lead time confirmed?', a: 'MOQ and lead time depend on construction, converting method, packaging and quantity. They are confirmed in the quotation after the specification is locked.' },
+  { q: 'Which certificates and reports can be provided?', a: 'Available documents may include ISO 9001, RoHS, REACH and selected product test reports, depending on the product grade and project requirement.' },
+]} />
 </Layout>
+
+<script>
+  const homeForm = document.getElementById('homeQuoteForm');
+  const homeStatus = document.getElementById('homeQuoteStatus');
+  homeForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!homeStatus) return;
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form).entries());
+    homeStatus.className = 'quote-status';
+    homeStatus.textContent = 'Submitting…';
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.ok) throw new Error(result.error || 'Submission failed.');
+      homeStatus.className = 'quote-status ok';
+      homeStatus.textContent = '✓ Inquiry received. We will contact you shortly.';
+      form.reset();
+    } catch (error) {
+      homeStatus.className = 'quote-status err';
+      homeStatus.textContent = `✗ ${error instanceof Error ? error.message : 'Network error. Please email us directly.'}`;
+    }
+  });
+</script>
 
 <style>
   /* ============================================================
@@ -413,6 +454,9 @@ const indImg: Record<string, string> = {
   .quote-form input, .quote-form select, .quote-form textarea { width: 100%; padding: .95rem 1.1rem; border: 1px solid var(--line); border-radius: var(--radius); font: inherit; background: #fafaf8; color: var(--fg); transition: border-color .2s, background .2s; }
   .quote-form input:focus, .quote-form select:focus, .quote-form textarea:focus { outline: none; border-color: var(--accent); background: #fff; }
   .quote-form textarea { min-height: 130px; resize: vertical; }
+  .quote-status { min-height: 1.2em; margin: 0; font-size: .9rem; }
+  .quote-status.ok { color: #137333; }
+  .quote-status.err { color: #b3261e; }
   .quote-form .btn { justify-content: center; padding: .85rem 1.5rem; font-size: .95rem; margin-top: .4rem; }
   .info-list { list-style: none; padding: 0; margin: 0 0 1.4rem; }
   .info-list li { padding: 1.2rem 1.5rem; background: #fff; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: var(--radius); margin-bottom: .9rem; }

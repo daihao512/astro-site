@@ -1,0 +1,10 @@
+---
+interface Props { eyebrow?: string; title: string; intro?: string; items: { q: string; a: string }[]; }
+const { eyebrow = 'FAQ', title, intro, items } = Astro.props;
+const jsonLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: items.map((item) => ({ '@type': 'Question', name: item.q, acceptedAnswer: { '@type': 'Answer', text: item.a } })) };
+---
+<section class="faq-section mod mod-light"><div class="container"><div class="section-head head-left"><div class="eyebrow">{eyebrow}</div><h2>{title}</h2>{intro && <p>{intro}</p>}</div><div class="faq-list">{items.map((item) => <details class="faq-item"><summary>{item.q}<span aria-hidden="true">+</span></summary><div class="faq-answer"><p>{item.a}</p></div></details>)}</div></div></section>
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+<style>
+  .faq-list { max-width:900px; border-top:1px solid var(--line); }.faq-item { border-bottom:1px solid var(--line); background:#fff; }.faq-item summary { list-style:none; cursor:pointer; display:flex; justify-content:space-between; gap:1rem; align-items:center; min-height:64px; padding:1rem 1.2rem; font-weight:650; color:var(--fg); }.faq-item summary::-webkit-details-marker { display:none; }.faq-item summary span { color:var(--accent); font-size:1.4rem; font-weight:400; }.faq-item[open] summary span { transform:rotate(45deg); }.faq-answer { padding:0 1.2rem 1.1rem; }.faq-answer p { max-width:78ch; margin:0; color:var(--fg-soft); line-height:1.7; font-size:.92rem; }.faq-item summary:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; }
+</style>
