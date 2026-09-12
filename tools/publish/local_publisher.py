@@ -81,7 +81,10 @@ def release_lock():
     except Exception:
         pass
 
-BUILD_CMD = ["npm", "run", "build"]
+# On Windows, npm is exposed as npm.cmd rather than an executable named npm.
+# Using the explicit shim also works from detached worktrees and Task Scheduler.
+NPM_BIN = "npm.cmd" if os.name == "nt" else "npm"
+BUILD_CMD = [NPM_BIN, "run", "build"]
 VERIFY_TIMEOUT = 600                            # Cloudflare 部署等待上限(秒)
 VERIFY_POLL = 20                                # 轮询间隔(秒)
 NETWORK_RETRIES = 3
@@ -134,7 +137,10 @@ def run(cmd, cwd, env_extra=None, timeout=600):
     env = dict(os.environ)
     if env_extra:
         env.update(env_extra)
-    r = subprocess.run(cmd, cwd=str(cwd), capture_output=True, text=True, env=env, timeout=timeout)
+    r = subprocess.run(
+        cmd, cwd=str(cwd), capture_output=True, text=True,
+        encoding="utf-8", errors="replace", env=env, timeout=timeout,
+    )
     return r.returncode, r.stdout, r.stderr
 
 def load_manifest(path: Path) -> dict:
