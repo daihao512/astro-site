@@ -372,6 +372,20 @@ def publish_one(manifest_path: Path) -> str:
             except Exception as e:
                 log(f"  [WARN] node_modules junction failed: {e}")
 
+        # The manifest/content source may be newly created locally and therefore
+        # not exist in origin/main yet. Carry approved repo-relative sources into
+        # the isolated worktree before applying them; the source itself is never
+        # staged unless it is also listed in approved_files.
+        for approved in manifest.get("approved_files", []):
+            ref_rel = approved.get("content_ref")
+            if not ref_rel:
+                continue
+            source = REPO_ROOT / ref_rel
+            target = wt / ref_rel
+            if source.exists() and not target.exists():
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(str(source), str(target))
+
         # 2) 写入 Astro（幂等去重）
         added = apply_content(wt, manifest)
         if not added:
