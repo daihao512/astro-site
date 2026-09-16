@@ -15,7 +15,7 @@ export const GET: APIRoute = () => {
     legalName: SITE.legalName,
     url: SITE.url,
     description: SITE.description,
-    foundingDate: SITE.foundingDate,
+    ...(SITE.foundingDate ? { foundingDate: SITE.foundingDate } : {}),
     email: SITE.email,
     entityType: 'Industrial adhesive tape manufacturer',
 
@@ -43,7 +43,7 @@ export const GET: APIRoute = () => {
     })),
 
     capabilities: [
-      'Adhesive coating (in-house, 2 lines)',
+      'Adhesive coating and converting coordination',
       'Adhesive laminating',
       'Precision slitting',
       'Rewinding & spool winding',

@@ -10,41 +10,40 @@ import FaqSection from '../components/FaqSection.astro';
   <SubHero
     eyebrow="Contact"
     title="Contact & Quote"
-    sub="LubandArt Tape is an industrial adhesive tape manufacturer supplying double sided tape, foam tape, and specialty tape for converters, distributors and OEMs worldwide. Tell us about your application and specifications, and we'll get back with product recommendations and a quote — we respond to all inquiries within 24 hours."
+    sub="LubandArt Tape supplies double sided tape, foam tape, and specialty tape for converters, distributors and OEMs. Tell us about your application and specifications, and we'll review the requirement and reply with product recommendations and a quote."
     breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Contact', href: '/contact' }]}
   />
 
   <section class="contact" style="padding:3rem 0">
     <div class="container">
       <div class="badges">
-        <span><b>✓</b> ISO 9001:2015</span>
-        <span><b>✓</b> REACH Compliant</span>
-        <span><b>✓</b> RoHS Compliant</span>
-        <span><b>✓</b> 10+ Years in Business</span>
-        <span><b>✓</b> Factory Direct</span>
+        <span><b>✓</b> Certification documents on request</span>
+        <span><b>✓</b> Product test data available</span>
+        <span><b>✓</b> Custom specifications supported</span>
+        <span><b>✓</b> B2B export supply</span>
+        <span><b>✓</b> Sample requests welcome</span>
       </div>
     </div>
     <div class="container contact-grid">
       <div>
         <ul class="contact-info">
           <li><strong>Email:</strong> info@lubandart.com</li>
-          <li><strong>Phone:</strong> +86 400-000-0000</li>
-          <li><strong>Address:</strong> Adhesive Tape Industrial Park, Zone A, China</li>
-          <li><strong>Working Hours:</strong> Monday – Sunday · 24/7 Service</li>
+          <li><strong>Contact:</strong> Email or WhatsApp available on request</li>
+          <li><strong>Location:</strong> Guangdong, China</li>
+          <li><strong>Working Hours:</strong> Monday – Friday · Response within one working day</li>
         </ul>
         <div class="footer-social" style="margin-top:1.5rem">
           <a href="mailto:info@lubandart.com">Email</a>
-          <a href="#" rel="noopener">WhatsApp</a>
-          <a href="#" rel="noopener">WeChat</a>
         </div>
       </div>
 
       <form id="quoteForm" class="quote-form" novalidate>
-        <input type="text" name="name" placeholder="Your name *" required />
-        <input type="text" name="company" placeholder="Company name *" required />
-        <input type="email" name="email" placeholder="Email *" required />
-        <input type="text" name="whatsapp" placeholder="WhatsApp number *" required />
-        <select name="product" class="full" required>
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="form-trap" />
+        <input type="text" name="name" placeholder="Your name *" aria-label="Your name" autocomplete="name" required />
+        <input type="text" name="company" placeholder="Company name *" aria-label="Company name" autocomplete="organization" required />
+        <input type="email" name="email" placeholder="Email (or use WhatsApp / phone below)" aria-label="Email address" autocomplete="email" />
+        <input type="text" name="whatsapp" placeholder="WhatsApp / phone (recommended if no email)" aria-label="WhatsApp or phone number" autocomplete="tel" />
+        <select name="product" class="full" aria-label="Product type" required>
           <option value="" disabled selected>Select product type *</option>
           <option>Double Sided Acrylic Tape</option>
           <option>Double Sided PE Foam Tape</option>
@@ -55,9 +54,9 @@ import FaqSection from '../components/FaqSection.astro';
           <option>Double Sided PVC Tape</option>
           <option>Other / Custom</option>
         </select>
-        <input type="text" name="spec" placeholder="Specs & dimensions (e.g. width 10mm, thickness 0.1mm)" />
-        <input type="text" name="qty" placeholder="Estimated quantity" />
-        <textarea name="message" placeholder="Describe your needs, e.g. need 0.1mm double sided tape, 10mm wide, 5,000 rolls" class="full"></textarea>
+        <input type="text" name="spec" placeholder="Specs & dimensions (e.g. width 10mm, thickness 0.1mm)" aria-label="Specifications and dimensions" />
+        <input type="text" name="quantity" placeholder="Estimated quantity" aria-label="Estimated quantity" />
+        <textarea name="message" placeholder="Describe your needs, e.g. need 0.1mm double sided tape, 10mm wide, 5,000 rolls" aria-label="Describe your requirements" class="full"></textarea>
         <button class="btn full" type="submit" id="submitBtn">Get a Quote</button>
         <p id="formStatus" class="form-status full" role="status" aria-live="polite"></p>
       </form>
@@ -65,7 +64,7 @@ import FaqSection from '../components/FaqSection.astro';
   </section>
 <FaqSection title="Before You Submit an Inquiry" items={[
   { q: 'What should I include in my inquiry?', a: 'Please include your company, email or WhatsApp, product type, substrate, dimensions, application, estimated quantity and any required certification.' },
-  { q: 'Can I send a drawing or datasheet?', a: 'Yes. Drawings, product photos, technical datasheets and target specifications help us recommend the correct construction.' },
+  { q: 'Can I send a drawing or datasheet?', a: 'Yes. Email drawings, product photos, technical datasheets or target specifications to info@lubandart.com and include your inquiry details.' },
   { q: 'Can you arrange samples?', a: 'Sample requests are welcome. We confirm the sample construction and preparation time after reviewing your requirements.' },
   { q: 'When will I receive a reply?', a: 'We aim to review complete inquiries within one working day. Complex specifications may require additional confirmation from the technical team.' },
   { q: 'Which documents can be supplied?', a: 'Depending on the product and project, we can discuss TDS, SDS, RoHS, REACH, ISO and selected test reports.' },
@@ -100,6 +99,7 @@ import FaqSection from '../components/FaqSection.astro';
   .quote-form .btn { padding: .85rem 1rem; }
   .quote-form .btn:disabled { opacity: .6; cursor: not-allowed; }
   .form-status { margin: 0; font-size: .9rem; min-height: 1.2em; }
+  .form-trap { position: absolute; left: -10000px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
   .form-status.ok { color: #137333; }
   .form-status.err { color: #c5221f; }
   @media (max-width: 680px) { .quote-form, .contact-grid { grid-template-columns: 1fr; } }
@@ -110,11 +110,20 @@ import FaqSection from '../components/FaqSection.astro';
   const btn = document.getElementById('submitBtn') as HTMLButtonElement;
   const status = document.getElementById('formStatus') as HTMLParagraphElement;
 
+  const productParam = new URLSearchParams(window.location.search).get('product');
+  const productMap: Record<string, string> = {
+    acrylic: 'Double Sided Acrylic Tape', eva: 'Double Sided EVA Tape', opp: 'Double Sided OPP Tape',
+    'pe-foam': 'Double Sided PE Foam Tape', pet: 'Double Sided PET Tape', pvc: 'Double Sided PVC Tape',
+    tissue: 'Double Sided Tissue Tape', 'low-odor': 'Other / Custom', 'flame-retardant': 'Other / Custom',
+    'substrate-free': 'Other / Custom', nonwoven: 'Other / Custom', mesh: 'Other / Custom', 'acrylic-foam': 'Double Sided Acrylic Tape',
+  };
+  if (productParam && productMap[productParam]) {
+    (form.elements['product'] as HTMLSelectElement).value = productMap[productParam];
+  }
+
   const required = [
     { name: 'name', label: 'Name' },
     { name: 'company', label: 'Company name' },
-    { name: 'email', label: 'Email' },
-    { name: 'whatsapp', label: 'WhatsApp number' },
     { name: 'product', label: 'Tape type' },
   ];
 
@@ -123,9 +132,14 @@ import FaqSection from '../components/FaqSection.astro';
       const el = form.elements[f.name] as HTMLInputElement;
       const val = (el.value || '').trim();
       if (!val) return { ok: false, el, msg: `${f.label} is required.` };
-      if (f.name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-        return { ok: false, el, msg: 'Please enter a valid email address.' };
-      }
+    }
+    const email = (form.elements['email'] as HTMLInputElement).value.trim();
+    const phone = (form.elements['whatsapp'] as HTMLInputElement).value.trim();
+    if (!email && !phone) {
+      return { ok: false, el: form.elements['email'] as HTMLInputElement, msg: 'Please provide an email or WhatsApp / phone number.' };
+    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return { ok: false, el: form.elements['email'] as HTMLInputElement, msg: 'Please enter a valid email address.' };
     }
     return { ok: true };
   }
@@ -141,29 +155,50 @@ import FaqSection from '../components/FaqSection.astro';
       v.el.focus();
       return;
     }
-    const data = Object.fromEntries(new FormData(form).entries());
+    // A1 — capture real attribution. Never fabricate: only what the browser actually knows.
+    const params = new URLSearchParams(window.location.search);
+    const data: Record<string, string> = {
+      ...Object.fromEntries(new FormData(form).entries()),
+    } as Record<string, string>;
+    const currentPath = window.location.pathname;
+    data.source_url = currentPath; // page that originated the inquiry
+    data.landing_url = currentPath; // V1 fallback: no session-level landing tracking yet
+    data.referrer = document.referrer || ''; // '' => server treats as UNKNOWN
+    data.utm_source = params.get('utm_source') || '';
+    data.utm_medium = params.get('utm_medium') || '';
+    data.utm_campaign = params.get('utm_campaign') || '';
     btn.disabled = true;
     btn.textContent = 'Submitting…';
     try {
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 15000);
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
+        signal: controller.signal,
       });
+      window.clearTimeout(timeout);
       const out = await res.json().catch(() => ({}));
       if (res.ok && out.ok) {
         status.className = 'form-status full ok';
-        status.textContent = out.degraded
-          ? '✓ We received your inquiry (demo mode: CRM not configured). We will contact you shortly.'
-          : '✓ We received your inquiry and will contact you soon!';
-        form.reset();
+        if (out.degraded) {
+          status.className = 'form-status full err';
+          status.textContent = '✗ Inquiry service is being configured. Please email us directly.';
+        } else {
+          status.className = 'form-status full ok';
+          status.textContent = '✓ We received your inquiry and will contact you soon!';
+          form.reset();
+        }
       } else {
         status.className = 'form-status full err';
         status.textContent = '✗ ' + (out.error || 'Submission failed. Please try again later or email us directly.');
       }
     } catch (err) {
       status.className = 'form-status full err';
-      status.textContent = '✗ Network error: ' + (err as Error).message;
+      status.textContent = err instanceof DOMException && err.name === 'AbortError'
+        ? '✗ The request timed out. Please email us directly.'
+        : '✗ Network error. Please email us directly.';
     } finally {
       btn.disabled = false;
       btn.textContent = 'Get a Quote';

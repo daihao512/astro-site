@@ -3,10 +3,10 @@ import Layout from '../layouts/Layout.astro';
 import SubHero from '../components/SubHero.astro';
 
 const certs = [
-  { icon: "📜", name: "ISO 9001:2015", desc: "Quality Management System certification covering R&D, production and quality control across the full process.", file: "/certs/iso-9001.pdf" },
-  { icon: "♻️", name: "RoHS Compliance", desc: "Materials meet the Restriction of Hazardous Substances directive. Test reports are available for download.", file: "/certs/rohs.pdf" },
-  { icon: "🌿", name: "REACH Compliance", desc: "Compliant with REACH registration, evaluation and authorization requirements for chemical substances.", file: "/certs/reach.pdf" },
-  { icon: "🔍", name: "SGS Audited", desc: "Third-party audited supplier — the production system is independently verified and traceable.", file: "/certs/sgs.pdf" },
+  { icon: "📜", name: "ISO 9001:2015", desc: "Document listed for review. Confirm the certificate scope, holder and validity for your order before relying on it.", file: "/certs/iso-9001.pdf" },
+  { icon: "♻️", name: "RoHS Compliance", desc: "Compliance document listed for review. Applicability depends on the selected construction and market requirement.", file: "/certs/rohs.pdf" },
+  { icon: "🌿", name: "REACH Compliance", desc: "Compliance document listed for review. Applicability depends on the selected construction and market requirement.", file: "/certs/reach.pdf" },
+  { icon: "🔍", name: "SGS Report", desc: "Third-party document listed for review. Confirm issuer, scope and date for the selected product or project.", file: "/certs/sgs.pdf" },
   { icon: "🧪", name: "In-House Laboratory", desc: "Key indicators such as tack, holding power, peel strength and aging are tested in our own lab." },
 ];
 
@@ -21,7 +21,7 @@ const reports = [
 ];
 ---
 
-<Layout title="Certifications & Test Reports — LubandArt Tape" description="ISO 9001, RoHS, REACH, SGS audit and third-party test report downloads for LubandArt industrial adhesive tapes."
+<Layout title="Quality Documents & Test Reports — LubandArt Tape" description="Quality documents and selected third-party test report downloads for LubandArt industrial adhesive tapes."
   breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Certifications', href: '/certifications' }]}
 >
   <SubHero

@@ -1,8 +1,7 @@
 /** Single source of truth for site-wide SEO / structured-data values.
  *
- *  TODO before launch: replace `url` with the production domain and fill in
- *  the real contact / address / social fields. Every canonical URL, sitemap
- *  entry and JSON-LD block derives from this file. */
+ *  Confirm the production domain and business contact fields before launch.
+ *  Every canonical URL, sitemap entry and JSON-LD block derives from this file. */
 export const SITE = {
   url: 'https://lubandart.com',
   name: 'LubandArt Tape',
@@ -10,10 +9,10 @@ export const SITE = {
   description:
     'Industrial adhesive tape manufacturer supplying double sided tape, foam tape and specialty tape for converters, distributors and OEMs worldwide.',
   logo: '/favicon.svg',
-  ogImage: '/og-default.jpg',
+  ogImage: '/favicon.svg',
   email: 'info@lubandart.com',
   telephone: '',
-  foundingDate: '2014',
+  foundingDate: '',
   address: {
     streetAddress: '',
     addressLocality: '',
@@ -21,8 +20,8 @@ export const SITE = {
     postalCode: '',
     addressCountry: '',
   },
-  /** Social / directory profiles — helps entity disambiguation for GEO */
-  sameAs: ['https://www.linkedin.com/company/lubandart'] as string[],
+  /** Add verified social / directory profiles before launch. */
+  sameAs: [] as string[],
 };
 
 /** Build an absolute URL from a site-relative path */

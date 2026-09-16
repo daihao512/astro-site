@@ -46,10 +46,12 @@ const organizationLd = {
   url: SITE.url,
   logo: absUrl(SITE.logo),
   description: SITE.description,
-  foundingDate: SITE.foundingDate,
+  ...(SITE.foundingDate ? { foundingDate: SITE.foundingDate } : {}),
   email: SITE.email,
   ...(SITE.telephone ? { telephone: SITE.telephone } : {}),
-  address: { '@type': 'PostalAddress', ...SITE.address },
+  ...(Object.values(SITE.address).some(Boolean)
+    ? { address: { '@type': 'PostalAddress', ...SITE.address } }
+    : {}),
   ...(SITE.sameAs.length ? { sameAs: SITE.sameAs } : {}),
   contactPoint: {
     '@type': 'ContactPoint',
@@ -657,10 +659,9 @@ const ldBlocks = [
           <div class="brand"><span class="logo">L</span> LUBANDART TAPE</div>
           <p>Industrial adhesive tape manufacturer supplying double sided tape, foam tape and specialty tape for converters, distributors and OEMs worldwide.</p>
           <div class="footer-badges">
-            <span>ISO 9001</span>
-            <span>RoHS</span>
-            <span>REACH</span>
-            <span>SGS</span>
+            <span>Documents on request</span>
+            <span>Product test data</span>
+            <span>Custom specifications</span>
           </div>
         </div>
         <div class="footer-col">
@@ -671,28 +672,24 @@ const ldBlocks = [
             <li><a href="/about">About Us</a></li>
             <li><a href="/contact">Contact</a></li>
             <li><a href="/blogs">Blogs</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h4>Contact</h4>
           <ul class="footer-contact">
             <li>Email: info@lubandart.com</li>
-            <li>Phone: +86 400-000-0000</li>
-            <li>WhatsApp: +86 138-0000-0000</li>
           </ul>
           <div class="footer-social">
             <a href="mailto:info@lubandart.com">Email</a>
-            <a href="#" rel="noopener">WhatsApp</a>
-            <a href="#" rel="noopener">WeChat</a>
           </div>
         </div>
         <div class="footer-col">
-          <h4>Certifications</h4>
+          <h4>Quality Documents</h4>
           <ul>
-            <li><a href="/certifications">ISO 9001:2015</a></li>
-            <li><a href="/certifications">RoHS / REACH</a></li>
-            <li><a href="/certifications">SGS Verified</a></li>
-            <li><a href="/certifications">Test Reports</a></li>
+            <li><a href="/certifications">Available documents</a></li>
+            <li><a href="/certifications">Product test reports</a></li>
+            <li><a href="/contact">Request a document set</a></li>
           </ul>
         </div>
       </div>
@@ -717,7 +714,7 @@ const ldBlocks = [
         <div class="msg bot">Hello! I'm the LubandArt AI assistant. I can help you with double sided tape, foam tape, specialty tape, applications and sourcing. How can I help?</div>
       </div>
       <form class="chat-input" id="chat-form">
-        <input id="chat-input" type="text" placeholder="Ask a question..." autocomplete="off" />
+            <input id="chat-input" type="text" placeholder="Ask a question..." autocomplete="off" maxlength="1000" />
         <button class="btn" type="submit">Send</button>
       </form>
     </div>
@@ -729,6 +726,7 @@ const ldBlocks = [
       const form = document.getElementById('chat-form');
       const input = document.getElementById('chat-input');
       const msgs = document.getElementById('chat-msgs');
+      const chatSend = form?.querySelector('button[type="submit"]');
 
       /* mobile menu */
       const navToggle = document.getElementById('nav-toggle');
@@ -785,13 +783,18 @@ const ldBlocks = [
         addMsg('user', text);
         history.push({ role: 'user', content: text });
         const typingEl = addMsg('bot', 'Typing', true);
+        if (chatSend) chatSend.disabled = true;
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 15000);
 
         try {
           const res = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: history })
+            body: JSON.stringify({ messages: history }),
+            signal: controller.signal,
           });
+          window.clearTimeout(timeout);
           const data = await res.json();
           let reply = 'Sorry, I cannot answer right now. Please try again later.';
           if (data?.choices?.[0]?.message?.content) {
@@ -804,7 +807,11 @@ const ldBlocks = [
           typingEl.querySelector('.msg-text').textContent = reply;
         } catch (err) {
           typingEl.classList.remove('typing');
-          typingEl.querySelector('.msg-text').textContent = 'Network error: ' + err.message;
+          typingEl.querySelector('.msg-text').textContent = err instanceof DOMException && err.name === 'AbortError'
+            ? 'The request timed out. Please try again later.'
+            : 'Network error. Please try again later.';
+        } finally {
+          if (chatSend) chatSend.disabled = false;
         }
         msgs.scrollTop = msgs.scrollHeight;
       });

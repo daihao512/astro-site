@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Page Not Found — LubandArt Tape" description="The requested LubandArt page could not be found.">
+  <section class="error-page">
+    <div class="container error-inner">
+      <p class="eyebrow">404 · PAGE NOT FOUND</p>
+      <h1>This page is not available.</h1>
+      <p class="lead">The link may be outdated. Start with the product range or send the application details directly to our team.</p>
+      <div class="actions">
+        <a class="btn" href="/products">View Products</a>
+        <a class="btn btn-ghost" href="/contact">Request a Quote</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .error-page { min-height: 58vh; display: grid; place-items: center; background: var(--bg); }
+  .error-inner { width: min(100% - 2rem, 760px); padding: 7rem 0; }
+  .eyebrow { color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .12em; }
+  h1 { max-width: 12ch; margin: .8rem 0 1rem; font-size: clamp(2.6rem, 7vw, 5.5rem); line-height: .98; }
+  .lead { max-width: 48ch; color: var(--fg-soft); line-height: 1.7; }
+  .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
+</style>

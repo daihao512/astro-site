@@ -1,6 +1,6 @@
 # LubandArt Tape
 
-> Industrial adhesive tape manufacturer supplying double sided tape, foam tape and specialty tape for converters, distributors and OEMs worldwide. In-house coating, precision converting and ISO-certified quality control.
+> Industrial adhesive tape manufacturer supplying double sided tape, foam tape and specialty tape for converters, distributors and OEMs worldwide. In-house coating, precision converting and documented quality review.
 
 LubandArt manufactures and converts double sided tapes, foam tapes and custom adhesive solutions for global industrial applications. This file helps AI answer engines understand our product range, industry applications and technical resources.
 
@@ -23,8 +23,8 @@ LubandArt manufactures and converts double sided tapes, foam tapes and custom ad
 ### Specialty Tape
 - [Specialty Tape Overview](/products/specialty/): Engineered constructions for demanding specifications.
 - [Acrylic Tape](/products/acrylic/): High-strength structural bonding.
-- [Low-Odor Tape](/products/low-odor/): Low-VOC formulation for enclosed cabins and automotive interiors (VDA 270 ≤ 3.0).
-- [Flame-Retardant Tape](/products/flame-retardant/): UL94 V-0 rated for battery packs and electrical assemblies.
+- [Low-Odor Tape](/products/low-odor/): Low-odor construction for enclosed cabins and automotive interiors; confirm the required test grade for the project.
+- [Flame-Retardant Tape](/products/flame-retardant/): Flame-retardant construction for electrical and industrial applications; confirm the required rating for the project.
 - [Substrate-Free Tape](/products/substrate-free/): Carrier-less transfer adhesive for ultra-thin bonding.
 
 ## Industries
@@ -40,11 +40,11 @@ LubandArt manufactures and converts double sided tapes, foam tapes and custom ad
 ## Resources
 
 - [Technical Articles & Guides](/blogs/): Engineering guides on tape selection, materials and application practice.
-- [Low-Odor Tape for Automotive Interiors: VOC, Fogging and Cabin Air](/blogs/low-odor-tape-automotive-interiors/): VDA 270 / VDA 278 / GB/T 27630 explained, with specification checklist.
+- [Low-Odor Tape for Automotive Interiors: VOC, Fogging and Cabin Air](/blogs/low-odor-tape-automotive-interiors/): VDA 270 / VDA 278 / GB/T 27630 explained, with a project specification checklist.
 
 ## Capabilities
 
-- Adhesive coating (in-house, 2 lines) and laminating
+- Adhesive coating and laminating
 - Precision slitting, rewinding, spool winding
 - Die cutting to drawings or samples
 - OEM and private label production

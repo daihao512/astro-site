@@ -12,6 +12,9 @@ const isDev = process.env.NODE_ENV === 'development';
 export default defineConfig({
   // Use Astro's native Node dev server locally so /api/* works without
   // requiring Wrangler, Cloudflare KV, or Worker-only sharp bindings.
-  adapter: isDev ? node({ mode: 'standalone' }) : cloudflare(),
+  // Cloudflare cannot run Sharp at request time. Compile image transforms
+  // during the build so production does not fall back to an unsupported
+  // runtime image service.
+  adapter: isDev ? node({ mode: 'standalone' }) : cloudflare({ imageService: 'compile' }),
   session: { driver: 'memory' },
 });

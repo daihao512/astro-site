@@ -26,11 +26,13 @@ DEEPSEEK_MODEL=deepseek-v4-flash
 
 ## 联系表单线索落库（CRM）
 
-`/api/contact` 接收报价表单，并把线索 POST 到 `CRM_WEBHOOK` 指向的中央接收器（即 `workbench` 里的 `python -m core.api_server`，默认 `http://localhost:8000/webhook/lead`，本机若端口被占用用 `PORT=8077`）。
+`/api/contact` 接收报价表单。生产环境优先写入 Cloudflare D1（`DB` 绑定），并记录 `inquiry.created` 事件；未绑定 D1 时才回退到 `CRM_WEBHOOK`。
 
-- **本地开发**：先启动中央接收器，再把 `.env` 的 `CRM_WEBHOOK` 设为 `http://localhost:8077/webhook/lead`。
+- **本地开发**：CRM 后端目录按当前项目约定为 `F:\test`；只有确认其中实际启动了 `/webhook/lead` 接口后，才把 `.env` 的 `CRM_WEBHOOK` 设为 `http://localhost:8077/webhook/lead`。
 - **生产环境**：把 `CRM_WEBHOOK` 改为控制面部署后的真实 Webhook URL（在 Cloudflare Pages 的 Environment variables 里设置，运行时变量）。
-- 未配置 `CRM_WEBHOOK` 时表单仍返回"已收到"（演示降级），但线索不会写入 CRM，上线前务必配置。
+- 未配置 D1 和 `CRM_WEBHOOK` 时接口会返回 `degraded: true`，前端会提示用户改发邮件；这不应视为正式上线状态。
+- D1 迁移：`wrangler d1 migrations apply lubandart-registry --remote`。生产部署前确认数据库 ID、绑定名和迁移均已生效。
+- 可选通知变量：`MAIL_FROM`、`INQUIRY_NOTIFY_TO`、`INQUIRY_EVENT_WEBHOOK`。邮件投递使用 HTTPS 邮件服务，需按服务商要求完成域名 SPF/DKIM。
 
 ## 部署到 Cloudflare Pages（只需一次）
 1. 注册免费账号：https://dash.cloudflare.com/sign-up
@@ -45,6 +47,11 @@ DEEPSEEK_MODEL=deepseek-v4-flash
    - `DEEPSEEK_API_KEY` = 你的真实密钥
    - `DEEPSEEK_BASE_URL` = `https://api.deepseek.com`
    - `DEEPSEEK_MODEL` = `deepseek-v4-flash`
+   - `CRM_WEBHOOK` = 控制面真实 Webhook（若未使用 D1 主存储）
+   - `CRM_WEBHOOK_SECRET` = 与接收端约定的共享密钥（可选，作为请求头发送）
+   - `KB_API` = 控制面真实知识库地址（可选）
+   - `REGISTRY_API_BASE` = URL Registry 地址（可选）
+   - `MAIL_FROM` / `INQUIRY_NOTIFY_TO` = 已完成域名验证的企业邮箱地址
    > 服务端函数通过 Cloudflare 运行时环境变量读取这些值，它们不会进入前端代码，也不会进 Git 仓库。
 6. 保存并部署，获得 `https://<project>.pages.dev` 地址。
 

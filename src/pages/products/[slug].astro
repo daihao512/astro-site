@@ -248,7 +248,7 @@ const configGroups = [
 
 const oem = [
   { t: 'Typical MOQ', d: 'Depends on model, width, length, adhesive system and customization level. Trial orders on standard specs are welcome.', ico: 'M' },
-  { t: 'Sample Lead Time', d: '1–3 working days — standard samples are usually prepared within 1–3 days subject to specification and stock.', ico: 'S' },
+  { t: 'Sample Lead Time', d: 'Confirmed after reviewing the requested specification, stock position and sample format.', ico: 'S' },
   { t: 'Bulk Production', d: 'Usually 7–10 working days, depending on specification, converting requirements and quantity.', ico: 'B' },
   { t: 'OEM Customization', d: 'Width, thickness, roll length, adhesive system, density, color, liner, core, printing and packaging can all be customized.', ico: 'C' },
 ];
@@ -336,7 +336,7 @@ const faqBySlug: Record<string, { q: string; a: string }[]> = {
   ],
   pvc: [
     { q: 'Is PVC tape flame-retardant?',
-      a: 'Yes — PVC carrier is inherently flame-retardant compared to tissue or PE foam. We supply UL94 V-0 / VTM-0 grades for electronics, signage and public-space applications. Test certificates are available per project.' },
+      a: 'PVC can offer a different flame profile from tissue or PE foam, but the result depends on the full construction and thickness. UL94 / VTM grades, if required, must be confirmed against the selected grade and test report.' },
     { q: 'Can PVC tape be removed cleanly?',
       a: 'We offer a removable PVC construction for point-of-sale, temporary signage and protective applications. Bond holds in service but lifts cleanly within the intended dwell window — substrate-dependent, so please confirm with us.' },
     { q: 'Will PVC tape discolour over time?',
@@ -364,9 +364,9 @@ const faqBySlug: Record<string, { q: string; a: string }[]> = {
   ],
   'low-odor': [
     { q: 'How low is the odor of low-odor tape?',
-      a: 'Our low-odor construction is formulated to meet VDA 270 ≤ 3.0 odor grade, well within typical OEM cabin air-quality limits. We can supply test data and certified low-VOC adhesive options for stricter programs such as Asian OEM or EV interior specifications.' },
+      a: 'Low-odor constructions can be evaluated against VDA 270 and other cabin-air requirements. The actual rating depends on the selected adhesive, carrier and test conditions; request the applicable report for your program.' },
     { q: 'Will the low-odor tape yellow or outgas over time?',
-      a: 'No. The eco-friendly acrylic system is designed to minimise plasticiser migration and secondary outgassing during the vehicle service life. Long-term aging tests under 80°C / 95% RH confirm stable bond and minimal cabin odor shift after 1000 hours.' },
+      a: 'Outgassing and yellowing depend on the adhesive, carrier, substrate and environment. We can review the required aging or VOC test method and provide the relevant grade data before approval.' },
     { q: 'What substrates can low-odor tape bond to?',
       a: 'Leather, fabric, foam, ABS and other interior plastics, plus painted or coated metal. For low-surface-energy substrates such as PP or TPO we offer a corona / primer-treated construction to maintain bond strength without compromising the low-odor claim.' },
     { q: 'Is the low-odor tape suitable for high-temperature automotive interiors?',
@@ -374,19 +374,19 @@ const faqBySlug: Record<string, { q: string; a: string }[]> = {
     { q: 'Can the low-odor tape be supplied as die-cut pieces?',
       a: 'Yes — kiss-cut pieces, individual gaskets and converted rolls, all using the same eco-friendly adhesive system. Common applications include A-pillar trims, headliner attachments, door panel fixings and EV battery interior NVH pads.' },
     { q: 'Does the low-odor tape meet OEM specifications for cabin air quality?',
-      a: 'Yes. We supply test reports aligned with VDA 270, VDA 278 and GB/T 27630 cabin air standards. For program-specific approval, share the OEM spec and we will match an existing certified grade or run a project qualification with you.' },
+      a: 'We can review VDA 270, VDA 278 or GB/T 27630 requirements and identify a grade for project testing. Program approval should be based on the report for the selected construction, not on the product category alone.' },
   ],
   'flame-retardant': [
     { q: 'Is flame-retardant tape UL94 V-0 certified?',
-      a: 'Yes — our standard flame-retardant construction meets UL94 V-0 at typical 0.1-0.3 mm thicknesses. Test certificates and lot-traceable documentation are available per shipment, and we can support project-specific fire ratings including FMVSS 302 and GB 8410.' },
+      a: 'Some flame-retardant constructions can be tested to UL94 or other project standards. The rating depends on thickness and the complete tape construction, so request the certificate for the selected grade before specifying it.' },
     { q: 'What is the temperature range of flame-retardant tape?',
       a: 'Standard grade: -20°C to 120°C continuous, with short-term peaks up to 150°C during battery pack assembly or paint bake. For higher service temperatures we offer a high-temperature flame-retardant grade rated to 150°C continuous.' },
     { q: 'Will flame-retardant tape drip when exposed to flame?',
-      a: 'No. The construction is formulated to be self-extinguishing and non-dripping — once the flame source is removed the tape stops burning within seconds and does not release flaming drips that could spread fire to adjacent materials.' },
+      a: 'Dripping and self-extinguishing behavior must be confirmed from the test report for the selected construction. Do not infer fire performance from the carrier alone.' },
     { q: 'Can flame-retardant tape be used in battery packs?',
       a: 'Yes — this is one of its main applications. The tape is used for cell-to-cell bonding, module-to-pack fixing, and busbar insulation in EV battery packs. We supply low-impedance / dielectric versions on request for electrical isolation layers.' },
     { q: 'How does flame-retardant tape differ from regular PET tape?',
-      a: 'Standard PET tape has limited flame performance. Our flame-retardant grade uses a flame-retardant carrier and a flame-retardant adhesive system so the entire construction — not just one layer — passes UL94 V-0 and self-extinguishes cleanly.' },
+      a: 'Standard PET and flame-retardant constructions differ in carrier and adhesive formulation. Compare the full construction, thickness and test report; a flame-retardant carrier alone does not establish a UL94 result.' },
     { q: 'Is flame-retardant tape available in custom thicknesses and widths?',
       a: 'Yes — 0.05-0.30 mm thickness and slit widths from 5 mm to 1040 mm. Custom die-cut shapes for battery pack assembly, PCB masking and electrical insulation are supplied to drawing with lot-traceable documentation.' },
   ],
@@ -438,7 +438,7 @@ const industries = [
   { t: 'Mechanical & Industrial', slug: 'machinery' },
 ];
 
-// Supply forms — real product-form photography (Unsplash, verified reachable)
+// Supply forms — local product and process photography
 const supplyForms = [
   { title: 'Jumbo Roll', tag: 'For converters', desc: 'Master rolls supplied by width and length for converters and die-cutters — ready for your own slitting and converting.' },
   { title: 'Converted Roll', tag: 'For distributors', desc: 'Slit and rewound to your required width, roll length, liner and core — direct-application rolls for wholesalers and distributors.' },
@@ -467,8 +467,8 @@ const supplyForms = [
             ))}
           </div>
           <div class="prod-cta">
-            <a class="btn" href="/contact">Get a Quote</a>
-            <a class="btn btn-ghost" href="/contact">Request Samples</a>
+            <a class="btn" href={`/contact?product=${product.slug}`}>Get a Quote</a>
+            <a class="btn btn-ghost" href={`/contact?product=${product.slug}`}>Request Samples</a>
           </div>
         </div>
         <div class="prod-img-col">
@@ -520,7 +520,7 @@ const supplyForms = [
         <ul class="ov-points">
           <li><span>✓</span> Engineered for consistent, repeatable performance</li>
           <li><span>✓</span> Customized to your substrate and service environment</li>
-          <li><span>✓</span> Free samples for in-house validation before mass production</li>
+          <li><span>✓</span> Sample options can be discussed for in-house validation before mass production</li>
         </ul>
       </div>
       <div class="overview-img">
@@ -684,9 +684,9 @@ const supplyForms = [
           </div>
         </div>
         <div class="customize-stats">
-          <div class="cust-stat"><span class="cust-stat-n">3</span><span class="cust-stat-l">days free sample</span></div>
+          <div class="cust-stat"><span class="cust-stat-n">SAMPLE</span><span class="cust-stat-l">availability confirmed by specification</span></div>
           <div class="cust-stat"><span class="cust-stat-n">100%</span><span class="cust-stat-l">spec confirmation before bulk</span></div>
-          <div class="cust-stat"><span class="cust-stat-n">5mm–1040</span><span class="cust-stat-l">slitting width range</span></div>
+          <div class="cust-stat"><span class="cust-stat-n">CUSTOM</span><span class="cust-stat-l">slitting width confirmed by project</span></div>
           <div class="cust-stat"><span class="cust-stat-n">OEM/ODM</span><span class="cust-stat-l">branding & packaging supported</span></div>
         </div>
       </div>
@@ -712,7 +712,7 @@ const supplyForms = [
         </div>
         <a class="config-cta" href="/contact">
           <span class="config-cta-t">Request a Custom Configuration</span>
-          <span class="config-cta-d">Send your substrate, environment and quantity profile — your engineered sample ships within 3 working days.</span>
+          <span class="config-cta-d">Send your substrate, environment and quantity profile — sample preparation time is confirmed after review.</span>
           <span class="config-cta-a">Get Sample Kit →</span>
         </a>
       </div>
@@ -812,7 +812,7 @@ const supplyForms = [
       <div class="cta-inner">
         <div class="eyebrow">Need Help?</div>
         <h2>Not Sure Which {product.en} Fits?</h2>
-        <p>Tell us your substrate, tape size and application. Our team will recommend a suitable construction and supply free samples for testing.</p>
+        <p>Tell us your substrate, tape size and application. Our team will recommend a suitable construction and discuss sample options for testing.</p>
         <a class="btn" href="/contact">Discuss Your Application</a>
       </div>
     </div>

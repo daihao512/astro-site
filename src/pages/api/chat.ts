@@ -5,18 +5,20 @@ import { SITE_ID } from '../../config';
 export const prerender = false;
 
 /** 去中央控制面取本隔离站的知识库上下文（RAG 接地）。失败则优雅降级为无上下文。 */
-async function retrieveContext(query: string): Promise<string> {
-  const env = ({} as any).runtime?.env ?? {};
+async function retrieveContext(query: string, env: Record<string, string>): Promise<string> {
   const kbApi =
-    (env as Record<string, string>).KB_API ??
+    env.KB_API ??
     (import.meta.env.KB_API as string | undefined) ??
     '';
   if (!kbApi) return '';
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
   try {
     const r = await fetch(`${kbApi.replace(/\/$/, '')}/kb/query`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ site_id: SITE_ID, query, top_k: 4 }),
+      signal: controller.signal,
     });
     if (!r.ok) return '';
     const data = await r.json();
@@ -25,13 +27,22 @@ async function retrieveContext(query: string): Promise<string> {
     return results.map((x) => x.text).join('\n\n');
   } catch {
     return '';
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
+    const contentLength = Number(request.headers.get('content-length') || 0);
+    if (contentLength > 64_000) {
+      return new Response(JSON.stringify({ error: '请求内容过大' }), {
+        status: 413,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
     const { messages } = await request.json();
-    if (!Array.isArray(messages)) {
+    if (!Array.isArray(messages) || messages.length === 0 || messages.length > 30) {
       return new Response(JSON.stringify({ error: 'messages 必须是数组' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -40,6 +51,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // 优先读取 Cloudflare Pages 运行时环境变量；本地 `astro dev` 回退到 import.meta.env（来自 .env）。
     const env = (locals as { runtime?: { env?: Record<string, string> } }).runtime?.env ?? {};
+
+    const userMessages = messages.filter((m: any) => m?.role === 'user');
+    if (userMessages.some((m: any) => typeof m.content !== 'string' || m.content.length > 2000)) {
+      return new Response(JSON.stringify({ error: '单条消息过长或格式不正确' }), {
+        status: 422,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
     const apiKey = env.DEEPSEEK_API_KEY ?? (import.meta.env.DEEPSEEK_API_KEY as string | undefined) ?? '';
     const baseUrl =
@@ -56,7 +75,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // ---- RAG 接地：取隔离知识库上下文，注入系统提示 ----
     const lastUser = [...messages].reverse().find((m: any) => m.role === 'user');
-    const context = lastUser ? await retrieveContext(String(lastUser.content ?? '')) : '';
+    const context = lastUser ? await retrieveContext(String(lastUser.content ?? ''), env) : '';
     const grounded = [
       {
         role: 'system',
@@ -70,19 +89,27 @@ export const POST: APIRoute = async ({ request, locals }) => {
       ...messages,
     ];
 
-    const response = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages: grounded,
-        temperature: 0.7,
-        max_tokens: 2048,
-      }),
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
+    let response: Response;
+    try {
+      response = await fetch(`${baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: grounded,
+          temperature: 0.7,
+          max_tokens: 2048,
+        }),
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
 
     if (!response.ok) {
       const error = await response.text();

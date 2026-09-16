@@ -1,0 +1,186 @@
+# DISABLED 2026-09-12 — Local Auto Publisher V1 is the SOLE queue consumer.
+# This POC workflow would compete with tools/publish/local_publisher.py (host-side).
+# Kept for reference/history only. To re-enable: remove the `if: false` guard on
+# the `poc` job + this header. Runner SERVICE is KEPT running.
+# Only triggered by workflow_dispatch (NEVER by pull_request / pull_request_target).
+# Runs exclusively on the Windows self-hosted runner labelled lubandart-publisher.
+# Does NOT modify production content. Used to verify the runner + local resources
+# (Registry SQLite, GSC credentials, GitHub push via GITHUB_TOKEN) before going live.
+name: Self-hosted Publisher POC (DISABLED 2026-09-12)
+
+on:
+  workflow_dispatch:
+    inputs:
+      url_id:
+        description: "URL id for POC-5 real dry run"
+        required: false
+        default: "42"
+      manifest_path:
+        description: "Manifest for POC-5 real dry run"
+        required: false
+        default: "tools/publish/manifests/publish_pe_manufacturer.json"
+      test_branch:
+        description: "Throwaway branch for POC-4 GitHub auth test"
+        required: false
+        default: "self-hosted-publisher-auth-poc"
+
+# GITHUB_TOKEN needs contents:write so POC-4 can push/delete a harmless test branch.
+# No PAT / GCM / username / password. Self-hosted runner uses the job token.
+permissions:
+  contents: write
+
+jobs:
+  poc:
+    if: false   # DISABLED 2026-09-12 — Local Auto Publisher V1 owns the queue (QUEUE_CONSUMERS=1).
+    runs-on: [self-hosted, Windows, X64, lubandart-publisher]
+    steps:
+      # ----------------------------------------------------------------------
+      # POC-1: Basic environment (real Actions run on Windows runner)
+      # ----------------------------------------------------------------------
+      - name: POC-1 Basic environment
+        shell: bash
+        run: |
+          set -e
+          echo "=== WINDOWS_RUNNER ==="
+          echo "os=$(uname -s) arch=$(uname -m) host=$(hostname)"
+          echo "WINDOWS_RUNNER=PASS"
+          echo "=== PYTHON ==="
+          python --version && echo "PYTHON=PASS" || echo "PYTHON=FAIL"
+          echo "=== GIT ==="
+          git --version && echo "GIT=PASS" || echo "GIT=FAIL"
+          echo "=== F_DRIVE ==="
+          test -d /f && echo "F_DRIVE=PASS" || echo "F_DRIVE=FAIL"
+          echo "=== NETWORK (GitHub reachable) ==="
+          curl -fsS -o /dev/null -I https://github.com && echo "NETWORK=PASS" || echo "NETWORK=FAIL"
+
+      # ----------------------------------------------------------------------
+      # Checkout (proves the runner can fetch the repo)
+      # ----------------------------------------------------------------------
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: CHECKOUT marker
+        shell: bash
+        run: |
+          set -e
+          test -f "tools/publish/publish_runner.py" && echo "CHECKOUT=PASS" || echo "CHECKOUT=FAIL"
+
+      # ----------------------------------------------------------------------
+      # POC-2: Registry read-only (SELECT only, never write)
+      # ----------------------------------------------------------------------
+      - name: POC-2 Registry read-only
+        shell: bash
+        run: |
+          set -e
+          python - <<'PY'
+          import os, sqlite3, sys
+          # Pure env-driven: REGISTRY_DB_PATH is provided by the runner's local .env.
+          db = os.environ.get("REGISTRY_DB_PATH")
+          if not db:
+              print("REGISTRY_DB_PATH not set (runner .env missing) -> REGISTRY_CONNECT=FAIL"); sys.exit(1)
+          print("REGISTRY_DB_PATH=", db)
+          if not os.path.isfile(db):
+              print("REGISTRY_CONNECT=FAIL (file missing)"); sys.exit(1)
+          con = sqlite3.connect(db)
+          con.execute("PRAGMA query_only = ON")  # hard guard: read-only connection
+          cur = con.cursor()
+          tables = [r[0] for r in cur.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")]
+          print("REGISTRY_CONNECT=PASS")
+          print("TABLES=", tables)
+          counts = {t: cur.execute(f"SELECT COUNT(*) FROM '{t}'").fetchone()[0] for t in tables}
+          print("ROW_COUNTS=", counts)
+          # url42 existence
+          try:
+              row = cur.execute("SELECT id,url FROM urls WHERE id=42").fetchone()
+              print("URL42_FOUND=YES", row)
+          except Exception as e:
+              print("URL42_FOUND=NO (", e, ")")
+          con.close()
+          print("REGISTRY_READ=PASS")
+          PY
+
+      # ----------------------------------------------------------------------
+      # POC-3: GSC read-only (load cred, init auth, one minimal read)
+      # ----------------------------------------------------------------------
+      - name: POC-3 GSC read-only
+        shell: bash
+        run: |
+          set -e
+          pip install -q google-api-python-client google-auth
+          python - <<'PY'
+          import os, json, sys
+          # Pure env-driven: GSC_CREDENTIALS_PATH is provided by the runner's local .env.
+          cred = os.environ.get("GSC_CREDENTIALS_PATH")
+          if not cred:
+              print("GSC_CREDENTIALS_PATH not set (runner .env missing) -> GSC_CREDENTIAL=FAIL"); sys.exit(1)
+          print("GSC_CREDENTIALS_PATH=", cred)
+          if not os.path.isfile(cred):
+              print("GSC_CREDENTIAL=FAIL (file missing)"); sys.exit(1)
+          with open(cred) as f:
+              data = json.load(f)   # parse only; never print private_key / token
+          print("GSC_CREDENTIAL=PASS type=", data.get("type"))
+          from google.oauth2 import service_account
+          from googleapiclient.discovery import build
+          SCOPES = ["https://www.googleapis.com/auth/webmasters.readonly"]
+          sa = service_account.Credentials.from_service_account_file(cred, scopes=SCOPES)
+          print("GSC_AUTH=PASS")
+          svc = build("searchconsole", "v1", credentials=sa)
+          # minimal read: list sites the property has access to (no modification)
+          sites = svc.sites().list().execute().get("siteEntry", [])
+          print("GSC_READ=PASS sites=", [s.get("siteUrl") for s in sites])
+          PY
+
+      # ----------------------------------------------------------------------
+      # POC-4: GitHub Actions Auth (harmless test branch, no main push)
+      # ----------------------------------------------------------------------
+      - name: POC-4 GitHub Auth (test branch)
+        shell: bash
+        env:
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          set -e
+          BR="${{ inputs.test_branch }}"
+          git config user.name "Lubandart POC Bot"
+          git config user.email "poc@users.noreply.github.com"
+          git checkout -b "$BR"
+          echo "poc-$(date -u +%Y%m%dT%H%M%SZ)" > POC_HELLO.txt
+          git add POC_HELLO.txt
+          git commit -m "POC GitHub auth test (harmless, will be deleted)"
+          echo "=== push test branch (must NOT prompt tty/GCM) ==="
+          git push origin "$BR"
+          echo "GITHUB_TOKEN_AUTH=PASS"
+          echo "TEST_PUSH=PASS"
+          REMOTE_SHA=$(git ls-remote origin "$BR" | awk '{print $1}')
+          echo "REMOTE_VERIFY=PASS sha=$REMOTE_SHA"
+          echo "=== cleanup remote test branch ==="
+          git push origin --delete "$BR"
+          git checkout main
+          git branch -D "$BR" || true
+          echo "TEST_CLEANUP=PASS"
+
+      # ----------------------------------------------------------------------
+      # POC-5: Publish Runner REAL dry run (url_id=42, no commit/push/registry)
+      # ----------------------------------------------------------------------
+      - name: POC-5 Publish Runner dry run
+        shell: bash
+        run: |
+          set -e
+          OUT=$(python tools/publish/publish_runner.py \
+                  --url-id "${{ inputs.url_id }}" \
+                  --manifest "${{ inputs.manifest_path }}" \
+                  --dry-run 2>&1)
+          echo "$OUT"
+          if echo "$OUT" | grep -q "FINAL: DRY_RUN_READY"; then
+            echo "PUBLISH_RUNNER_DRY_RUN=PASS"
+          else
+            echo "PUBLISH_RUNNER_DRY_RUN=FAIL (expected FINAL: DRY_RUN_READY)"
+            exit 1
+          fi
+          # Hard guard: dry run must NOT have written Registry / pushed / committed
+          if echo "$OUT" | grep -qiE "REGISTRY_SYNC_REQUIRED|DEPLOY_PUSHED|COMMIT (done|ok)|pushed to origin"; then
+            echo "PUBLISH_RUNNER_DRY_RUN=FAIL (dry run leaked a write!)"
+            exit 1
+          fi
+          echo "DRY_RUN_WRITE_PROTECTION=PASS"

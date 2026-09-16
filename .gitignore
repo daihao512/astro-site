@@ -19,6 +19,17 @@ __pycache__/
 
 # local agent / project tooling data (not part of the site)
 .workbuddy/
+.publish-wt/
+.wrangler/
+
+# local backups, reports and publishing runtime state
+*.bak
+*.zip
+tools/publish/logs/
+tools/publish/queue/
+tools/publish/post_publish_state.json
+公司简介_结构化知识库.xlsx
+update_posts_body.py
 
 # 业务素材（本地保留，不推送到公开仓库）
 2020产品主图无LOGO/

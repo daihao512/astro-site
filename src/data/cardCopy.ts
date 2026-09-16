@@ -32,8 +32,8 @@ export const cardCopy: Record<string, { tag: string; desc: string }> = {
     desc: 'Low-emission, low-odor formulation meets automotive cabin air-quality standards. Bonds leather, fabric and plastic trims in enclosed spaces without solvent smell — ideal for OEM interior assembly.',
   },
   'flame-retardant': {
-    tag: 'UL94 V-0 · Self-extinguishing',
-    desc: 'Flame-retardant adhesive system achieves UL94 V-0 rating — self-extinguishing, low-smoke and non-dripping on metal and plastic. Built for battery packs, electrical cabinets and other fire-sensitive assemblies.',
+    tag: 'Flame-retardant · Grade-specific testing',
+    desc: 'Flame-retardant constructions can be matched to electrical and battery assembly requirements. Confirm the complete construction, thickness and applicable fire-test report for the selected grade.',
   },
   'substrate-free': {
     tag: 'Carrier-free · Ultra-thin & clear',

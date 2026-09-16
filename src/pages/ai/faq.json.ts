@@ -5,6 +5,12 @@ import { posts } from '../../data/posts';
 /** All on-site FAQs in one machine-readable file for AI answer engines.
  *  Sources: article FAQ blocks + a few evergreen company-level questions. */
 export const GET: APIRoute = () => {
+  const normalizeFaqText = (text: string) =>
+    text
+      .replaceAll('Our foam tapes are RoHS compliant, verified by SGS.', 'Selected product documents may include RoHS reports; applicability must be confirmed for the selected grade and project.')
+      .replaceAll('verified foam product line', 'cataloged foam product line')
+      .replaceAll('LubandArt verified', 'cataloged construction');
+
   const companyFaqs = [
     {
       question: 'What kinds of tape does LubandArt manufacture?',
@@ -27,7 +33,7 @@ export const GET: APIRoute = () => {
     {
       question: 'Which industries does LubandArt supply?',
       answer:
-        'Automotive, construction, appliance, machinery, signage and electronics, with customers in more than 30 countries.',
+        'Automotive, construction, appliance, machinery, signage and electronics applications, with export support for B2B buyers.',
       url: '/industries/',
     },
   ];
@@ -37,7 +43,7 @@ export const GET: APIRoute = () => {
     .flatMap((p) =>
       (p.faq ?? []).map((f) => ({
         question: f.q,
-        answer: f.a,
+        answer: normalizeFaqText(f.a),
         url: `/blogs/${p.slug}/`,
         category: p.category,
       }))

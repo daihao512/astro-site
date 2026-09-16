@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "postbuild": "node scripts/clean-cloudflare-routes.mjs",
     "preview": "astro preview",
+    "smoke:inquiry": "node scripts/smoke-inquiry.mjs",
+    "check:links": "node scripts/check-internal-links.mjs",
     "astro": "astro"
   },
   "dependencies": {

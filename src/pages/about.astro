@@ -12,12 +12,11 @@ const U = (id: string) => ({
   '1504917595217-d4dc5ebe6122': '/products/pvc.jpg',
 }[id] || '/products/acrylic.jpg');
 
-/* NOTE: placeholder figures — replace with confirmed LubandArt data before launch. */
 const stats = [
-  { n: '10+', l: 'Years of adhesive R&D' },
-  { n: '2', l: 'In-house coating lines' },
-  { n: '5,000㎡', l: 'Dust-free workshop area' },
-  { n: '30+', l: 'Countries served' },
+  { n: 'R&D', l: 'Application-focused adhesive development' },
+  { n: 'COAT', l: 'Coating and converting coordination' },
+  { n: 'OEM', l: 'Custom widths, lengths and packaging' },
+  { n: 'GLOBAL', l: 'Export-oriented B2B supply' },
 ];
 
 /* 1 — Hero (copy left, photo right) */
@@ -31,11 +30,11 @@ const whoWeAre = {
   img: U('1581092335397-9583eb92d232', 1000),
   alt: 'Industrial adhesive coating and laminating line',
   p1: "LubandArt supplies high-performance double sided and foam tapes — engineered for strength, cut to spec, and ready to run. We don't just manufacture materials; we solve your most complex assembly challenges.",
-  p2: 'Global OEMs and industrial partners count on our coating and precision die-cutting for unmatched consistency, from automotive to electronics.',
+  p2: 'For OEM and industrial projects, we review the required construction, dimensions and test criteria before confirming production suitability.',
   achievements: [
-    '10+ Years of Engineering Expertise',
-    'ISO 9001 Certified Quality Management',
-    'Serving 30+ Export Markets',
+    'Application-focused engineering support',
+    'Quality documents available for review',
+    'Export-oriented B2B service',
   ],
 };
 
@@ -76,10 +75,10 @@ const customers = [
    Deliberately a plain list — no cards, so the page closes light. */
 const whyUs = [
   { t: 'Direct Factory Supply', d: 'No middlemen — full cost efficiency and quality oversight from raw material to finished roll.' },
-  { t: 'Stable Quality Control', d: 'ISO-certified testing for consistent adhesion and performance in every batch.' },
+  { t: 'Documented Quality Control', d: 'Inspection records and applicable quality documents can be reviewed against the project requirement.' },
   { t: 'Custom Adhesive Solutions', d: 'Formulations and dimensions developed for your exact application.' },
   { t: 'Fast Lead Times', d: 'High-capacity lines and an optimized supply chain keep projects on schedule.' },
-  { t: 'Global Export Experience', d: '10+ years of international logistics and compliance support.' },
+  { t: 'Global Export Experience', d: 'International logistics and compliance support can be coordinated for the project.' },
   { t: 'Engineering Support', d: 'Our technical team partners with you on your most complex bonding challenges.' },
 ];
 
@@ -88,7 +87,7 @@ const statsBg = U('1565043666747-69f6646db940', 1600);
 
 <Layout
   title="About Us — LubandArt Tape | Adhesive Tape Manufacturer"
-  description="LubandArt manufactures and converts double sided tape, foam tape and custom adhesive solutions — in-house coating, precision converting and ISO-certified quality control for global industrial customers."
+  description="LubandArt manufactures and converts double sided tape, foam tape and custom adhesive solutions — in-house coating, precision converting and documented quality control for global industrial customers."
   breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'About Us', href: '/about' }]}
 >
   <!-- ===== 1. HERO ===== -->
@@ -192,7 +191,7 @@ const statsBg = U('1565043666747-69f6646db940', 1600);
         <div class="eyebrow">Who We Serve</div>
         <h2>Supporting Industrial Customers <span class="accent">Worldwide</span></h2>
         <p>
-          Supplied to customers in more than 30 countries — with samples, customized specifications,
+          Supporting distributors, converters and OEM buyers with samples, customized specifications,
           repeat production and export packaging.
         </p>
       </div>

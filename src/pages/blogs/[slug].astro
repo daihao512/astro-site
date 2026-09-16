@@ -30,7 +30,20 @@ const fmtDate = (d: string) =>
   new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
 const pageUrl = absUrl(`/blogs/${post.slug}/`);
-const coverUrl = post.img ? (post.img.startsWith('http') ? post.img : absUrl(post.img)) : undefined;
+const fallbackPostImages = ['/products/acrylic.jpg', '/products/pe-foam.jpg', '/products/pet.jpg', '/products/tissue.jpg'];
+const imageForPost = (item: (typeof posts)[number], index: number) =>
+  item.img || fallbackPostImages[index % fallbackPostImages.length];
+const coverUrl = absUrl(imageForPost(post, posts.indexOf(post)));
+// Keep article bodies self-contained at runtime. Legacy posts may still contain
+// remote Unsplash URLs; use local catalog imagery instead of a third-party CDN.
+const bodyHtml = post.body
+  // Some legacy entries contain Markdown emphasis/image markers inside HTML.
+  // Normalise them here so readers never see raw `**` or `!<a` tokens.
+  ?.replaceAll('!<a ', '<a ')
+  .replaceAll('**', '')
+  .replaceAll('https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=1200&amp;q=80', '/catalog-assets/acrylic-foam-structure.png')
+  .replaceAll('https://images.unsplash.com/photo-1565891741441-64926e441838?w=1200&amp;q=80', '/industries/signage.webp')
+  .replaceAll('https://images.unsplash.com/photo-1581094488379-6d2cb6f60c0a?w=1200&amp;q=80', '/capabilities/testing.webp');
 
 /* ---- Structured data: Article + Breadcrumb + FAQPage ---- */
 const articleLd = {
@@ -98,8 +111,14 @@ const faqLd = post.faq?.length
     <div class="container">
       <div class="post-cover"></div>
 
-      {post.body ? (
-        <div class="post-body-html" set:html={post.body} />
+      <div class="technical-note" role="note">
+        <strong>Technical note:</strong> figures and test-method references in this guide are for
+        preliminary selection only. Final performance depends on the exact construction, thickness,
+        substrate, application and test method; request the report for the proposed grade before approval.
+      </div>
+
+      {bodyHtml ? (
+        <div class="post-body-html" set:html={bodyHtml} />
       ) : (
         <div class="post-note">
           <strong>Note:</strong> the full article text is being prepared. This page carries the
@@ -167,7 +186,7 @@ const faqLd = post.faq?.length
       <div class="rel-grid">
         {more.map((p) => (
           <a class="rel-card" href={`/blogs/${p.slug}`}>
-            <div class="rel-img"><img src={p.img} alt={p.imgAlt} loading="lazy" /></div>
+                <div class="rel-img"><img src={imageForPost(p, posts.indexOf(p))} alt={p.imgAlt || p.title} loading="lazy" /></div>
             <div class="rel-body">
               <span class="rel-cat">{p.category}</span>
               <h3>{p.title}</h3>
@@ -203,6 +222,7 @@ const faqLd = post.faq?.length
   .post-lead { color: #cfcfcf; font-size: 1.02rem; line-height: 1.8; margin: 0; }
 
   .post-content { padding: 3.5rem 0 4rem; }
+  .technical-note { margin: 0 0 1.8rem; padding: .9rem 1rem; border-left: 3px solid var(--accent); background: rgba(188, 143, 58, .08); color: var(--fg-soft); font-size: .9rem; line-height: 1.6; }
 
   .post-cover {
     width: 100%; aspect-ratio: 21 / 9; min-height: 200px;

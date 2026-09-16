@@ -42,13 +42,14 @@ $settings = New-ScheduledTaskSettingsSet `
     -MultipleInstances IgnoreNew `
     -StartWhenAvailable
 
-# 以当前用户运行（继承 GCM 凭据缓存 + 代理环境 + F: 盘访问）
+# 以当前登录用户运行（继承 GCM 凭据缓存 + 代理环境 + F: 盘访问）。
+# 不指定 -User/-Password：避免无口令的非交互上下文报错；任务在本用户登录态下运行
+# （满足"开机后 + 每 10 分钟"自动巡检；关机/登出期间不触发，符合本机常在线场景）。
 Register-ScheduledTask `
     -TaskName "LubandArtAutoPublisher" `
     -Action $action `
     -Trigger @($triggerBoot, $triggerRep) `
     -Settings $settings `
-    -User "$env:USERNAME" `
     -Force
 
 Write-Host "TASK_CREATED: LubandArtAutoPublisher (every 10 min + at startup, user=$env:USERNAME)"

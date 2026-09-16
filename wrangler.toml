@@ -1,0 +1,13 @@
+name = "lubandart-site"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "dist"
+
+# Phase A (Node22.1) 生产存储绑定：Cloudflare D1（serverless SQLite）。
+# 部署前一次性创建：`wrangler d1 create lubandart-registry`
+# 然后将其返回的 database_id 填入下方，再 `wrangler d1 migrations apply lubandart-registry --remote`
+# 本地 dev（node adapter）无此绑定，contact.ts 会优雅降级（storage=skipped），不阻断主链。
+[[d1_databases]]
+binding = "DB"
+database_name = "lubandart-registry"
+database_id = "dcb06751-3f68-474b-aa8b-cd50b33b7ffe"
+migrations_dir = "./migrations"

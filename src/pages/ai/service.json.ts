@@ -48,7 +48,7 @@ export const GET: APIRoute = () => {
     name: `${SITE.name} capabilities`,
     url: absUrl('/ai/service.json'),
     provider: { '@type': 'Organization', name: SITE.name, url: SITE.url },
-    areaServed: 'Worldwide (30+ countries)',
+    areaServed: 'Worldwide',
     itemListElement: services.map((s, i) => ({
       '@type': 'Service',
       position: i + 1,

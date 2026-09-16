@@ -40,6 +40,7 @@ export const GET: APIRoute = () => {
     { url: '/about/', priority: '0.6', changefreq: 'monthly' },
     { url: '/certifications/', priority: '0.5', changefreq: 'yearly' },
     { url: '/contact/', priority: '0.7', changefreq: 'monthly' },
+    { url: '/privacy/', priority: '0.2', changefreq: 'yearly' },
   ];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

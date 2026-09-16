@@ -54,12 +54,11 @@ const needs = [
   },
 ];
 
-// NOTE: stats are placeholders — replace with confirmed LubandArt figures before launch.
 const stats = [
-  { n: '10+', l: 'Years of adhesive R&D' },
-  { n: '2', l: 'In-house coating lines' },
-  { n: '5,000㎡', l: 'Dust-free workshop area' },
-  { n: '30+', l: 'Countries served' },
+  { n: 'R&D', l: 'Application-focused adhesive development' },
+  { n: 'COAT', l: 'Coating and converting coordination' },
+  { n: 'OEM', l: 'Custom widths, lengths and packaging' },
+  { n: 'GLOBAL', l: 'Export-oriented B2B supply' },
 ];
 
 const capabilities = [
@@ -112,10 +111,10 @@ const industries = [
 
 const bySlug = Object.fromEntries(products.map((p) => [p.slug, p]));
 const sellingPoints = [
-  { t: 'Direct Factory Pricing', d: 'Manufactured in-house — no middle layer between you and the tape.' },
+  { t: 'Manufacturer Coordination', d: 'Discuss construction, converting and packaging requirements directly with the supply team.' },
   { t: 'Custom Slitting & Rewinding', d: 'Widths, lengths and die-cut parts built to your specification.' },
-  { t: 'Free Product Samples', d: 'Evaluate the right construction before you commit to volume.' },
-  { t: 'Response Within 24 Hours', d: 'Our team replies to quotes and application questions fast.' },
+  { t: 'Sample Evaluation', d: 'Discuss evaluation samples for the selected construction before volume approval.' },
+  { t: 'Clear Quote Process', d: 'We review the application and confirm workable specifications, samples, MOQ and lead time.' },
 ];
 ---
 
@@ -304,7 +303,7 @@ const sellingPoints = [
         <h2>Not Sure Which <span class="accent">Tape</span> You Need?</h2>
         <p>
           Tell us your substrate, application, required thickness and temperature range. Our team will
-          recommend a suitable tape construction and can supply free samples.
+          recommend a suitable tape construction and can discuss sample options.
         </p>
         <a class="btn" href="/contact">Discuss Your Application</a>
       </div>

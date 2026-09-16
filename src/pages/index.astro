@@ -29,11 +29,7 @@ const indImg: Record<string, string> = {
   <!-- ====== HERO — full-screen, video background with graceful gradient fallback ====== -->
   <section class="hero">
     <div class="hero-bg" aria-hidden="true"></div>
-    <!-- Drop your hero loop at public/media/hero.mp4 (poster: public/media/hero-poster.jpg).
-         If the file is absent the gradient behind it shows through, so the hero never breaks. -->
-    <video class="hero-video" autoplay muted loop playsinline poster="/media/hero-poster.jpg" aria-hidden="true">
-      <source src="/media/hero.mp4" type="video/mp4" />
-    </video>
+    <!-- Use the gradient hero until a real, compressed company asset is supplied. -->
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="hero-grid container">
       <div class="hero-copy">
@@ -42,16 +38,16 @@ const indImg: Record<string, string> = {
           <span class="line">Double Sided <span class="hl">Tape</span> · Foam <span class="hl">Tape</span> ·</span>
           <span class="line">Specialty <span class="hl">Tape</span> Supplier</span>
         </h1>
-        <p class="hero-sub">Industrial adhesive solutions for converting, distribution and manufacturing — engineered for permanent, invisible bonding across surfaces, with tight tolerances and certified quality.</p>
+        <p class="hero-sub">Industrial adhesive solutions for converting, distribution and manufacturing — specified for the surfaces, dimensions and service conditions in your project.</p>
         <div class="hero-cta">
           <a class="btn" href="/products">Explore Products</a>
           <a class="btn btn-ghost-light" href="/contact">Get a Quote</a>
         </div>
       </div>
       <div class="data-bar">
-        <div><strong>ISO 9001 Certified</strong><span>Quality Management</span></div>
-        <div><strong>14+ Years Experience</strong><span>In Adhesives</span></div>
-        <div><strong>Global Export</strong><span>30+ Countries</span></div>
+          <div><strong>Quality Management</strong><span>Certification documents available on request</span></div>
+          <div><strong>Industrial Adhesives</strong><span>Application-focused supply</span></div>
+          <div><strong>Global Supply</strong><span>Export support for B2B orders</span></div>
       </div>
     </div>
   </section>
@@ -141,7 +137,7 @@ const indImg: Record<string, string> = {
       <div class="section-head">
         <div class="eyebrow">INDUSTRIES</div>
         <h2>Application <span class="accent">Areas</span></h2>
-        <p>Proven performance across six major industries — engineered tapes that meet the certification, durability and precision each sector demands.</p>
+        <p>Application references across six major industries — use the project brief and sample test to confirm the required durability and precision.</p>
       </div>
       <div class="zigzag">
         {industries.map((it, i) => (
@@ -206,26 +202,26 @@ const indImg: Record<string, string> = {
       <div class="section-head">
         <div class="eyebrow">TRUST</div>
         <h2>Why Work <span class="accent">With Us</span></h2>
-        <p>Standards, reach and control you can build supply on — backed by certifications and a fully traceable production line.</p>
+        <p>Quality documents, application review and production coordination to support a repeatable B2B supply decision.</p>
       </div>
       <div class="trust-grid">
         <div class="trust reveal">
           <div class="trust-ico">🏅</div>
           <h3>Certifications</h3>
-          <p>ISO 9001, RoHS, REACH and SGS verified — compliant for global markets.</p>
-          <div class="trust-badges"><span>ISO</span><span>RoHS</span><span>SGS</span></div>
+          <p>Certification and selected product test documents can be provided for review against the requested grade.</p>
+          <div class="trust-badges"><span>DOCUMENTS</span><span>TEST DATA</span></div>
         </div>
         <div class="trust reveal">
           <div class="trust-ico">🌐</div>
           <h3>Global Reach</h3>
-          <p>Serving <strong>30+ Countries</strong> with stable export and logistics support.</p>
-          <div class="trust-num">30+</div>
+          <p>Supporting international buyers with stable export and logistics coordination.</p>
+          <div class="trust-num">GLOBAL</div>
         </div>
         <div class="trust reveal">
           <div class="trust-ico">🎯</div>
           <h3>Quality Control</h3>
-          <p>In-house lab holding <strong>±0.01mm Precision</strong> on thickness tolerance.</p>
-          <div class="trust-num">±0.01mm</div>
+          <p>Quality checks can be matched to the agreed product specification and test plan.</p>
+          <div class="trust-num">QC</div>
         </div>
       </div>
     </div>
@@ -237,37 +233,38 @@ const indImg: Record<string, string> = {
       <div class="section-head">
         <div class="eyebrow">START</div>
         <h2>Get a <span class="accent">Quote</span></h2>
-        <p>Tell us your requirement and our engineering team will respond within 24 hours with a tailored specification and pricing.</p>
+        <p>Tell us your requirement and our engineering team will review the specification and reply with product recommendations and pricing.</p>
       </div>
       <div class="contact-grid">
         <form id="homeQuoteForm" class="quote-form">
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="form-trap" />
           <div class="row">
-            <input type="text" name="name" placeholder="Your Name" required />
-            <input type="email" name="email" placeholder="Email Address" required />
+            <input type="text" name="name" placeholder="Your Name" aria-label="Your name" autocomplete="name" required />
+            <input type="email" name="email" placeholder="Email Address *" aria-label="Email address" autocomplete="email" required />
           </div>
-          <input type="text" name="company" placeholder="Company Name" />
+          <input type="text" name="company" placeholder="Company Name" aria-label="Company name" autocomplete="organization" />
           <div class="row">
-            <input type="text" name="spec" placeholder="Width / thickness / length" />
-            <input type="text" name="qty" placeholder="Estimated quantity" />
+            <input type="text" name="spec" placeholder="Width / thickness / length" aria-label="Width, thickness and length" />
+            <input type="text" name="quantity" placeholder="Estimated quantity" aria-label="Estimated quantity" />
           </div>
-          <select name="product">
+          <select name="product" aria-label="Product requirement">
             <option value="">Product Requirement</option>
             <option>Double Sided Tape</option>
             <option>Foam Tape</option>
             <option>Specialty Tape</option>
             <option>Custom / OEM Project</option>
           </select>
-          <textarea name="message" placeholder="Application, substrate, target market, sample or OEM needs…"></textarea>
+          <textarea name="message" placeholder="Application, substrate, target market, sample or OEM needs…" aria-label="Application and requirements"></textarea>
           <button class="btn" type="submit">Submit Inquiry</button>
           <p id="homeQuoteStatus" class="quote-status" role="status" aria-live="polite"></p>
         </form>
         <div>
           <ul class="info-list">
             <li><strong>Email</strong><span>info@lubandart.com</span></li>
-            <li><strong>WhatsApp</strong><span>+86 138-0000-0000</span></li>
-            <li><strong>Address</strong><span>Adhesive Industrial Park, Guangdong, China</span></li>
+            <li><strong>Contact</strong><span>Email or WhatsApp available on request</span></li>
+            <li><strong>Location</strong><span>Guangdong, China</span></li>
           </ul>
-          <p class="quote-hint">Prefer email? Write to us and attach your drawing or spec sheet for a faster, more accurate quote.</p>
+          <p class="quote-hint">Need to send a drawing or spec sheet? Email it to info@lubandart.com with your inquiry details.</p>
         </div>
       </div>
     </div>
@@ -284,6 +281,7 @@ const indImg: Record<string, string> = {
 <script>
   const homeForm = document.getElementById('homeQuoteForm');
   const homeStatus = document.getElementById('homeQuoteStatus');
+  const homeButton = homeForm?.querySelector('button[type="submit"]');
   homeForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (!homeStatus) return;
@@ -291,20 +289,33 @@ const indImg: Record<string, string> = {
     const data = Object.fromEntries(new FormData(form).entries());
     homeStatus.className = 'quote-status';
     homeStatus.textContent = 'Submitting…';
+    if (homeButton) homeButton.disabled = true;
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 15000);
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
+        signal: controller.signal,
       });
+      window.clearTimeout(timeout);
       const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.ok) throw new Error(result.error || 'Submission failed.');
+      if (!response.ok || !result.ok || result.degraded) {
+        throw new Error(result.degraded
+          ? 'Inquiry service is being configured. Please email us directly.'
+          : (result.error || 'Submission failed.'));
+      }
       homeStatus.className = 'quote-status ok';
       homeStatus.textContent = '✓ Inquiry received. We will contact you shortly.';
       form.reset();
     } catch (error) {
       homeStatus.className = 'quote-status err';
-      homeStatus.textContent = `✗ ${error instanceof Error ? error.message : 'Network error. Please email us directly.'}`;
+      homeStatus.textContent = error instanceof DOMException && error.name === 'AbortError'
+        ? '✗ The request timed out. Please email us directly.'
+        : '✗ Network error. Please email us directly.';
+    } finally {
+      if (homeButton) homeButton.disabled = false;
     }
   });
 </script>
@@ -457,6 +468,7 @@ const indImg: Record<string, string> = {
   .quote-status { min-height: 1.2em; margin: 0; font-size: .9rem; }
   .quote-status.ok { color: #137333; }
   .quote-status.err { color: #b3261e; }
+  .form-trap { position: absolute; left: -10000px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
   .quote-form .btn { justify-content: center; padding: .85rem 1.5rem; font-size: .95rem; margin-top: .4rem; }
   .info-list { list-style: none; padding: 0; margin: 0 0 1.4rem; }
   .info-list li { padding: 1.2rem 1.5rem; background: #fff; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: var(--radius); margin-bottom: .9rem; }
