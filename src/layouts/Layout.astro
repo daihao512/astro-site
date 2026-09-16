@@ -691,6 +691,7 @@ const ldBlocks = [
       const navToggle = document.getElementById('nav-toggle');
       const navMenu = document.getElementById('nav-menu');
       const navRightMenu = document.getElementById('nav-right-menu');
+      const whatsappFab = document.getElementById('chat-fab');
       if (navToggle && navMenu && navRightMenu) {
         navToggle.addEventListener('click', () => {
           navMenu.classList.toggle('open');
@@ -714,6 +715,20 @@ const ldBlocks = [
           });
         });
       }
+
+      // Carry the page context into WhatsApp so every chat starts with a useful inquiry.
+      whatsappFab?.addEventListener('click', (event) => {
+        event.preventDefault();
+        const pageTitle = document.title.replace(/\s*[|—-].*$/, '').trim();
+        const pageHeading = document.querySelector('main h1')?.textContent?.trim() || pageTitle;
+        const message = [
+          `Hello, I’m interested in the content on this page: ${pageHeading}.`,
+          'Please share the suitable product grade, specifications and quotation. ',
+          `Page title: ${pageTitle}`,
+          `Page URL: ${window.location.href}`,
+        ].join('\n');
+        window.open(`https://wa.me/8618064692463?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+      });
 
       /* active link */
       const path = location.pathname;
