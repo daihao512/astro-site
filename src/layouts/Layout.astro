@@ -200,6 +200,7 @@ const ldBlocks = [
       }
       .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 70px; gap: 1rem; }
       .brand { display: flex; align-items: center; gap: .6rem; font-family: var(--font-head); font-weight: 700; font-size: 1.25rem; letter-spacing: 1.5px; text-transform: uppercase; color: #fff; }
+      .brand-logo { width: 42px; height: 42px; object-fit: contain; display: block; }
       .brand .logo {
         width: 36px; height: 36px; display: grid; place-items: center;
         background: var(--accent); color: #fff; font-weight: 700; font-size: 1.1rem;
@@ -586,7 +587,7 @@ const ldBlocks = [
     <header class="nav">
       <div class="container nav-inner">
         <a class="brand" href="/">
-          <span class="logo">L</span>
+          <img class="brand-logo" src="/brand/logo.webp" alt="Lubandart Tape" width="42" height="42" />
           <span>LUBAND<span class="sub">ART</span> TAPE</span>
         </a>
         <nav class="nav-links" id="nav-menu">
@@ -656,7 +657,7 @@ const ldBlocks = [
     <footer>
       <div class="container footer-grid">
         <div class="footer-col footer-brand">
-          <div class="brand"><span class="logo">L</span> LUBANDART TAPE</div>
+          <div class="brand"><img class="brand-logo" src="/brand/logo.webp" alt="Lubandart Tape" width="42" height="42" /> LUBANDART TAPE</div>
           <p>Industrial adhesive tape manufacturer supplying double sided tape, foam tape and specialty tape for converters, distributors and OEMs worldwide.</p>
           <div class="footer-badges">
             <span>Documents on request</span>

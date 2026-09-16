@@ -8,8 +8,8 @@ export const SITE = {
   legalName: 'LubandArt Tape',
   description:
     'Industrial adhesive tape manufacturer supplying double sided tape, foam tape and specialty tape for converters, distributors and OEMs worldwide.',
-  logo: '/favicon.svg',
-  ogImage: '/favicon.svg',
+  logo: '/brand/logo.webp',
+  ogImage: '/brand/logo.webp',
   email: 'info@lubandart.com',
   telephone: '',
   foundingDate: '',
