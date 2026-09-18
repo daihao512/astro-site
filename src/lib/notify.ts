@@ -39,8 +39,8 @@ export async function sendInquiryEmail(
   env: EnvLike,
   rec: InquiryRecord
 ): Promise<EmailResult> {
-  const from = env.MAIL_FROM || 'salestape@ludandart.com';
-  const to = env.INQUIRY_NOTIFY_TO || 'salestape@ludandart.com';
+  const from = env.MAIL_FROM || 'salestape@lubandart.com';
+  const to = env.INQUIRY_NOTIFY_TO || 'salestape@lubandart.com';
   const subject = `[Lubandart Inquiry] ${rec.product || 'General'} - ${rec.company || rec.name || 'Unknown'}`;
   const text = [
     `submission_id : ${rec.submission_id}`,

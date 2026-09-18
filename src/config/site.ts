@@ -10,7 +10,7 @@ export const SITE = {
     'Industrial adhesive tape manufacturer supplying double sided tape, foam tape and specialty tape for converters, distributors and OEMs worldwide.',
   logo: '/brand/logo.webp',
   ogImage: '/brand/logo.webp',
-  email: 'salestape@ludandart.com',
+  email: 'salestape@lubandart.com',
   telephone: '',
   foundingDate: '',
   address: {
