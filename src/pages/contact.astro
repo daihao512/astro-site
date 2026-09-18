@@ -27,13 +27,13 @@ import FaqSection from '../components/FaqSection.astro';
     <div class="container contact-grid">
       <div>
         <ul class="contact-info">
-          <li><strong>Email:</strong> salestape@ludandart.com</li>
+          <li><strong>Email:</strong> salestape@lubandart.com</li>
           <li><strong>Contact:</strong> Email or WhatsApp available on request</li>
           <li><strong>Location:</strong> Guangdong, China</li>
           <li><strong>Working Hours:</strong> Monday – Friday · Response within one working day</li>
         </ul>
         <div class="footer-social" style="margin-top:1.5rem">
-          <a href="mailto:salestape@ludandart.com">Email</a>
+          <a href="mailto:salestape@lubandart.com">Email</a>
         </div>
       </div>
 
@@ -76,7 +76,7 @@ import FaqSection from '../components/FaqSection.astro';
   </section>
 <FaqSection title="Before You Submit an Inquiry" items={[
   { q: 'What should I include in my inquiry?', a: 'Please include your company, email or WhatsApp, product type, substrate, dimensions, application, estimated quantity and any required certification.' },
-  { q: 'Can I send a drawing or datasheet?', a: 'Yes. Email drawings, product photos, technical datasheets or target specifications to salestape@ludandart.com and include your inquiry details.' },
+  { q: 'Can I send a drawing or datasheet?', a: 'Yes. Email drawings, product photos, technical datasheets or target specifications to salestape@lubandart.com and include your inquiry details.' },
   { q: 'Can you arrange samples?', a: 'Sample requests are welcome. We confirm the sample construction and preparation time after reviewing your requirements.' },
   { q: 'When will I receive a reply?', a: 'We aim to review complete inquiries within one working day. Complex specifications may require additional confirmation from the technical team.' },
   { q: 'Which documents can be supplied?', a: 'Depending on the product and project, we can discuss TDS, SDS, RoHS, REACH, ISO and selected test reports.' },
@@ -196,7 +196,7 @@ import FaqSection from '../components/FaqSection.astro';
         status.className = 'form-status full ok';
         if (out.degraded) {
           status.className = 'form-status full err';
-          status.innerHTML = '✗ This local preview is not connected to the inquiry database yet. Please email <a href="mailto:salestape@ludandart.com">salestape@ludandart.com</a> or <a href="https://wa.me/8618064692463" target="_blank" rel="noopener noreferrer">message us on WhatsApp</a>.';
+        status.innerHTML = '✗ This local preview is not connected to the inquiry database yet. Please email <a href="mailto:salestape@lubandart.com">salestape@lubandart.com</a> or <a href="https://wa.me/8618064692463" target="_blank" rel="noopener noreferrer">message us on WhatsApp</a>.';
         } else {
           status.className = 'form-status full ok';
           status.textContent = '✓ We received your inquiry and will contact you soon!';
