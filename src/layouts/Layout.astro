@@ -461,6 +461,17 @@ const ldBlocks = [
       }
       .contact-form textarea, .quote-form textarea { min-height: 120px; resize: vertical; }
 
+      .global-inquiry { padding: 3rem 0; border-top: 1px solid var(--line); }
+      .global-inquiry .section-head { margin-bottom: 1.5rem; }
+      .global-inquiry-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; background: #fff; padding: 1.25rem; border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius-lg); }
+      .global-inquiry-form input, .global-inquiry-form select, .global-inquiry-form textarea { width: 100%; padding: .72rem .85rem; border: 1px solid var(--line); border-radius: var(--radius); font: inherit; background: #fafaf8; color: var(--fg); }
+      .global-inquiry-form .form-trap { position: absolute; left: -10000px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+      .global-inquiry-form textarea { grid-column: span 3; min-height: 78px; resize: vertical; }
+      .global-inquiry-form .btn { align-self: stretch; justify-content: center; }
+      .global-inquiry-status { grid-column: 1 / -1; min-height: 1.2em; margin: 0; font-size: .88rem; }
+      .global-inquiry-status.ok { color: #137333; }
+      .global-inquiry-status.err { color: #b3261e; }
+
       /* footer */
       footer { background: #141414; color: #b8b8b8; font-size: .9rem; padding: 3.5rem 0 0; border-top: 3px solid var(--accent); }
       footer a { color: #b8b8b8; transition: color .2s; }
@@ -503,6 +514,8 @@ const ldBlocks = [
 
       @media (max-width: 920px) {
         .hero-inner, .contact-grid { grid-template-columns: 1fr; }
+        .global-inquiry-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .global-inquiry-form textarea { grid-column: 1 / -1; }
         footer { display: none; }
         .nav-inner { display: block; min-height: 78px; height: 78px; padding-inline: 1rem; }
         .brand-logo { width: 70px; height: 70px; transform: scale(1.5); }
@@ -648,6 +661,52 @@ const ldBlocks = [
       <slot />
     </main>
 
+    {path !== '/contact' && path !== '/contact/' && (
+      <section class="global-inquiry mod mod-light" aria-labelledby="global-inquiry-title">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow">QUICK INQUIRY</div>
+            <h2 id="global-inquiry-title">Request a <span class="accent">Quote</span></h2>
+            <p>Send your basic requirement from this page and our team will follow up with product recommendations and pricing.</p>
+          </div>
+          <form class="global-inquiry-form" data-global-inquiry>
+            <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="form-trap" />
+            <input type="text" name="name" placeholder="Your name *" aria-label="Your name" autocomplete="name" required />
+            <input type="text" name="company" placeholder="Company *" aria-label="Company" autocomplete="organization" required />
+            <input type="email" name="email" placeholder="Business email *" aria-label="Business email" autocomplete="email" required />
+            <input type="tel" name="whatsapp" placeholder="WhatsApp *" aria-label="WhatsApp number" autocomplete="tel" required />
+            <select name="product" aria-label="Product requirement" required>
+              <option value="">Product requirement *</option>
+              <optgroup label="Double Sided Tape">
+                <option>Double Sided Acrylic Tape</option>
+                <option>Double Sided PET Tape</option>
+                <option>Double Sided Tissue Tape</option>
+                <option>Double Sided OPP Tape</option>
+              </optgroup>
+              <optgroup label="Foam Tape">
+                <option>Double Sided PE Foam Tape</option>
+                <option>Double Sided EVA Foam Tape</option>
+                <option>Acrylic Foam Tape</option>
+              </optgroup>
+              <optgroup label="Specialty Tape">
+                <option>Double Sided PVC Tape</option>
+                <option>Flame Retardant Tape</option>
+                <option>Low-Odor Tape</option>
+                <option>Substrate-Free Transfer Tape</option>
+                <option>Nonwoven Tape</option>
+                <option>Mesh Tape</option>
+              </optgroup>
+              <option>Other / Custom OEM Project</option>
+            </select>
+            <textarea name="message" placeholder="Width, thickness, application and estimated quantity" aria-label="Requirements"></textarea>
+            <input type="hidden" name="source_page" value={path} />
+            <button class="btn" type="submit">Send Inquiry</button>
+            <p class="global-inquiry-status" data-inquiry-status role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    )}
+
     <footer>
       <div class="container footer-grid">
         <div class="footer-col footer-brand">
@@ -739,6 +798,36 @@ const ldBlocks = [
           `Page URL: ${window.location.href}`,
         ].join('\n');
         window.open(`https://wa.me/8618064692463?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+      });
+
+      document.querySelectorAll('[data-global-inquiry]').forEach((form) => {
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const target = event.currentTarget;
+          const status = target.querySelector('[data-inquiry-status]');
+          const button = target.querySelector('button[type="submit"]');
+          if (!status) return;
+          status.className = 'global-inquiry-status';
+          status.textContent = 'Submitting…';
+          if (button) button.disabled = true;
+          try {
+            const response = await fetch('/api/contact', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(Object.fromEntries(new FormData(target).entries())),
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok || !result.ok || result.degraded) throw new Error(result.error || 'Submission failed.');
+            status.className = 'global-inquiry-status ok';
+            status.textContent = '✓ Inquiry received. We will contact you shortly.';
+            target.reset();
+          } catch {
+            status.className = 'global-inquiry-status err';
+            status.textContent = '✗ Submission failed. Please email us directly.';
+          } finally {
+            if (button) button.disabled = false;
+          }
+        });
       });
 
       /* active link */

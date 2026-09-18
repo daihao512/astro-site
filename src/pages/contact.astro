@@ -45,14 +45,26 @@ import FaqSection from '../components/FaqSection.astro';
         <input type="text" name="whatsapp" placeholder="WhatsApp / phone (recommended if no email)" aria-label="WhatsApp or phone number" autocomplete="tel" />
         <select name="product" class="full" aria-label="Product type" required>
           <option value="" disabled selected>Select product type *</option>
-          <option>Double Sided Acrylic Tape</option>
-          <option>Double Sided PE Foam Tape</option>
-          <option>Double Sided PET Tape</option>
-          <option>Double Sided Tissue Tape</option>
-          <option>Double Sided EVA Tape</option>
-          <option>Double Sided OPP Tape</option>
-          <option>Double Sided PVC Tape</option>
-          <option>Other / Custom</option>
+          <optgroup label="Double Sided Tape">
+            <option>Double Sided Acrylic Tape</option>
+            <option>Double Sided PET Tape</option>
+            <option>Double Sided Tissue Tape</option>
+            <option>Double Sided OPP Tape</option>
+          </optgroup>
+          <optgroup label="Foam Tape">
+            <option>Double Sided PE Foam Tape</option>
+            <option>Double Sided EVA Foam Tape</option>
+            <option>Acrylic Foam Tape</option>
+          </optgroup>
+          <optgroup label="Specialty Tape">
+            <option>Double Sided PVC Tape</option>
+            <option>Flame Retardant Tape</option>
+            <option>Low-Odor Tape</option>
+            <option>Substrate-Free Transfer Tape</option>
+            <option>Nonwoven Tape</option>
+            <option>Mesh Tape</option>
+          </optgroup>
+          <option>Other / Custom OEM Project</option>
         </select>
         <input type="text" name="spec" placeholder="Specs & dimensions (e.g. width 10mm, thickness 0.1mm)" aria-label="Specifications and dimensions" />
         <input type="text" name="quantity" placeholder="Estimated quantity" aria-label="Estimated quantity" />
