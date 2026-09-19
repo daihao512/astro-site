@@ -22,7 +22,7 @@ export const categories: Category[] = [
     name: 'Foam Tape',
     intro:
       'Closed-cell PE and soft EVA foam tapes engineered for cushioning, sealing, gap filling and vibration control in automotive, construction and industrial use.',
-    items: ['pe-foam', 'eva', 'acrylic-foam'],
+    items: ['pe-foam', 'eva', 'acrylic', 'acrylic-foam'],
   },
   {
     id: 'specialty',
@@ -31,6 +31,6 @@ export const categories: Category[] = [
     alt: true,
     intro:
       'Specialty-engineered double sided tapes including low-odor, flame-retardant and substrate-free constructions for automotive interior, electronics and precision bonding where standard grades do not fit.',
-    items: ['acrylic', 'low-odor', 'flame-retardant', 'substrate-free'],
+    items: ['low-odor', 'flame-retardant', 'substrate-free'],
   },
 ];

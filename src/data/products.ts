@@ -12,7 +12,7 @@ export interface Product {
 }
 
 const categoryBySlug: Record<string, string> = {
-  acrylic: 'specialty-tape',
+  acrylic: 'foam-tape',
   eva: 'foam-tape',
   opp: 'double-sided-tape',
   'pe-foam': 'foam-tape',
