@@ -661,52 +661,6 @@ const ldBlocks = [
       <slot />
     </main>
 
-    {path !== '/contact' && path !== '/contact/' && (
-      <section class="global-inquiry mod mod-light" aria-labelledby="global-inquiry-title">
-        <div class="container">
-          <div class="section-head">
-            <div class="eyebrow">QUICK INQUIRY</div>
-            <h2 id="global-inquiry-title">Request a <span class="accent">Quote</span></h2>
-            <p>Send your basic requirement from this page and our team will follow up with product recommendations and pricing.</p>
-          </div>
-          <form class="global-inquiry-form" data-global-inquiry>
-            <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="form-trap" />
-            <input type="text" name="name" placeholder="Your name *" aria-label="Your name" autocomplete="name" required />
-            <input type="text" name="company" placeholder="Company *" aria-label="Company" autocomplete="organization" required />
-            <input type="email" name="email" placeholder="Business email *" aria-label="Business email" autocomplete="email" required />
-            <input type="tel" name="whatsapp" placeholder="WhatsApp *" aria-label="WhatsApp number" autocomplete="tel" required />
-            <select name="product" aria-label="Product requirement" required>
-              <option value="">Product requirement *</option>
-              <optgroup label="Double Sided Tape">
-                <option>Double Sided Acrylic Tape</option>
-                <option>Double Sided PET Tape</option>
-                <option>Double Sided Tissue Tape</option>
-                <option>Double Sided OPP Tape</option>
-              </optgroup>
-              <optgroup label="Foam Tape">
-                <option>Double Sided PE Foam Tape</option>
-                <option>Double Sided EVA Foam Tape</option>
-                <option>Acrylic Foam Tape</option>
-              </optgroup>
-              <optgroup label="Specialty Tape">
-                <option>Double Sided PVC Tape</option>
-                <option>Flame Retardant Tape</option>
-                <option>Low-Odor Tape</option>
-                <option>Substrate-Free Transfer Tape</option>
-                <option>Nonwoven Tape</option>
-                <option>Mesh Tape</option>
-              </optgroup>
-              <option>Other / Custom OEM Project</option>
-            </select>
-            <textarea name="message" placeholder="Width, thickness, application and estimated quantity" aria-label="Requirements"></textarea>
-            <input type="hidden" name="source_page" value={path} />
-            <button class="btn" type="submit">Send Inquiry</button>
-            <p class="global-inquiry-status" data-inquiry-status role="status" aria-live="polite"></p>
-          </form>
-        </div>
-      </section>
-    )}
-
     <footer>
       <div class="container footer-grid">
         <div class="footer-col footer-brand">
