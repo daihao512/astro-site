@@ -22,7 +22,7 @@ export const categories: Category[] = [
     name: 'Foam Tape',
     intro:
       'Closed-cell PE and soft EVA foam tapes engineered for cushioning, sealing, gap filling and vibration control in automotive, construction and industrial use.',
-    items: ['pe-foam', 'eva'],
+    items: ['pe-foam', 'eva', 'acrylic-foam'],
   },
   {
     id: 'specialty',

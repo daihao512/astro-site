@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SubHero from '../components/SubHero.astro';
-import { products } from '../data/products';
+import { products, productUrl } from '../data/products';
 
 import { categories } from '../data/categories';
 import CategorySection from '../components/CategorySection.astro';
@@ -204,7 +204,7 @@ const sellingPoints = [
               <div class="need-rec">
                 <span class="need-rec-label">Recommended:</span>
                 {need.rec.map((slug) => (
-                  <a class="rec-chip" href={`/products/${slug}`}>{bySlug[slug].en}</a>
+                  <a class="rec-chip" href={productUrl(slug)}>{bySlug[slug].en}</a>
                 ))}
               </div>
               <a class="btn btn-ghost btn-sm" href="/contact">Get Tape Recommendation →</a>

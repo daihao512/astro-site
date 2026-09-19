@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { absUrl } from '../config/site';
-import { products } from '../data/products';
+import { products, productUrl } from '../data/products';
 import { categories } from '../data/categories';
 import { industries } from '../data/industries';
 import { posts } from '../data/posts';
@@ -18,7 +18,7 @@ export const GET: APIRoute = () => {
       changefreq: 'monthly',
     })),
     ...products.map((p) => ({
-      url: `/products/${p.slug}/`,
+      url: productUrl(p),
       priority: '0.8',
       changefreq: 'monthly',
     })),

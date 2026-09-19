@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import SubHero from '../../components/SubHero.astro';
 import { industries } from '../../data/industries';
-import { products } from '../../data/products';
+import { products, productUrl } from '../../data/products';
 
 export function getStaticPaths() {
   return industries.map((it) => ({ params: { slug: it.slug } }));
@@ -122,7 +122,7 @@ const navItems = (industry.appBlocks ?? []).map((a, i) => {
                   <div class="app-prods">
                     {a.products.map((s) => {
                       const p = products.find((x) => x.slug === s);
-                      return p ? <a class="chip" href={`/products/${p.slug}`}>{p.en}</a> : null;
+                      return p ? <a class="chip" href={productUrl(p)}>{p.en}</a> : null;
                     })}
                   </div>
                 </div>
@@ -188,7 +188,7 @@ const navItems = (industry.appBlocks ?? []).map((a, i) => {
       </div>
       <div class="rec-grid">
         {recommended.map((r) => (
-          <a class="rec-card reveal" href={`/products/${r!.slug}`}>
+          <a class="rec-card reveal" href={productUrl(r!)}>
             <div class="rec-img"><img src={r!.img} alt={r!.en} loading="lazy" /></div>
             <div class="rec-body">
               <h3>{r!.en}</h3>

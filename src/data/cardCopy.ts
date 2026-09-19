@@ -15,6 +15,10 @@ export const cardCopy: Record<string, { tag: string; desc: string }> = {
     tag: 'Gap filling · Waterproof seal',
     desc: 'Closed-cell PE foam provides waterproof, dust-proof cushioning. Strong on glass, metal and painted surfaces — used for automotive weatherstrips, curtain-wall gaskets, mirror and sign mounting.',
   },
+  'acrylic-foam': {
+    tag: 'Structural bonding · Stress absorbing',
+    desc: 'Acrylic foam core absorbs vibration and thermal expansion for durable mounting on metal, glass and selected plastics. Suitable for signage, automotive exterior parts and long-term industrial assembly.',
+  },
   pet: {
     tag: 'Ultra-thin · Dimensionally stable',
     desc: 'PET film carrier is extremely thin and resists stretching, keeping laminates flat and curl-free. Built for display bonding, plastic-part fixing and precision die-cutting.',

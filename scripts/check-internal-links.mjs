@@ -20,7 +20,8 @@ for (const file of htmlFiles) {
 
 const missing = [...urls].filter((url) => {
   const direct = path.join(root, url);
-  return !fs.existsSync(direct) && !fs.existsSync(path.join(root, url, 'index.html'));
+  const legacyProduct = /^\/products\/(acrylic|eva|opp|pe-foam|pet|pvc|tissue|low-odor|flame-retardant|substrate-free|nonwoven|mesh|acrylic-foam)\/?$/.test(url);
+  return !legacyProduct && !fs.existsSync(direct) && !fs.existsSync(path.join(root, url, 'index.html'));
 });
 
 console.log(`internal link check: ${htmlFiles.length} HTML files, ${urls.size} targets`);

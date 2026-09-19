@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { posts } from '../../data/posts';
-import { products } from '../../data/products';
+import { products, productUrl } from '../../data/products';
 import { industries } from '../../data/industries';
 import { SITE, absUrl } from '../../config/site';
 
@@ -133,7 +133,7 @@ const faqLd = post.faq?.length
           <h2 class="ilinks-h">Related <span class="accent">Products</span></h2>
           <div class="ilink-grid">
             {relatedProducts.map((p) => (
-              <a class="ilink-card" href={`/products/${p.slug}`}>
+              <a class="ilink-card" href={productUrl(p)}>
                 <div class="ilink-img"><img src={p.img} alt={p.en} loading="lazy" /></div>
                 <div class="ilink-body">
                   <h3>{p.en}</h3>

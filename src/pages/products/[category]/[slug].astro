@@ -1,14 +1,14 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { products, getProduct } from '../../data/products';
+import Layout from '../../../layouts/Layout.astro';
+import { products, getProduct, productCategory, productUrl, productUrlSlug } from '../../../data/products';
 
 export function getStaticPaths() {
-  return products.map((p) => ({ params: { slug: p.slug } }));
+  return products.map((p) => ({ params: { category: productCategory(p.slug), slug: productUrlSlug(p.slug) } }));
 }
 
-const { slug } = Astro.params;
+const { category, slug } = Astro.params;
 const product = getProduct(slug!);
-if (!product) return Astro.redirect('/products');
+if (!product || productCategory(product.slug) !== category) return Astro.redirect('/products/');
 
 const related = products.filter((p) => p.slug !== product.slug).slice(0, 4);
 
@@ -450,7 +450,7 @@ const supplyForms = [
   title={`${product.en} — LubandArt Tape`}
   description={overview.slice(0, 150)}
   jsonLd={productFaqLd}
-  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Products', href: '/products' }, { name: product.en, href: `/products/${product.slug}` }]}
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Products', href: '/products/' }, { name: category.replaceAll('-', ' '), href: `/products/${category}/` }, { name: product.en, href: productUrl(product) }]}
 >
   <!-- ===== HERO (compact, product-focused) ===== -->
   <section class="prod-hero">
@@ -796,7 +796,7 @@ const supplyForms = [
       </div>
       <div class="rel-grid">
         {related.map((r) => (
-          <a class="rel-card" href={`/products/${r.slug}`}>
+          <a class="rel-card" href={productUrl(r)}>
             <div class="rel-media"><img src={r.img} alt={r.en} loading="lazy" /></div>
             <h3>{r.en}</h3>
             <p class="rel-base">{baseEn[r.base] ?? r.base}</p>

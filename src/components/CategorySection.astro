@@ -1,5 +1,5 @@
 ---
-import { products } from '../data/products';
+import { products, productUrl } from '../data/products';
 import { cardCopy } from '../data/cardCopy';
 import type { Category } from '../data/categories';
 
@@ -29,7 +29,7 @@ const modClass = sectionIndex % 2 === 0 ? 'mod-gray' : 'mod-light';
           const p = bySlug[slug];
           const c = cardCopy[p.slug];
           return (
-            <a class="pcard pcard-alt" href={`/products/${p.slug}`}>
+            <a class="pcard pcard-alt" href={productUrl(p)}>
               <div class="pimg"><img src={p.img} alt={p.en} loading="lazy" /></div>
               <div class="pbody">
                 <div class="ptag">{c.tag}</div>
@@ -48,7 +48,7 @@ const modClass = sectionIndex % 2 === 0 ? 'mod-gray' : 'mod-light';
           const p = bySlug[slug];
           const c = cardCopy[p.slug];
           return (
-            <a class="pcard pcard-feature" href={`/products/${p.slug}`}>
+            <a class="pcard pcard-feature" href={productUrl(p)}>
               <div class="pbody">
                 <div class="ptag">{c.tag}</div>
                 <h3>{p.en}</h3>
@@ -67,7 +67,7 @@ const modClass = sectionIndex % 2 === 0 ? 'mod-gray' : 'mod-light';
           const p = bySlug[slug];
           const c = cardCopy[p.slug];
           return (
-            <a class="pcard" href={`/products/${p.slug}`}>
+            <a class="pcard" href={productUrl(p)}>
               <div class="pimg"><img src={p.img} alt={p.en} loading="lazy" /></div>
               <div class="pbody">
                 <div class="ptag">{c.tag}</div>

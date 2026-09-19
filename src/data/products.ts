@@ -11,6 +11,38 @@ export interface Product {
   base: string;
 }
 
+const categoryBySlug: Record<string, string> = {
+  acrylic: 'specialty-tape',
+  eva: 'foam-tape',
+  opp: 'double-sided-tape',
+  'pe-foam': 'foam-tape',
+  pet: 'double-sided-tape',
+  pvc: 'double-sided-tape',
+  tissue: 'double-sided-tape',
+  'low-odor': 'specialty-tape',
+  'flame-retardant': 'specialty-tape',
+  'substrate-free': 'specialty-tape',
+  nonwoven: 'double-sided-tape',
+  mesh: 'double-sided-tape',
+  'acrylic-foam': 'foam-tape',
+};
+
+const urlSlugBySlug: Record<string, string> = {
+  acrylic: 'acrylic-tape',
+  eva: 'eva-foam-tape',
+  opp: 'opp-tape',
+  'pe-foam': 'pe-foam-tape',
+  pet: 'pet-tape',
+  pvc: 'pvc-tape',
+  tissue: 'tissue-tape',
+  'low-odor': 'low-odor-tape',
+  'flame-retardant': 'flame-retardant-tape',
+  'substrate-free': 'substrate-free-tape',
+  nonwoven: 'nonwoven-tape',
+  mesh: 'mesh-tape',
+  'acrylic-foam': 'acrylic-foam-tape',
+};
+
 export const products: Product[] = [
   {
     slug: "acrylic",
@@ -288,5 +320,20 @@ export const products: Product[] = [
 ];
 
 export function getProduct(slug: string) {
-  return products.find((p) => p.slug === slug);
+  return products.find((p) => p.slug === slug || productUrlSlug(p.slug) === slug);
+}
+
+export function productCategory(slug: string): string {
+  return categoryBySlug[slug] ?? 'specialty-tape';
+}
+
+export function productUrl(product: Pick<Product, 'slug'> | string): string {
+  const rawSlug = typeof product === 'string' ? product : product.slug;
+  const source = products.find((p) => p.slug === rawSlug || productUrlSlug(p.slug) === rawSlug);
+  const slug = source?.slug ?? rawSlug;
+  return `/products/${productCategory(slug)}/${productUrlSlug(slug)}/`;
+}
+
+export function productUrlSlug(slug: string): string {
+  return urlSlugBySlug[slug] ?? `${slug}-tape`;
 }

@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import SubHero from '../components/SubHero.astro';
 import { industries } from '../data/industries';
+import { productUrl } from '../data/products';
 import FaqSection from '../components/FaqSection.astro';
 
 /* Hero credibility badges */
@@ -78,7 +79,7 @@ const supportSteps = [
                 <h4>Recommended Solutions</h4>
                 <div class="ind-rec">
                   {it.recommended.map((r) => (
-                    <a class="rec-chip" href={`/products/${r.slug}`}>{r.label}</a>
+                    <a class="rec-chip" href={productUrl(r.slug)}>{r.label}</a>
                   ))}
                 </div>
               </div>

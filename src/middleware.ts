@@ -1,6 +1,28 @@
 import { defineMiddleware } from 'astro:middleware';
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  const legacyRedirects: Record<string, string> = {
+    '/products/acrylic': '/products/specialty-tape/acrylic-tape/',
+    '/products/eva': '/products/foam-tape/eva-foam-tape/',
+    '/products/opp': '/products/double-sided-tape/opp-tape/',
+    '/products/pe-foam': '/products/foam-tape/pe-foam-tape/',
+    '/products/pet': '/products/double-sided-tape/pet-tape/',
+    '/products/pvc': '/products/double-sided-tape/pvc-tape/',
+    '/products/tissue': '/products/double-sided-tape/tissue-tape/',
+    '/products/low-odor': '/products/specialty-tape/low-odor-tape/',
+    '/products/flame-retardant': '/products/specialty-tape/flame-retardant-tape/',
+    '/products/substrate-free': '/products/specialty-tape/substrate-free-tape/',
+    '/products/nonwoven': '/products/double-sided-tape/nonwoven-tape/',
+    '/products/mesh': '/products/double-sided-tape/mesh-tape/',
+    '/products/acrylic-foam': '/products/specialty-tape/acrylic-foam-tape/',
+    '/products/specialty-tape/acrylic-foam-tape': '/products/foam-tape/acrylic-foam-tape/',
+  };
+  const legacyTarget = legacyRedirects[context.url.pathname.replace(/\/$/, '')];
+  if (legacyTarget) {
+    const target = new URL(legacyTarget, context.url.origin);
+    context.url.searchParams.forEach((value, key) => target.searchParams.set(key, value));
+    return new Response(null, { status: 301, headers: { Location: target.href, 'Cache-Control': 'public, max-age=31536000' } });
+  }
   const response = await next();
   const headers = new Headers(response.headers);
 
