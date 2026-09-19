@@ -1,5 +1,6 @@
-/products/acrylic    /products/foam-tape/acrylic-tape/    301
-/products/specialty-tape/acrylic-tape    /products/foam-tape/acrylic-tape/    301
+/products/acrylic    /products/foam-tape/acrylic-foam-tape/    301
+/products/specialty-tape/acrylic-tape    /products/foam-tape/acrylic-foam-tape/    301
+/products/foam-tape/acrylic-tape    /products/foam-tape/acrylic-foam-tape/    301
 /products/eva    /products/foam-tape/eva-foam-tape/    301
 /products/opp    /products/double-sided-tape/opp-tape/    301
 /products/pe-foam    /products/foam-tape/pe-foam-tape/    301

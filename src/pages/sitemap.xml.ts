@@ -17,7 +17,7 @@ export const GET: APIRoute = () => {
       priority: '0.8',
       changefreq: 'monthly',
     })),
-    ...products.map((p) => ({
+    ...products.filter((p) => p.slug !== 'acrylic').map((p) => ({
       url: productUrl(p),
       priority: '0.8',
       changefreq: 'monthly',

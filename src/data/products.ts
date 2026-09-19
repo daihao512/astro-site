@@ -329,6 +329,7 @@ export function productCategory(slug: string): string {
 
 export function productUrl(product: Pick<Product, 'slug'> | string): string {
   const rawSlug = typeof product === 'string' ? product : product.slug;
+  if (rawSlug === 'acrylic') return '/products/foam-tape/acrylic-foam-tape/';
   const source = products.find((p) => p.slug === rawSlug || productUrlSlug(p.slug) === rawSlug);
   const slug = source?.slug ?? rawSlug;
   return `/products/${productCategory(slug)}/${productUrlSlug(slug)}/`;

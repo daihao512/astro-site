@@ -28,7 +28,7 @@ export const GET: APIRoute = () => {
       itemCount: c.items.length,
     })),
 
-    products: products.map((p) => ({
+    products: products.filter((p) => p.slug !== 'acrylic').map((p) => ({
       name: p.en,
       slug: p.slug,
       url: absUrl(productUrl(p)),

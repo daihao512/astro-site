@@ -2,8 +2,9 @@ import { defineMiddleware } from 'astro:middleware';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const legacyRedirects: Record<string, string> = {
-    '/products/acrylic': '/products/foam-tape/acrylic-tape/',
-    '/products/specialty-tape/acrylic-tape': '/products/foam-tape/acrylic-tape/',
+    '/products/acrylic': '/products/foam-tape/acrylic-foam-tape/',
+    '/products/specialty-tape/acrylic-tape': '/products/foam-tape/acrylic-foam-tape/',
+    '/products/foam-tape/acrylic-tape': '/products/foam-tape/acrylic-foam-tape/',
     '/products/eva': '/products/foam-tape/eva-foam-tape/',
     '/products/opp': '/products/double-sided-tape/opp-tape/',
     '/products/pe-foam': '/products/foam-tape/pe-foam-tape/',

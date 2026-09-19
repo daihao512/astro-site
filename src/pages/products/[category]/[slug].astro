@@ -3,7 +3,9 @@ import Layout from '../../../layouts/Layout.astro';
 import { products, getProduct, productCategory, productUrl, productUrlSlug } from '../../../data/products';
 
 export function getStaticPaths() {
-  return products.map((p) => ({ params: { category: productCategory(p.slug), slug: productUrlSlug(p.slug) } }));
+  return products
+    .filter((p) => p.slug !== 'acrylic')
+    .map((p) => ({ params: { category: productCategory(p.slug), slug: productUrlSlug(p.slug) } }));
 }
 
 const { category, slug } = Astro.params;
