@@ -1,6 +1,41 @@
 import { defineMiddleware } from 'astro:middleware';
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  const path = context.url.pathname.replace(/\/$/, '') || '/';
+
+  const gonePrefixes = [
+    '/de',
+    '/customer_authentication',
+    '/sitemap_blogs_1.xml',
+    '/sitemap_collections_1.xml',
+    '/sitemap_pages_1.xml',
+    '/sitemap_products_1.xml',
+  ];
+  const gonePaths = new Set([
+    '/products/10w-usb-powered-led-grow-lamp-with-real-wood-base-fully-adjustable-gooseneck-desktop-light-for-succulents-and-eco-bottles',
+    '/products/5w-premium-full-spectrum-led-aquarium-plant-grow-light-with-bamboo-base-smart-programmable-timer-desk-lamp-for-nano-tanks-succulents-bonsai',
+    '/blogs/craft-standards',
+    '/pages/custom-inquiry',
+    '/pages/data-sharing-opt-out',
+    '/policies/privacy-policy',
+    '/sitemap_agentic_discovery.xml',
+  ]);
+  if (gonePaths.has(path) || gonePrefixes.some((prefix) => path === prefix || path.startsWith(`${prefix}/`))) {
+    return new Response('Gone', { status: 410, headers: { 'Cache-Control': 'public, max-age=86400' } });
+  }
+
+  const collectionRedirects: Record<string, string> = {
+    '/collections': '/products/',
+    '/collections/all': '/products/',
+    '/collections/desktop-grow-lights-nano-aquarium-lighting': '/products/',
+  };
+  if (collectionRedirects[path]) {
+    return new Response(null, {
+      status: 301,
+      headers: { Location: new URL(collectionRedirects[path], context.url.origin).href, 'Cache-Control': 'public, max-age=31536000' },
+    });
+  }
+
   const legacyRedirects: Record<string, string> = {
     '/products/acrylic': '/products/foam-tape/acrylic-foam-tape/',
     '/products/specialty-tape/acrylic-tape': '/products/foam-tape/acrylic-foam-tape/',
