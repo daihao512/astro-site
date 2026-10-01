@@ -492,6 +492,17 @@ const ldBlocks = [
       .footer-social a { border: 1px solid var(--line); padding: .4rem .85rem; font-family: var(--font-head); letter-spacing: .5px; text-transform: uppercase; font-size: .78rem; }
       .footer-social a:hover { border-color: var(--accent); }
       .footer-bottom { border-top: 1px solid var(--line); margin-top: 2.8rem; padding: 1.4rem 0; color: #7a7a7a; font-size: .8rem; }
+      .global-quote { background: var(--bg-2); padding: 4.5rem 0; }
+      .global-quote-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 2rem; align-items: start; }
+      .global-quote h2 { margin: 0 0 .7rem; font-size: clamp(1.8rem, 3vw, 2.6rem); }
+      .global-quote h2 .accent { color: var(--accent); }
+      .global-quote-intro { color: var(--fg-soft); max-width: 52ch; }
+      .global-quote-form { display: grid; gap: .75rem; background: #fff; padding: 1.35rem 1.45rem 1.5rem; border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius-lg); }
+      .global-quote-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .global-quote-form input, .global-quote-form select, .global-quote-form textarea { width: 100%; padding: .75rem .9rem; border: 1px solid var(--line); border-radius: var(--radius); font: inherit; background: #fafaf8; color: var(--fg); }
+      .global-quote-form textarea { min-height: 96px; resize: vertical; }
+      .global-quote-form .btn { justify-content: center; padding: .85rem 1.5rem; font-size: .95rem; margin-top: .4rem; }
+      @media (max-width: 760px) { .global-quote-grid, .global-quote-form .row { grid-template-columns: 1fr; } }
 
       /* chat widget — red tape roll */
       .chat-fab {
@@ -662,6 +673,28 @@ const ldBlocks = [
       <slot />
     </main>
 
+    {path !== '/' && path !== '/contact' && (
+      <section class="global-quote" aria-labelledby="global-quote-title">
+        <div class="container global-quote-grid">
+          <div>
+            <div class="eyebrow">Start a technical enquiry</div>
+            <h2 id="global-quote-title">Get a <span class="accent">Quote</span></h2>
+            <p class="global-quote-intro">Tell us your substrate, application, target dimensions and service conditions. Our engineering team will review the requirement and reply with a product direction, sample plan or quotation questions.</p>
+            <p class="global-quote-intro">Need to send a drawing or specification? Submit the basic requirement first and our team will reply with the appropriate document or upload route.</p>
+          </div>
+          <form data-global-inquiry class="global-quote-form" id="globalQuoteForm">
+            <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="form-trap" />
+            <div class="row"><input type="text" name="name" placeholder="Your Name" aria-label="Your name" autocomplete="name" required /><input type="email" name="email" placeholder="Email Address *" aria-label="Email address" autocomplete="email" required /></div>
+            <input type="text" name="company" placeholder="Company Name" aria-label="Company name" autocomplete="organization" />
+            <div class="row"><select name="product_interest" aria-label="Product interest"><option value="">Product or material of interest</option><option>Double Sided Tape</option><option>PE Foam Tape</option><option>High Temperature Tape</option><option>Die-Cut / Custom OEM</option><option>Other / Custom Project</option></select><input type="text" name="quantity" placeholder="Estimated quantity" aria-label="Estimated quantity" /></div>
+            <textarea name="message" placeholder="Application, substrate, target market, sample or OEM needs…" aria-label="Application and requirements" required></textarea>
+            <input type="hidden" name="source_page" value={path} />
+            <button class="btn" type="submit">Submit Inquiry</button><p data-inquiry-status class="quote-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    )}
+
     <footer>
       <div class="container footer-grid">
         <div class="footer-col footer-brand">
@@ -755,6 +788,17 @@ const ldBlocks = [
         window.open(`https://wa.me/8618064692463?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
       });
 
+      // Keep only navigation attribution in this tab; never store form PII.
+      try {
+        if (!sessionStorage.getItem('inquiry_landing_path'))
+          sessionStorage.setItem('inquiry_landing_path', location.pathname);
+        if (!sessionStorage.getItem('inquiry_first_referrer') && document.referrer)
+          sessionStorage.setItem('inquiry_first_referrer', document.referrer);
+        document.querySelectorAll('a[href*="/contact"]').forEach((link) => link.addEventListener('click', () => {
+          sessionStorage.setItem('inquiry_source_path', location.pathname);
+        }));
+      } catch { /* storage unavailable: per-page attribution remains available */ }
+
       document.querySelectorAll('[data-global-inquiry]').forEach((form) => {
         form.addEventListener('submit', async (event) => {
           event.preventDefault();
@@ -769,10 +813,21 @@ const ldBlocks = [
             const response = await fetch('/api/contact', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(Object.fromEntries(new FormData(target).entries())),
+              body: JSON.stringify({
+                ...Object.fromEntries(new FormData(target).entries()),
+                source_url: location.pathname,
+                landing_url: (() => { try { return sessionStorage.getItem('inquiry_landing_path') || location.pathname; } catch { return location.pathname; } })(),
+                referrer: (() => { try { return sessionStorage.getItem('inquiry_first_referrer') || document.referrer; } catch { return document.referrer; } })(),
+                utm_source: new URLSearchParams(location.search).get('utm_source') || '',
+                utm_medium: new URLSearchParams(location.search).get('utm_medium') || '',
+                utm_campaign: new URLSearchParams(location.search).get('utm_campaign') || '',
+              }),
             });
             const result = await response.json().catch(() => ({}));
             if (!response.ok || !result.ok || result.degraded) throw new Error(result.error || 'Submission failed.');
+            if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead', {
+              page_location: location.href, form_id: target.id || 'global_inquiry',
+            });
             status.className = 'global-inquiry-status ok';
             status.textContent = '✓ Inquiry received. We will contact you shortly.';
             target.reset();
@@ -783,6 +838,27 @@ const ldBlocks = [
             if (button) button.disabled = false;
           }
         });
+      });
+
+      /* Commercial feedback events for GA4 → PG attribution. */
+      const sendCommercialEvent = (name, params = {}) => {
+        if (typeof window.gtag === 'function') window.gtag('event', name, {
+          page_location: location.href,
+          page_title: document.title,
+          ...params,
+        });
+      };
+      document.querySelectorAll('a[href*="/contact"], a[href*="wa.me"]').forEach((a) => {
+        a.addEventListener('click', () => sendCommercialEvent(
+          a.href.includes('wa.me') ? 'whatsapp_click' : 'technical_enquiry_click',
+          { link_url: a.href }
+        ));
+      });
+      document.querySelectorAll('a[href*="/products/"]').forEach((a) => {
+        a.addEventListener('click', () => sendCommercialEvent('product_click', { link_url: a.href }));
+      });
+      document.querySelectorAll('form').forEach((form) => {
+        form.addEventListener('submit', () => sendCommercialEvent('rfq_or_sample_attempt', { form_id: form.id || 'unnamed_form' }));
       });
 
       /* active link */

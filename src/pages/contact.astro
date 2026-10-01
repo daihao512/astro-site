@@ -174,9 +174,15 @@ import FaqSection from '../components/FaqSection.astro';
       ...Object.fromEntries(new FormData(form).entries()),
     } as Record<string, string>;
     const currentPath = window.location.pathname;
-    data.source_url = currentPath; // page that originated the inquiry
-    data.landing_url = currentPath; // V1 fallback: no session-level landing tracking yet
-    data.referrer = document.referrer || ''; // '' => server treats as UNKNOWN
+    try {
+      data.source_url = sessionStorage.getItem('inquiry_source_path') || currentPath;
+      data.landing_url = sessionStorage.getItem('inquiry_landing_path') || currentPath;
+      data.referrer = sessionStorage.getItem('inquiry_first_referrer') || document.referrer || '';
+    } catch {
+      data.source_url = currentPath;
+      data.landing_url = currentPath;
+      data.referrer = document.referrer || '';
+    }
     data.utm_source = params.get('utm_source') || '';
     data.utm_medium = params.get('utm_medium') || '';
     data.utm_campaign = params.get('utm_campaign') || '';
@@ -200,6 +206,9 @@ import FaqSection from '../components/FaqSection.astro';
         status.innerHTML = '✗ This local preview is not connected to the inquiry database yet. Please email <a href="mailto:salestape@lubandart.com">salestape@lubandart.com</a> or <a href="https://wa.me/8618064692463" target="_blank" rel="noopener noreferrer">message us on WhatsApp</a>.';
         } else {
           status.className = 'form-status full ok';
+          if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead', {
+            page_location: location.href, form_id: form.id || 'contact_form',
+          });
           status.textContent = '✓ We received your inquiry and will contact you soon!';
           form.reset();
         }

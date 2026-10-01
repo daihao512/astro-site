@@ -85,7 +85,7 @@ const faqLd = post.faq?.length
 ---
 
 <Layout
-  title={`${post.title} — LubandArt Tape`}
+  title={post.seoTitle ?? `${post.title} — LubandArt Tape`}
   description={post.excerpt}
   ogType="article"
   ogImage={post.img || undefined}
